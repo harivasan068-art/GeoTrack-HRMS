@@ -1,0 +1,45 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.db
+*.sqlite
+*.sqlite3
+.venv/
+venv/
+env/
+
+# Environment
+.env
+.env.*
+
+# Logs
+*.log
+
+# VS Code
+.vscode/
+
+# Node
+node_modules/
+dist/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Build
+build/
+
+# Coverage
+.coverage
+htmlcov/
+
+# Pytest
+.pytest_cache/
+
+# Alembic cache
+*.egg-info/
+
+# Uploads
+uploads/
