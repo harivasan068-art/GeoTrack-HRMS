@@ -1,0 +1,43 @@
+import fs from 'fs';
+import path from 'path';
+import { fileURLToPath } from 'url';
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const publicDir = path.resolve(__dirname, '../public');
+const iconsDir = path.resolve(publicDir, 'icons');
+
+if (!fs.existsSync(publicDir)) fs.mkdirSync(publicDir, { recursive: true });
+if (!fs.existsSync(iconsDir)) fs.mkdirSync(iconsDir, { recursive: true });
+
+// SVG Icon definition for GeoTrack HRMS
+const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="100%" height="100%">
+  <defs>
+    <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4f46e5" />
+      <stop offset="100%" stop-color="#0f172a" />
+    </linearGradient>
+    <linearGradient id="pinGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#38bdf8" />
+      <stop offset="100%" stop-color="#818cf8" />
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000" flood-opacity="0.4"/>
+    </filter>
+  </defs>
+  <rect width="512" height="512" rx="128" fill="url(#bgGrad)"/>
+  <circle cx="256" cy="256" r="180" fill="none" stroke="rgba(255,255,255,0.08)" stroke-width="8" stroke-dasharray="16 16"/>
+  <g filter="url(#shadow)" transform="translate(156, 96)">
+    <path d="M100 0 C44.77 0 0 44.77 0 100 C0 175 100 280 100 280 C100 280 200 175 200 100 C200 44.77 155.23 0 100 0 Z" fill="url(#pinGrad)"/>
+    <circle cx="100" cy="95" r="42" fill="#ffffff"/>
+    <circle cx="100" cy="95" r="24" fill="#4f46e5"/>
+  </g>
+  <text x="256" y="440" font-family="system-ui, -apple-system, sans-serif" font-weight="900" font-size="44" fill="#ffffff" text-anchor="middle" letter-spacing="4">GEOTRACK</text>
+</svg>`;
+
+fs.writeFileSync(path.join(publicDir, 'favicon.svg'), svgContent);
+fs.writeFileSync(path.join(publicDir, 'pwa-icon.svg'), svgContent);
+fs.writeFileSync(path.join(iconsDir, 'icon.svg'), svgContent);
+
+console.log('Successfully generated PWA SVG icons in public/ directory!');
