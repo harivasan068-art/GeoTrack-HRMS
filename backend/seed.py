@@ -5,6 +5,8 @@ from datetime import date, datetime, timedelta
 # Ensure backend directory is in python path
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
+from alembic.config import Config
+from alembic import command
 from database.database import Base, SessionLocal, engine
 from models.attendance import Attendance
 from models.company import AuditLog, CompanySettings
@@ -16,6 +18,11 @@ def seed_database():
     print("Recreating database tables for Enterprise HRMS...")
     Base.metadata.drop_all(bind=engine)
     Base.metadata.create_all(bind=engine)
+    
+    # Stamp alembic version table so alembic upgrade head succeeds seamlessly
+    alembic_ini_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "alembic.ini")
+    alembic_cfg = Config(alembic_ini_path)
+    command.stamp(alembic_cfg, "head")
 
     db = SessionLocal()
 
