@@ -8,15 +8,20 @@ BASE_DIR = Path(__file__).resolve().parent
 # Absolute path to backend/.env
 ENV_FILE = BASE_DIR / ".env"
 
-# Load backend/.env with override=True to guarantee values override system environment
-load_dotenv(dotenv_path=ENV_FILE, override=True)
+# Load local .env only if it exists (for local development)
+if ENV_FILE.exists():
+    load_dotenv(dotenv_path=ENV_FILE)
 
 DATABASE_URL = os.getenv("DATABASE_URL")
 
 if not DATABASE_URL:
-    raise RuntimeError(f"DATABASE_URL is not set or empty in {ENV_FILE}")
+    raise RuntimeError(
+        "DATABASE_URL is not configured. "
+        "Set it in backend/.env for local development "
+        "or as an Environment Variable in Render."
+    )
 
-print(f"DATABASE_URL loaded: {DATABASE_URL}")
+print("Configuration loaded successfully.")
 
 SECRET_KEY = os.getenv("SECRET_KEY", "geotrack-hrms-secret-key-change-in-production")
 ALGORITHM = os.getenv("ALGORITHM", "HS256")
