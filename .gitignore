@@ -10,9 +10,16 @@ __pycache__/
 venv/
 env/
 
-# Environment
+# Environment & Secrets
 .env
 .env.*
+*.env
+*.pem
+*.key
+.env.local
+.env.development
+.env.production
+
 
 # Logs
 *.log
@@ -43,3 +50,25 @@ htmlcov/
 
 # Uploads
 uploads/
+
+# Vite
+.vite/
+
+# PWA
+dev-dist/
+
+# PostgreSQL
+*.backup
+
+# Alembic
+alembic/__pycache__/
+
+# Python cache
+.pytest_cache/
+.mypy_cache/
+
+# Uploads (legacy)
+backend/uploads/
+
+# IDE
+.idea/
