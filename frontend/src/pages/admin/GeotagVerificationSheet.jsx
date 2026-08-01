@@ -392,7 +392,7 @@ const GeotagVerificationSheet = () => {
               </div>
               <div>
                 <span className="text-slate-400">IP Address:</span>
-                <div className="font-mono text-indigo-300 mt-0.5">{selectedRequest.ip_address || "127.0.0.1"}</div>
+                <div className="font-mono text-indigo-300 mt-0.5">{selectedRequest.ip_address || "N/A"}</div>
               </div>
             </div>
 

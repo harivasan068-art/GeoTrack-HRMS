@@ -68,7 +68,7 @@ async def submit_geotag_photo(
 
     # Extract metadata
     user_agent = request.headers.get("user-agent", "Unknown Device")
-    client_ip = request.client.host if request.client else "127.0.0.1"
+    client_ip = request.client.host if request.client else "0.0.0.0"
 
     # Geofence check
     is_inside = get_geofence_status(db, latitude, longitude)
@@ -112,7 +112,7 @@ def check_in(
     status_label = "Pending Approval" if is_inside else "Pending Approval (Outside Zone)"
 
     user_agent = request.headers.get("user-agent", "Unknown Device")
-    client_ip = request.client.host if request.client else "127.0.0.1"
+    client_ip = request.client.host if request.client else "0.0.0.0"
 
     now_local = datetime.now()
 
