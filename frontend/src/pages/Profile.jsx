@@ -5,6 +5,7 @@ import DigitalIdCard from "../components/DigitalIdCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useAuth } from "../hooks/useAuth";
 import { authService } from "../services/authService";
+import { API_BASE_URL } from "../services/api";
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -139,7 +140,7 @@ const Profile = () => {
                   user?.photo?.startsWith("http")
                     ? user.photo
                     : user?.photo
-                    ? `${import.meta.env.VITE_API_URL || "http://localhost:8000"}${user.photo}`
+                    ? `${API_BASE_URL}${user.photo}`
                     : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"
                 }
                 alt={user?.full_name}
@@ -198,7 +199,7 @@ const Profile = () => {
                 photoPreview?.startsWith("http")
                   ? photoPreview
                   : photoPreview
-                  ? `${import.meta.env.VITE_API_URL || "http://localhost:8000"}${photoPreview}`
+                  ? `${API_BASE_URL}${photoPreview}`
                   : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"
               }
               alt="Profile Preview"

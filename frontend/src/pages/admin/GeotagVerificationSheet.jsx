@@ -17,6 +17,7 @@ import {
 import InteractiveMap from "../../components/InteractiveMap";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { adminService } from "../../services/attendanceService";
+import { API_BASE_URL } from "../../services/api";
 
 const GeotagVerificationSheet = () => {
   const [sheetData, setSheetData] = useState([]);
@@ -253,7 +254,7 @@ const GeotagVerificationSheet = () => {
                           className="group flex items-center gap-2 rounded-lg bg-slate-950 p-1 border border-slate-800 hover:border-indigo-500 transition"
                         >
                           <img
-                            src={item.photo_url.startsWith("http") ? item.photo_url : `${import.meta.env.VITE_API_URL || "http://localhost:8000"}${item.photo_url}`}
+                            src={item.photo_url.startsWith("http") ? item.photo_url : `${API_BASE_URL}${item.photo_url}`}
                             alt="Selfie"
                             className="h-10 w-12 object-cover rounded"
                           />
@@ -359,7 +360,7 @@ const GeotagVerificationSheet = () => {
               <div>
                 <span className="text-xs font-bold text-slate-400 block mb-2">Live Captured Selfie Proof:</span>
                 <img
-                  src={selectedRequest.photo_url?.startsWith("http") ? selectedRequest.photo_url : `${import.meta.env.VITE_API_URL || "http://localhost:8000"}${selectedRequest.photo_url}`}
+                  src={selectedRequest.photo_url?.startsWith("http") ? selectedRequest.photo_url : `${API_BASE_URL}${selectedRequest.photo_url}`}
                   alt="Large Selfie Proof"
                   className="h-64 w-full object-cover rounded-2xl border border-slate-800 shadow-md"
                 />

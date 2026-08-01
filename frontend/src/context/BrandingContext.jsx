@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../services/api";
 
 const BrandingContext = createContext(null);
 
@@ -21,8 +21,7 @@ export const BrandingProvider = ({ children }) => {
 
   const fetchBranding = async () => {
     try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:8000";
-      const res = await axios.get(`${apiUrl}/api/admin/company`);
+      const res = await api.get("/api/admin/company");
       if (res.data) {
         setCompany(res.data);
       }

@@ -16,6 +16,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { useBranding } from "../context/BrandingContext";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { attendanceService } from "../services/attendanceService";
+import { API_BASE_URL } from "../services/api";
 
 const Attendance = () => {
   const { company } = useBranding();
@@ -380,7 +381,7 @@ const Attendance = () => {
                 {att.photo_url && (
                   <div className="pt-3 border-t border-slate-800 flex items-center gap-4">
                     <img
-                      src={att.photo_url.startsWith("http") ? att.photo_url : `${import.meta.env.VITE_API_URL || "http://localhost:8000"}${att.photo_url}`}
+                      src={att.photo_url.startsWith("http") ? att.photo_url : `${API_BASE_URL}${att.photo_url}`}
                       alt="Selfie Proof"
                       className="h-24 w-24 object-cover rounded-xl border border-slate-700 shadow-md"
                     />
