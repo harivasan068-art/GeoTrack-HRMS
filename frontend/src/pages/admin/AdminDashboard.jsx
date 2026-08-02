@@ -214,19 +214,17 @@ const AdminDashboard = () => {
         </div>
       )}
 
-      {/* Stats Cards */}
-      <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      {/* Stats Cards - 2 Cols on Mobile, 3 Cols on Desktop */}
+      <div className="grid gap-3 sm:gap-6 grid-cols-2 lg:grid-cols-3">
         {stats.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="rounded-2xl bg-slate-900 p-6 border border-slate-800">
+          <div key={label} className="rounded-2xl bg-slate-900 p-4 sm:p-6 border border-slate-800 space-y-2">
             <div className="flex items-center justify-between">
-              <div>
-                <p className="text-xs font-medium text-slate-400">{label}</p>
-                <p className="mt-2 text-3xl font-extrabold text-white">{value}</p>
-              </div>
-              <div className={`rounded-xl p-3.5 ${color}`}>
-                <Icon className="h-6 w-6" />
+              <p className="text-[11px] sm:text-xs font-medium text-slate-400 truncate">{label}</p>
+              <div className={`rounded-xl p-2 sm:p-3 ${color} shrink-0`}>
+                <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
             </div>
+            <p className="text-xl sm:text-3xl font-extrabold text-white">{value}</p>
           </div>
         ))}
       </div>

@@ -1,15 +1,18 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
-export const useGeolocation = () => {
+export const useGeolocation = (options = {}) => {
+  const { autoFetch = false } = options;
   const [location, setLocation] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [permissionState, setPermissionState] = useState("prompt"); // 'prompt' | 'granted' | 'denied'
 
   const getLocation = useCallback(() => {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
         const err = "Geolocation is not supported by your browser";
         setError(err);
+        setPermissionState("denied");
         reject(new Error(err));
         return;
       }
@@ -36,6 +39,7 @@ export const useGeolocation = () => {
 
           const loc = { latitude, longitude, location_name: locationName };
           setLocation(loc);
+          setPermissionState("granted");
           setLoading(false);
           resolve(loc);
         },
@@ -45,6 +49,7 @@ export const useGeolocation = () => {
               ? "Location permission denied. Please enable GPS access."
               : "Unable to retrieve your location. Please try again.";
           setError(message);
+          setPermissionState(err.code === 1 ? "denied" : "prompt");
           setLoading(false);
           reject(new Error(message));
         },
@@ -53,5 +58,12 @@ export const useGeolocation = () => {
     });
   }, []);
 
-  return { location, loading, error, getLocation };
+  useEffect(() => {
+    if (autoFetch) {
+      getLocation().catch(() => {});
+    }
+  }, [autoFetch, getLocation]);
+
+  return { location, loading, error, permissionState, getLocation };
 };
+
