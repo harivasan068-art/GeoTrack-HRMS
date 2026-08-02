@@ -28,6 +28,13 @@ export const authService = {
     return response.data;
   },
 
+  uploadPhoto: async (formData) => {
+    const response = await api.post("/api/auth/upload-photo", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  },
+
   logout: async () => {
     try {
       await api.post("/api/auth/logout");

@@ -103,8 +103,8 @@ def update_profile(
             )
         current_user.email = update_data["email"]
 
-    if "password" in update_data and update_data["password"]:
-        current_user.password = hash_password(update_data["password"])
+    if "password" in update_data and update_data["password"] and isinstance(update_data["password"], str) and update_data["password"].strip() != "":
+        current_user.password = hash_password(update_data["password"].strip())
 
     for field, value in update_data.items():
         if field not in ("email", "password") and value is not None:

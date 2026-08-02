@@ -7,6 +7,54 @@ import { useAuth } from "../hooks/useAuth";
 import { authService } from "../services/authService";
 import { getImageUrl } from "../services/api";
 
+const compressImageFile = (file, maxDim = 400, quality = 0.85) => {
+  return new Promise((resolve) => {
+    if (!file.type || !file.type.startsWith("image/")) {
+      resolve(file);
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        const canvas = document.createElement("canvas");
+        let width = img.width;
+        let height = img.height;
+        if (width > height) {
+          if (width > maxDim) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          }
+        } else {
+          if (height > maxDim) {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext("2d");
+        ctx.drawImage(img, 0, 0, width, height);
+        canvas.toBlob(
+          (blob) => {
+            if (blob) {
+              resolve(new File([blob], file.name || "avatar.jpg", { type: "image/jpeg" }));
+            } else {
+              resolve(file);
+            }
+          },
+          "image/jpeg",
+          quality
+        );
+      };
+      img.onerror = () => resolve(file);
+      img.src = e.target.result;
+    };
+    reader.onerror = () => resolve(file);
+    reader.readAsDataURL(file);
+  });
+};
+
 const Profile = () => {
   const { user, updateUser } = useAuth();
   const [activeTab, setActiveTab] = useState("idcard"); // 'idcard' | 'details' | 'edit'
@@ -41,8 +89,9 @@ const Profile = () => {
 
     setUploadingPhoto(true);
     try {
+      const optimizedFile = await compressImageFile(file);
       const data = new FormData();
-      data.append("photo", file);
+      data.append("photo", optimizedFile);
       const updatedUser = await authService.uploadProfilePhoto(data);
       updateUser(updatedUser);
       setPhotoPreview(updatedUser.photo);
