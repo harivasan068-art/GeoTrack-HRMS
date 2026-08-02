@@ -394,48 +394,57 @@ const Attendance = () => {
       {/* 1. CHECK-IN SECTION */}
       {activeTab === "checkin" && (
         <div className="space-y-6">
-          {isCheckedIn ? (
-            <div className="rounded-3xl bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 space-y-6 shadow-sm text-center font-sans">
-              <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-3xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/30">
-                <FiCheckCircle className="h-8 w-8" />
-              </div>
-              <div className="space-y-2">
-                <h2 className="text-xl font-extrabold text-slate-900 dark:text-white font-display">You Have Already Checked In Today</h2>
-                <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
-                  Check-in recorded at <strong className="text-orange-600 dark:text-orange-400 font-mono">{formatTime(primaryRecord.check_in)}</strong>. Multiple check-ins per day are not permitted.
-                </p>
-              </div>
-
-              <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 max-w-md mx-auto text-left text-xs space-y-2">
-                <div className="flex justify-between">
-                  <span className="text-slate-500 font-bold">Check-In Location:</span>
-                  <span className="font-bold text-slate-900 dark:text-white">{primaryRecord.location_name}</span>
-                </div>
-                <div className="flex justify-between">
-                  <span className="text-slate-500 font-bold">Verification Status:</span>
-                  <span className="font-bold text-amber-500">{primaryRecord.status}</span>
-                </div>
-              </div>
-
-              {!isCheckedOut && (
-                <button
-                  onClick={() => setActiveTab("checkout")}
-                  className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-6 py-3 text-xs font-bold text-white shadow-lg hover:bg-orange-700 transition"
-                >
-                  <FiLogOut /> Proceed to Evening Check-Out
-                </button>
-              )}
-            </div>
-          ) : (
-            <form onSubmit={handleCheckInSubmit} className="rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6 shadow-sm">
+          {isCheckedIn && (
+            <div className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm font-sans">
               <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-                <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 font-display">
-                  <FiPlusCircle className="text-orange-600 dark:text-orange-400" /> Morning Check-In & Work Proof Submission
-                </h2>
-                <span className="text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 px-3 py-1 rounded-full border border-orange-200 dark:border-orange-800 font-mono">
-                  Daily Check-In
-                </span>
+                <div className="flex items-center gap-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-emerald-500/10 text-emerald-500 border border-emerald-500/30">
+                    <FiCheckCircle className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-extrabold text-slate-900 dark:text-white font-display">Active Workday Check-In ({todayRecords.length} Site Logs)</h3>
+                    <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">
+                      First check-in recorded at <strong className="text-orange-600 dark:text-orange-400 font-mono">{formatTime(todayRecords[todayRecords.length - 1]?.check_in)}</strong>. You can continuously log new site locations below.
+                    </p>
+                  </div>
+                </div>
+
+                {!isCheckedOut && (
+                  <button
+                    onClick={() => setActiveTab("checkout")}
+                    className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-orange-700 transition"
+                  >
+                    <FiLogOut /> Proceed to Check-Out
+                  </button>
+                )}
               </div>
+
+              {/* Logged Sites */}
+              <div className="grid gap-2 sm:grid-cols-2 text-xs font-mono">
+                {todayRecords.map((rec, idx) => (
+                  <div key={rec.id || idx} className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-3 border border-slate-200 dark:border-slate-800 flex justify-between items-center">
+                    <div>
+                      <span className="font-bold text-slate-900 dark:text-white font-sans block">{rec.location_name || "Work Site"}</span>
+                      <span className="text-slate-400 text-[10px]">{formatTime(rec.check_in)}</span>
+                    </div>
+                    <span className="text-[10px] font-bold text-amber-500 font-sans px-2 py-0.5 bg-amber-50 dark:bg-amber-950/50 rounded-full border border-amber-200 dark:border-amber-800">
+                      {rec.status}
+                    </span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          <form onSubmit={handleCheckInSubmit} className="rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6 shadow-sm">
+            <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+              <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+                <FiPlusCircle className="text-orange-600 dark:text-orange-400" /> {isCheckedIn ? "Log New Worksite Location & Work Proof" : "Morning Check-In & Work Proof Submission"}
+              </h2>
+              <span className="text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 px-3 py-1 rounded-full border border-orange-200 dark:border-orange-800 font-mono">
+                {isCheckedIn ? "Location Update" : "Daily Check-In"}
+              </span>
+            </div>
 
               {/* Location Name */}
               <div>
@@ -599,13 +608,12 @@ const Attendance = () => {
                 disabled={submitting}
                 className="w-full rounded-2xl bg-orange-600 py-3.5 text-xs font-extrabold text-white shadow-md hover:bg-orange-700 disabled:opacity-60 transition font-sans tracking-wide"
               >
-                {submitting ? <LoadingSpinner size="sm" /> : "Submit Morning Check-In & Work Proof"}
+                {submitting ? <LoadingSpinner size="sm" /> : isCheckedIn ? "Submit Site Location & Work Proof Update" : "Submit Morning Check-In & Work Proof"}
               </button>
               <canvas ref={canvasRef} className="hidden" />
             </form>
-          )}
-        </div>
-      )}
+          </div>
+        )}
 
       {/* 2. CHECK-OUT SECTION */}
       {activeTab === "checkout" && (

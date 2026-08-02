@@ -135,7 +135,7 @@ const GeotagVerificationSheet = () => {
       item.full_name?.toLowerCase().includes(term) ||
       item.employee_id?.toLowerCase().includes(term) ||
       item.department?.toLowerCase().includes(term) ||
-      (item.date && item.date.includes(term));
+      (item.date && String(item.date).toLowerCase().includes(term));
 
     return matchesSearch;
   });

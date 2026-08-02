@@ -8,14 +8,22 @@ const InteractiveMap = ({
   isInsideGeofence = true,
   height = "h-64",
 }) => {
-  const mapUrl = `https://maps.google.com/maps?q=${latitude},${longitude}&z=16&output=embed`;
-  const googleMapsExternalUrl = `https://www.google.com/maps/search/?api=1&query=${latitude},${longitude}`;
+  const numLat = latitude != null && latitude !== "" ? Number(latitude) : null;
+  const numLon = longitude != null && longitude !== "" ? Number(longitude) : null;
+  const isValidCoords = numLat != null && !isNaN(numLat) && numLon != null && !isNaN(numLon);
+
+  const mapUrl = isValidCoords
+    ? `https://maps.google.com/maps?q=${numLat},${numLon}&z=16&output=embed`
+    : "";
+  const googleMapsExternalUrl = isValidCoords
+    ? `https://www.google.com/maps/search/?api=1&query=${numLat},${numLon}`
+    : "#";
 
   return (
     <div className="space-y-3 font-sans">
       {/* Map Container */}
       <div className={`relative ${height} w-full overflow-hidden rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 shadow-inner`}>
-        {latitude && longitude ? (
+        {isValidCoords ? (
           <iframe
             title="Location Map"
             width="100%"
@@ -37,7 +45,7 @@ const InteractiveMap = ({
         <div className="absolute top-3 left-3 z-10 flex flex-col gap-1.5 font-sans">
           <div className="inline-flex items-center gap-1.5 rounded-xl bg-slate-900/90 px-3 py-1.5 text-xs font-mono font-bold text-orange-400 backdrop-blur-md border border-slate-700 shadow-md">
             <FiNavigation className="text-orange-400" />
-            Lat: {latitude?.toFixed(4)}, Lon: {longitude?.toFixed(4)}
+            Lat: {isValidCoords ? numLat.toFixed(4) : "--"}, Lon: {isValidCoords ? numLon.toFixed(4) : "--"}
           </div>
 
           {/* Geofence Warning or Verified Badge */}
@@ -53,7 +61,7 @@ const InteractiveMap = ({
         </div>
 
         {/* Floating Google Maps Button */}
-        {latitude && longitude && (
+        {isValidCoords && (
           <a
             href={googleMapsExternalUrl}
             target="_blank"

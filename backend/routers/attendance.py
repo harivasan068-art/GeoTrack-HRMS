@@ -68,18 +68,7 @@ async def submit_geotag_photo(
 ):
     today = date.today()
 
-    # Rule: Employee can Check In only ONCE per day!
-    existing = (
-        db.query(Attendance)
-        .filter(Attendance.employee_id == current_user.employee_id, Attendance.date == today)
-        .first()
-    )
-    if existing:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You have already checked in for today. Multiple check-ins per day are not permitted.",
-        )
-
+    # Note: Employees are permitted to submit continuous location & work proof updates throughout the day after initial check-in.
     # 1. Selfie Upload
     selfie_url = None
     if photo:
@@ -207,21 +196,24 @@ async def check_out_full(
     db: Session = Depends(get_db),
 ):
     today = date.today()
-    attendance = (
+    today_records = (
         db.query(Attendance)
         .filter(
             Attendance.employee_id == current_user.employee_id,
             Attendance.date == today,
         )
-        .order_by(Attendance.check_in.desc())
-        .first()
+        .order_by(Attendance.check_in.asc())
+        .all()
     )
 
-    if not attendance or not attendance.check_in:
+    if not today_records:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cannot Check Out without Check In.",
         )
+
+    first_record = today_records[0]
+    attendance = today_records[-1]
 
     if attendance.check_out or attendance.check_out_time:
         raise HTTPException(
@@ -267,9 +259,13 @@ async def check_out_full(
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Failed to upload checkout video: {str(e)}")
 
-    # Automatic Working Hours calculation
-    start_dt = attendance.check_in_time or attendance.check_in
-    attendance.working_hours = calculate_working_hours_string(start_dt, now_local)
+    # Automatic Working Hours calculation from earliest check-in
+    start_dt = first_record.check_in_time or first_record.check_in
+    working_hours_str = calculate_working_hours_string(start_dt, now_local)
+    for rec in today_records:
+        rec.working_hours = working_hours_str
+        rec.check_out = now_local
+        rec.check_out_time = now_local
 
     db.commit()
     db.refresh(attendance)
@@ -283,21 +279,24 @@ def check_out(
     db: Session = Depends(get_db),
 ):
     today = date.today()
-    attendance = (
+    today_records = (
         db.query(Attendance)
         .filter(
             Attendance.employee_id == current_user.employee_id,
             Attendance.date == today,
         )
-        .order_by(Attendance.check_in.desc())
-        .first()
+        .order_by(Attendance.check_in.asc())
+        .all()
     )
 
-    if not attendance or not attendance.check_in:
+    if not today_records:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cannot Check Out without Check In.",
         )
+
+    first_record = today_records[0]
+    attendance = today_records[-1]
 
     now_local = datetime.now()
     attendance.check_out = now_local
@@ -307,8 +306,12 @@ def check_out(
     attendance.checkout_location_name = check_out_data.location_name
     attendance.address = check_out_data.address or check_out_data.location_name
 
-    start_dt = attendance.check_in_time or attendance.check_in
-    attendance.working_hours = calculate_working_hours_string(start_dt, now_local)
+    start_dt = first_record.check_in_time or first_record.check_in
+    working_hours_str = calculate_working_hours_string(start_dt, now_local)
+    for rec in today_records:
+        rec.working_hours = working_hours_str
+        rec.check_out = now_local
+        rec.check_out_time = now_local
 
     db.commit()
     db.refresh(attendance)

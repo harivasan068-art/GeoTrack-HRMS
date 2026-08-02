@@ -63,7 +63,7 @@ class TestGeoTrackAPI(unittest.TestCase):
         token = login_resp.json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
 
-        # Check-in with selfie upload
+        # 1. Initial Check-in at HQ site
         files = {
             "photo": ("selfie.jpg", b"\xff\xd8\xff\xe0test_jpg_data", "image/jpeg")
         }
@@ -78,7 +78,17 @@ class TestGeoTrackAPI(unittest.TestCase):
         checkin_data = checkin_resp.json()
         self.assertIsNotNone(checkin_data["check_in_time"])
 
-        # Check-out
+        # 2. Continuous location update at Customer Worksite B
+        site2_data = {
+            "latitude": 37.7833,
+            "longitude": -122.4167,
+            "location_name": "Customer Site B",
+            "address": "500 Market Street",
+        }
+        site2_resp = self.client.post("/api/attendance/geotag-upload", data=site2_data, files=files, headers=headers)
+        self.assertEqual(site2_resp.status_code, 201)
+
+        # 3. Evening Check-out
         checkout_data = {
             "latitude": 37.7749,
             "longitude": -122.4194,
