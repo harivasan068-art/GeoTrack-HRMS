@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
-import { FiCheckCircle, FiGlobe, FiMapPin, FiSave, FiSettings, FiShield } from "react-icons/fi";
+import { FiAlertTriangle, FiCheckCircle, FiGlobe, FiMapPin, FiSave, FiSettings, FiShield, FiUpload } from "react-icons/fi";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { useBranding } from "../../context/BrandingContext";
 import { adminService } from "../../services/attendanceService";
+import { getImageUrl } from "../../services/api";
 
 const CompanySettings = () => {
   const { company, updateBrandingState, refreshBranding } = useBranding();
   const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [logoPreviewError, setLogoPreviewError] = useState(false);
 
   const [formData, setFormData] = useState({
     company_name: company?.company_name || "GeoTrack HRMS",
@@ -104,15 +106,118 @@ const CompanySettings = () => {
             </div>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-slate-300">Company Logo URL (Optional Image Link)</label>
-            <input
-              type="text"
-              placeholder="https://example.com/logo.png"
-              value={formData.company_logo}
-              onChange={(e) => setFormData({ ...formData, company_logo: e.target.value })}
-              className="mt-1.5 w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-sm text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none"
-            />
+          <div className="space-y-3">
+            <label className="block text-xs font-medium text-slate-300">Company Logo (Upload File, Direct Image Link, or Presets)</label>
+            
+            {/* Live Logo Preview Box */}
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl bg-slate-950 p-4 border border-slate-800">
+              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-slate-900 border border-slate-700 overflow-hidden shrink-0">
+                {formData.company_logo && !logoPreviewError ? (
+                  <img
+                    src={getImageUrl(formData.company_logo)}
+                    alt="Logo Preview"
+                    className="h-full w-full object-contain"
+                    onError={() => setLogoPreviewError(true)}
+                  />
+                ) : (
+                  <div
+                    style={{ backgroundColor: formData.theme_color || "#4f46e5" }}
+                    className="h-full w-full flex items-center justify-center text-white font-bold"
+                  >
+                    <FiMapPin className="h-6 w-6" />
+                  </div>
+                )}
+              </div>
+
+              <div className="flex-1 space-y-2 w-full">
+                <input
+                  type="text"
+                  placeholder="https://example.com/logo.png or data:image/..."
+                  value={formData.company_logo}
+                  onChange={(e) => {
+                    setLogoPreviewError(false);
+                    setFormData({ ...formData, company_logo: e.target.value });
+                  }}
+                  className="w-full rounded-xl bg-slate-900 border border-slate-800 px-4 py-2 text-xs text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none"
+                />
+
+                <div className="flex flex-wrap items-center gap-2">
+                  {/* Local Image File Upload Button */}
+                  <label className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600/20 border border-indigo-500/30 px-3 py-1.5 text-[11px] font-bold text-indigo-300 hover:bg-indigo-600 hover:text-white transition cursor-pointer">
+                    <FiUpload className="h-3.5 w-3.5" /> Upload Image File
+                    <input
+                      type="file"
+                      accept="image/*"
+                      className="hidden"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) {
+                          const reader = new FileReader();
+                          reader.onloadend = () => {
+                            setLogoPreviewError(false);
+                            setFormData({ ...formData, company_logo: reader.result });
+                            toast.success("Logo file selected!");
+                          };
+                          reader.readAsDataURL(file);
+                        }
+                      }}
+                    />
+                  </label>
+
+                  {/* Preset Logos */}
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLogoPreviewError(false);
+                      setFormData({
+                        ...formData,
+                        company_logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80",
+                      });
+                    }}
+                    className="inline-flex items-center gap-1 rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] text-slate-300 hover:bg-slate-700 transition"
+                  >
+                    Preset 1
+                  </button>
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setLogoPreviewError(false);
+                      setFormData({
+                        ...formData,
+                        company_logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&auto=format&fit=crop&q=80",
+                      });
+                    }}
+                    className="inline-flex items-center gap-1 rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] text-slate-300 hover:bg-slate-700 transition"
+                  >
+                    Preset 2
+                  </button>
+
+                  {formData.company_logo && (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setLogoPreviewError(false);
+                        setFormData({ ...formData, company_logo: "" });
+                      }}
+                      className="inline-flex items-center gap-1 rounded-lg bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 text-[11px] font-semibold text-rose-400 hover:bg-rose-600 hover:text-white transition"
+                    >
+                      Reset Default Icon
+                    </button>
+                  )}
+                </div>
+              </div>
+            </div>
+
+            {/* Webpage HTML URL Warning */}
+            {formData.company_logo && (formData.company_logo.includes(".htm") || formData.company_logo.includes(".html")) && (
+              <div className="flex items-center gap-2 rounded-xl bg-amber-500/10 border border-amber-500/30 p-3 text-xs text-amber-300">
+                <FiAlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
+                <span>
+                  The URL entered ends in <code>.htm</code> (web page). Please upload an image file (`.png`, `.jpg`, `.svg`) or click <strong>Upload Image File</strong> above.
+                </span>
+              </div>
+            )}
           </div>
         </div>
 

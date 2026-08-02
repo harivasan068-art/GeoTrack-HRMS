@@ -24,7 +24,14 @@ const DigitalIdCard = ({ employee }) => {
         >
           <div className="flex items-center justify-center gap-2">
             {company?.company_logo && (
-              <img src={company.company_logo} alt="Logo" className="h-7 w-7 object-contain rounded" />
+              <img
+                src={getImageUrl(company.company_logo)}
+                alt="Logo"
+                className="h-7 w-7 object-contain rounded"
+                onError={(e) => {
+                  e.target.style.display = "none";
+                }}
+              />
             )}
             <span className="font-extrabold text-lg tracking-wide">{company?.company_name || "GeoTrack HRMS"}</span>
           </div>

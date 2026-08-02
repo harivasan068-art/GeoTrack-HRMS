@@ -1,8 +1,15 @@
+import { useEffect, useState } from "react";
 import { FiMapPin } from "react-icons/fi";
 import { useBranding } from "../context/BrandingContext";
+import { getImageUrl } from "../services/api";
 
 const Branding = ({ size = "md", showSubtitle = true, dark = true }) => {
   const { company } = useBranding();
+  const [imageError, setImageError] = useState(false);
+
+  useEffect(() => {
+    setImageError(false);
+  }, [company?.company_logo]);
 
   const logoSizes = {
     sm: "h-7 w-7 text-xs",
@@ -16,18 +23,21 @@ const Branding = ({ size = "md", showSubtitle = true, dark = true }) => {
     lg: "text-2xl font-extrabold",
   };
 
+  const logoUrl = getImageUrl(company?.company_logo);
+
   return (
     <div className="flex items-center gap-3">
-      {company?.company_logo ? (
+      {company?.company_logo && !imageError ? (
         <img
-          src={company.company_logo}
-          alt={company.company_name || "Logo"}
-          className={`${logoSizes[size]} object-contain rounded-xl border border-slate-800 shadow-md`}
+          src={logoUrl}
+          alt={company?.company_name || "Logo"}
+          className={`${logoSizes[size]} object-contain rounded-xl border border-slate-800 bg-slate-900 shadow-md`}
+          onError={() => setImageError(true)}
         />
       ) : (
         <div
           style={{ backgroundColor: company?.theme_color || "#4f46e5" }}
-          className={`${logoSizes[size]} flex items-center justify-center rounded-xl text-white font-extrabold shadow-md shadow-indigo-600/30`}
+          className={`${logoSizes[size]} flex items-center justify-center rounded-xl text-white font-extrabold shadow-md shadow-indigo-600/30 shrink-0`}
         >
           <FiMapPin className="h-5 w-5" />
         </div>
@@ -48,3 +58,4 @@ const Branding = ({ size = "md", showSubtitle = true, dark = true }) => {
 };
 
 export default Branding;
+
