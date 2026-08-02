@@ -1,3 +1,4 @@
+import base64
 import os
 import uuid
 
@@ -120,16 +121,24 @@ async def upload_profile_photo(
     current_user: Employee = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
-    os.makedirs("uploads", exist_ok=True)
-    file_ext = os.path.splitext(photo.filename)[1] or ".jpg"
-    unique_filename = f"profile_{current_user.employee_id}_{uuid.uuid4().hex[:8]}{file_ext}"
-    file_path = os.path.join("uploads", unique_filename)
+    content = await photo.read()
+    if content:
+        mime_type = photo.content_type or "image/jpeg"
+        base64_str = base64.b64encode(content).decode("utf-8")
+        photo_url = f"data:{mime_type};base64,{base64_str}"
 
-    with open(file_path, "wb") as buffer:
-        content = await photo.read()
-        buffer.write(content)
+        try:
+            os.makedirs("uploads", exist_ok=True)
+            file_ext = os.path.splitext(photo.filename)[1] or ".jpg"
+            unique_filename = f"profile_{current_user.employee_id}_{uuid.uuid4().hex[:8]}{file_ext}"
+            file_path = os.path.join("uploads", unique_filename)
+            with open(file_path, "wb") as buffer:
+                buffer.write(content)
+        except Exception:
+            pass
+    else:
+        photo_url = current_user.photo
 
-    photo_url = f"/uploads/{unique_filename}"
     current_user.photo = photo_url
     db.commit()
     db.refresh(current_user)

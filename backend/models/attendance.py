@@ -1,6 +1,6 @@
 from datetime import date, datetime
 
-from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String
+from sqlalchemy import Boolean, Column, Date, DateTime, Float, ForeignKey, Integer, String, Text
 from sqlalchemy.orm import relationship
 
 from database.database import Base
@@ -18,7 +18,7 @@ class Attendance(Base):
     location_name = Column(String(255), nullable=True)
     address = Column(String(500), nullable=True)
     campaign_name = Column(String(255), nullable=True)
-    photo_url = Column(String(500), nullable=True)
+    photo_url = Column(Text, nullable=True)
     status = Column(String(50), default="Pending Approval", nullable=False, index=True)
     is_inside_geofence = Column(Boolean, default=True, nullable=False)
     browser = Column(String(150), nullable=True)
