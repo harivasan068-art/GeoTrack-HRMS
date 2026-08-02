@@ -13,6 +13,7 @@ from models.attendance import Attendance
 from models.company import CompanySettings
 from models.employee import Employee
 from schemas.attendance import AttendanceResponse, CheckInRequest, CheckOutRequest
+from services.cloudinary_service import upload_image
 
 router = APIRouter()
 
@@ -55,24 +56,19 @@ async def submit_geotag_photo(
 ):
     today = date.today()
 
-    # Save uploaded selfie as Base64 Data URL for serverless resilience
-    content = await photo.read()
-    if content:
-        mime_type = photo.content_type or "image/jpeg"
-        base64_str = base64.b64encode(content).decode("utf-8")
-        photo_url = f"data:{mime_type};base64,{base64_str}"
+    # STEP 1: Does FastAPI receive UploadFile?
+    print(f"[STEP 1] Received UploadFile: photo.filename = {photo.filename if photo else None}")
 
-        try:
-            os.makedirs("uploads", exist_ok=True)
-            file_ext = os.path.splitext(photo.filename)[1] or ".jpg"
-            unique_filename = f"selfie_{current_user.employee_id}_{uuid.uuid4().hex[:8]}{file_ext}"
-            file_path = os.path.join("uploads", unique_filename)
-            with open(file_path, "wb") as buffer:
-                buffer.write(content)
-        except Exception:
-            pass
-    else:
-        photo_url = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80"
+    # STEP 2 & 3: Upload file to Cloudinary & verify secure_url exists
+    photo_bytes = await photo.read() if photo else b""
+    upload_res = upload_image(photo_bytes, filename=photo.filename if photo else "selfie.jpg", folder="geotrack_hrms/selfies")
+    print(f"[STEP 2] Cloudinary upload response: {upload_res}")
+
+    secure_url = upload_res.get("secure_url")
+    print(f"[STEP 3] Uploaded secure_url: {secure_url}")
+
+    if not secure_url:
+        secure_url = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80"
 
     # Extract metadata
     user_agent = request.headers.get("user-agent", "Unknown Device")
@@ -93,7 +89,7 @@ async def submit_geotag_photo(
         location_name=location_name,
         address=address or location_name,
         campaign_name=campaign_name,
-        photo_url=photo_url,
+        photo_url=secure_url,
         is_inside_geofence=is_inside,
         browser=user_agent[:150],
         device="Mobile/Web Browser",
@@ -102,9 +98,17 @@ async def submit_geotag_photo(
         date=today,
     )
 
+    # STEP 4: Immediately before db.commit()
+    print(f"[STEP 4] Immediately before db.commit(): attendance.photo_url = {attendance.photo_url}")
+
     db.add(attendance)
     db.commit()
     db.refresh(attendance)
+
+    # STEP 5: Immediately after db.commit()
+    re_read = db.query(Attendance).filter(Attendance.id == attendance.id).first()
+    print(f"[STEP 5] After db.commit() query: re_read.photo_url = {re_read.photo_url if re_read else None}")
+
     return attendance
 
 

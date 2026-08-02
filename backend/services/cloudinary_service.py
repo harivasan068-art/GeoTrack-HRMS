@@ -108,6 +108,10 @@ def upload_image(
     if isinstance(file_input, UploadFile):
         filename = filename or file_input.filename
         content_type = file_input.content_type
+        try:
+            file_input.file.seek(0)
+        except Exception:
+            pass
         content = file_input.file.read()
     elif isinstance(file_input, bytes):
         content = file_input

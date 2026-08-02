@@ -62,6 +62,13 @@ class TestGeoTrackAPI(unittest.TestCase):
         token = login_resp.json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
 
+        files = {"photo": ("selfie.jpg", b"\xff\xd8\xff\xe0test_image_bytes", "image/jpeg")}
+        data = {"latitude": 37.7749, "longitude": -122.4194, "location_name": "San Francisco Tech Park HQ"}
+        geotag_resp = self.client.post("/api/attendance/geotag-upload", data=data, files=files, headers=headers)
+        self.assertEqual(geotag_resp.status_code, 201)
+        geotag_data = geotag_resp.json()
+        self.assertIsNotNone(geotag_data.get("photo_url"))
+
         today_resp = self.client.get("/api/attendance/today", headers=headers)
         self.assertEqual(today_resp.status_code, 200)
 
