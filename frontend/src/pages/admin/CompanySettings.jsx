@@ -42,6 +42,40 @@ const CompanySettings = () => {
     }
   }, [company]);
 
+  const compressLogoImage = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        const img = new Image();
+        img.onload = () => {
+          const canvas = document.createElement("canvas");
+          let width = img.width;
+          let height = img.height;
+          const maxDim = 300;
+          if (width > height) {
+            if (width > maxDim) {
+              height = Math.round(height * (maxDim / width));
+              width = maxDim;
+            }
+          } else {
+            if (height > maxDim) {
+              width = Math.round(width * (maxDim / height));
+              height = maxDim;
+            }
+          }
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext("2d");
+          ctx.drawImage(img, 0, 0, width, height);
+          resolve(canvas.toDataURL("image/png"));
+        };
+        img.onerror = () => resolve(e.target.result);
+        img.src = e.target.result;
+      };
+      reader.readAsDataURL(file);
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
@@ -50,7 +84,8 @@ const CompanySettings = () => {
       updateBrandingState(updated);
       toast.success("Company branding & Geofence settings updated successfully!");
     } catch (e) {
-      toast.error("Failed to update company settings");
+      const msg = e.response?.data?.detail || "Failed to update company settings";
+      toast.error(typeof msg === "string" ? msg : "Failed to update company settings");
     } finally {
       setSaving(false);
     }
@@ -149,16 +184,17 @@ const CompanySettings = () => {
                       type="file"
                       accept="image/*"
                       className="hidden"
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         const file = e.target.files?.[0];
                         if (file) {
-                          const reader = new FileReader();
-                          reader.onloadend = () => {
+                          try {
+                            const compressedDataUrl = await compressLogoImage(file);
                             setLogoPreviewError(false);
-                            setFormData({ ...formData, company_logo: reader.result });
-                            toast.success("Logo file selected!");
-                          };
-                          reader.readAsDataURL(file);
+                            setFormData({ ...formData, company_logo: compressedDataUrl });
+                            toast.success("Logo file selected & optimized!");
+                          } catch {
+                            toast.error("Failed to process image file");
+                          }
                         }
                       }}
                     />

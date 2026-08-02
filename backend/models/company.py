@@ -1,6 +1,6 @@
 from datetime import datetime
 
-from sqlalchemy import Column, DateTime, Float, Integer, String
+from sqlalchemy import Column, DateTime, Float, Integer, String, Text
 
 from database.database import Base
 
@@ -10,7 +10,7 @@ class CompanySettings(Base):
 
     id = Column(Integer, primary_key=True, index=True, autoincrement=True)
     company_name = Column(String(150), nullable=False, default="GeoTrack HRMS")
-    company_logo = Column(String(500), nullable=True)
+    company_logo = Column(Text, nullable=True)
     theme_color = Column(String(50), nullable=False, default="#4f46e5")
     phone = Column(String(50), nullable=False, default="+1-800-555-0199")
     email = Column(String(150), nullable=False, default="contact@geotrackhrms.com")
