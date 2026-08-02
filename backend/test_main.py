@@ -63,9 +63,11 @@ class TestGeoTrackAPI(unittest.TestCase):
         token = login_resp.json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
 
-        # 1. Initial Check-in at HQ site
+        # 1. Initial Check-in with Selfie, Work Photo, and Work Video
         files = {
-            "photo": ("selfie.jpg", b"\xff\xd8\xff\xe0test_jpg_data", "image/jpeg")
+            "photo": ("selfie.jpg", b"\xff\xd8\xff\xe0test_jpg_data", "image/jpeg"),
+            "work_photo": ("work_site.png", b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDRtest_png_data", "image/png"),
+            "work_video": ("work_clip.mp4", b"\x00\x00\x00\x18ftypisom\x00\x00\x02\x00isomiso2avc1mp41test_mp4_data", "video/mp4"),
         }
         data = {
             "latitude": 37.7749,
@@ -88,17 +90,23 @@ class TestGeoTrackAPI(unittest.TestCase):
         site2_resp = self.client.post("/api/attendance/geotag-upload", data=site2_data, files=files, headers=headers)
         self.assertEqual(site2_resp.status_code, 201)
 
-        # 3. Evening Check-out
+        # 3. Evening Check-out with Checkout Selfie, Checkout Work Photo, and Checkout Work Video
+        checkout_files = {
+            "checkout_selfie": ("out_selfie.jpg", b"\xff\xd8\xff\xe0test_jpg_data", "image/jpeg"),
+            "checkout_work_photo": ("out_photo.png", b"\x89PNG\r\n\x1a\n\x00\x00\x00\rIHDRtest_png_data", "image/png"),
+            "checkout_work_video": ("out_video.mp4", b"\x00\x00\x00\x18ftypisom\x00\x00\x02\x00isomiso2avc1mp41test_mp4_data", "video/mp4"),
+        }
         checkout_data = {
             "latitude": 37.7749,
             "longitude": -122.4194,
             "location_name": "San Francisco Tech Park HQ",
         }
-        checkout_resp = self.client.post("/api/attendance/check-out-full", data=checkout_data, headers=headers)
+        checkout_resp = self.client.post("/api/attendance/check-out-full", data=checkout_data, files=checkout_files, headers=headers)
         self.assertEqual(checkout_resp.status_code, 200)
         rec = checkout_resp.json()
         self.assertIsNotNone(rec["check_out_time"])
         self.assertIsNotNone(rec["working_hours"])
+
 
     def test_07_admin_employee_directory_and_sheet(self):
         login_resp = self.client.post(

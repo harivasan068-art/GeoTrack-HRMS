@@ -106,8 +106,28 @@ async def submit_geotag_photo(
             existing_record.campaign_name = campaign_name
         existing_record.is_inside_geofence = is_inside
         existing_record.status = status_label
+
+        print(f"[DEBUG STEP 2] Assigned to existing Attendance Model (ID: {existing_record.id}):")
+        print(f"  attendance.selfie_url (photo_url) = {existing_record.photo_url}")
+        print(f"  attendance.work_photo_url        = {existing_record.work_photo_url}")
+        print(f"  attendance.work_video_url        = {existing_record.work_video_url}")
+        print(f"  attendance.checkout_selfie_url    = {existing_record.checkout_selfie_url}")
+        print(f"  attendance.checkout_work_photo   = {existing_record.checkout_work_photo_url}")
+        print(f"  attendance.checkout_work_video   = {existing_record.checkout_work_video_url}")
+
         db.commit()
         db.refresh(existing_record)
+
+        # Read SAME record back from database to verify persistence
+        re_read = db.query(Attendance).filter(Attendance.id == existing_record.id).first()
+        print(f"[DEBUG STEP 3] Re-read Record (ID: {re_read.id}) from DB after db.commit():")
+        print(f"  re_read.selfie_url (photo_url)   = {re_read.photo_url}")
+        print(f"  re_read.work_photo_url          = {re_read.work_photo_url}")
+        print(f"  re_read.work_video_url          = {re_read.work_video_url}")
+        print(f"  re_read.checkout_selfie_url      = {re_read.checkout_selfie_url}")
+        print(f"  re_read.checkout_work_photo_url  = {re_read.checkout_work_photo_url}")
+        print(f"  re_read.checkout_work_video_url  = {re_read.checkout_work_video_url}")
+
         return existing_record
 
     attendance = Attendance(
@@ -130,10 +150,30 @@ async def submit_geotag_photo(
         date=today,
     )
 
+    print(f"[DEBUG STEP 2] Assigned to new Attendance Model:")
+    print(f"  attendance.selfie_url (photo_url) = {attendance.photo_url}")
+    print(f"  attendance.work_photo_url        = {attendance.work_photo_url}")
+    print(f"  attendance.work_video_url        = {attendance.work_video_url}")
+    print(f"  attendance.checkout_selfie_url    = {attendance.checkout_selfie_url}")
+    print(f"  attendance.checkout_work_photo   = {attendance.checkout_work_photo_url}")
+    print(f"  attendance.checkout_work_video   = {attendance.checkout_work_video_url}")
+
     db.add(attendance)
     db.commit()
     db.refresh(attendance)
+
+    # Read SAME record back from database to verify persistence
+    re_read = db.query(Attendance).filter(Attendance.id == attendance.id).first()
+    print(f"[DEBUG STEP 3] Re-read Record (ID: {re_read.id}) from DB after db.commit():")
+    print(f"  re_read.selfie_url (photo_url)   = {re_read.photo_url}")
+    print(f"  re_read.work_photo_url          = {re_read.work_photo_url}")
+    print(f"  re_read.work_video_url          = {re_read.work_video_url}")
+    print(f"  re_read.checkout_selfie_url      = {re_read.checkout_selfie_url}")
+    print(f"  re_read.checkout_work_photo_url  = {re_read.checkout_work_photo_url}")
+    print(f"  re_read.checkout_work_video_url  = {re_read.checkout_work_video_url}")
+
     return attendance
+
 
 
 @router.post("/check-in", response_model=AttendanceResponse, status_code=status.HTTP_201_CREATED)

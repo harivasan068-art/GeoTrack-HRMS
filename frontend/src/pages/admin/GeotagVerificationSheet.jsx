@@ -176,15 +176,27 @@ const GeotagVerificationSheet = () => {
   });
 
   const getMediaListForCount = (item) => {
-    return [
+    const rawList = [
       item.selfie_url || item.photo_url,
       item.work_photo_url,
       item.work_video_url,
       item.checkout_selfie_url,
       item.checkout_work_photo_url,
       item.checkout_work_video_url,
-    ].filter((u) => getImageUrl(u));
+    ];
+    const validList = rawList.filter((u) => getImageUrl(u));
+    console.log(`[DEBUG STEP 5] Attendance ID: ${item.id} | Employee: ${item.full_name}`);
+    console.log("  Received Object:", item);
+    console.log("  selfie_url / photo_url:", item.selfie_url || item.photo_url);
+    console.log("  work_photo_url:        ", item.work_photo_url);
+    console.log("  work_video_url:        ", item.work_video_url);
+    console.log("  checkout_selfie_url:    ", item.checkout_selfie_url);
+    console.log("  checkout_work_photo_url:", item.checkout_work_photo_url);
+    console.log("  checkout_work_video_url:", item.checkout_work_video_url);
+    console.log(`  Calculated Media Count = ${validList.length} (out of ${rawList.length} potential slots)`);
+    return validList;
   };
+
 
   return (
     <div className="space-y-6 font-sans">

@@ -147,48 +147,56 @@ def get_attendance_sheet(
 
     sheet_items = []
     for att, emp in records:
-        sheet_items.append(
-            GeotagAttendanceSheetItem(
-                id=att.id,
-                employee_id=emp.employee_id,
-                full_name=emp.full_name,
-                department=emp.department,
-                designation=emp.designation,
-                employee_photo=emp.photo,
-                check_in=att.check_in,
-                check_out=att.check_out,
-                latitude=att.latitude,
-                longitude=att.longitude,
-                location_name=att.location_name,
-                address=att.address,
-                campaign_name=att.campaign_name,
-                photo_url=att.photo_url,
-                selfie_url=att.photo_url,
-                status=att.status or "Pending Approval",
-                is_inside_geofence=att.is_inside_geofence,
-                browser=att.browser,
-                device=att.device,
-                ip_address=att.ip_address,
-                admin_notes=att.admin_notes,
-                remarks=att.remarks,
-                approved_by=att.approved_by,
-                approved_at=att.approved_at,
-                date=att.date,
-                check_in_time=att.check_in_time or att.check_in,
-                check_out_time=att.check_out_time or att.check_out,
-                working_hours=att.working_hours,
-                checkout_latitude=att.checkout_latitude,
-                checkout_longitude=att.checkout_longitude,
-                checkout_location_name=att.checkout_location_name,
-                checkout_selfie_url=att.checkout_selfie_url,
-                checkout_work_photo_url=att.checkout_work_photo_url,
-                checkout_work_video_url=att.checkout_work_video_url,
-                work_photo_url=att.work_photo_url,
-                work_video_url=att.work_video_url,
-            )
+        item = GeotagAttendanceSheetItem(
+            id=att.id,
+            employee_id=emp.employee_id,
+            full_name=emp.full_name,
+            department=emp.department,
+            designation=emp.designation,
+            employee_photo=emp.photo,
+            check_in=att.check_in,
+            check_out=att.check_out,
+            latitude=att.latitude,
+            longitude=att.longitude,
+            location_name=att.location_name,
+            address=att.address,
+            campaign_name=att.campaign_name,
+            photo_url=att.photo_url,
+            selfie_url=att.photo_url,
+            status=att.status or "Pending Approval",
+            is_inside_geofence=att.is_inside_geofence,
+            browser=att.browser,
+            device=att.device,
+            ip_address=att.ip_address,
+            admin_notes=att.admin_notes,
+            remarks=att.remarks,
+            approved_by=att.approved_by,
+            approved_at=att.approved_at,
+            date=att.date,
+            check_in_time=att.check_in_time or att.check_in,
+            check_out_time=att.check_out_time or att.check_out,
+            working_hours=att.working_hours,
+            checkout_latitude=att.checkout_latitude,
+            checkout_longitude=att.checkout_longitude,
+            checkout_location_name=att.checkout_location_name,
+            checkout_selfie_url=att.checkout_selfie_url,
+            checkout_work_photo_url=att.checkout_work_photo_url,
+            checkout_work_video_url=att.checkout_work_video_url,
+            work_photo_url=att.work_photo_url,
+            work_video_url=att.work_video_url,
         )
+        print(f"[DEBUG STEP 4] Serialized GeotagAttendanceSheetItem (ID: {item.id}):")
+        print(f"  selfie_url              = {item.selfie_url}")
+        print(f"  photo_url               = {item.photo_url}")
+        print(f"  work_photo_url          = {item.work_photo_url}")
+        print(f"  work_video_url          = {item.work_video_url}")
+        print(f"  checkout_selfie_url      = {item.checkout_selfie_url}")
+        print(f"  checkout_work_photo_url  = {item.checkout_work_photo_url}")
+        print(f"  checkout_work_video_url  = {item.checkout_work_video_url}")
+        sheet_items.append(item)
 
     return sheet_items
+
 
 
 @router.post("/verify-attendance/{attendance_id}", response_model=AttendanceResponse)

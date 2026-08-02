@@ -291,6 +291,8 @@ async def process_media_upload(
     if not content or len(content) == 0:
         return None
 
+    print(f"\n[DEBUG STEP 1] Upload Received | Filename: {filename} | Content-Type: {content_type} | Size: {len(content)} bytes | Resource Type: {resource_type}")
+
     # Check if Cloudinary is configured with valid production/dev credentials (not dummy keys)
     is_cloudinary_configured = bool(
         CLOUDINARY_CLOUD_NAME
@@ -306,10 +308,13 @@ async def process_media_upload(
             else:
                 res = await upload_image(content, filename=filename, folder=folder)
             if res and res.get("secure_url"):
+                print(f"[DEBUG STEP 1] Cloudinary Upload Success | secure_url: {res.get('secure_url')} | public_id: {res.get('public_id')}")
                 return res.get("secure_url")
         except Exception as e:
-            print(f"Cloudinary upload warning: {e}. Storing media file locally...")
+            print(f"[DEBUG STEP 1] Cloudinary upload warning: {e}. Storing media file locally...")
 
-    # Fallback to saving file locally on server disk under uploads/
-    return save_local_file(content, filename=filename, folder=folder)
+    local_url = save_local_file(content, filename=filename, folder=folder)
+    print(f"[DEBUG STEP 1] Local Storage Fallback Success | secure_url: {local_url}")
+    return local_url
+
 
