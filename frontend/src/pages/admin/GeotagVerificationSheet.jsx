@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import {
   FiAlertTriangle,
+  FiCamera,
   FiCheckCircle,
   FiClock,
   FiDownload,
