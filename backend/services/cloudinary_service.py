@@ -134,19 +134,26 @@ def upload_image(
             quality="auto",
             fetch_format="auto",
         )
-        return {
-            "secure_url": response.get("secure_url"),
-            "public_id": response.get("public_id"),
-        }
+        if response and response.get("secure_url"):
+            return {
+                "secure_url": response.get("secure_url"),
+                "public_id": response.get("public_id"),
+            }
     except Exception as e:
-        # If API key is mock or network issue, generate valid Cloudinary secure HTTPS URL format
-        cloud_name = CLOUDINARY_CLOUD_NAME or "geotrack_hrms"
-        fallback_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/v1720000000/{public_id}{ext}"
-        return {
-            "secure_url": fallback_url,
-            "public_id": public_id,
-            "warning": f"Cloudinary SDK fallback: {str(e)}",
-        }
+        print(f"[CLOUDINARY UPLOAD NOTICE] Cloudinary upload exception: {e}")
+
+    # Fallback to self-contained Base64 Data URL so the captured camera selfie is ALWAYS preserved cleanly
+    import base64
+    mime = content_type or "image/jpeg"
+    if not mime.startswith("image/"):
+        mime = "image/jpeg"
+    b64 = base64.b64encode(content).decode("utf-8")
+    data_url = f"data:{mime};base64,{b64}"
+    return {
+        "secure_url": data_url,
+        "public_id": public_id,
+        "warning": "Data URL fallback",
+    }
 
 
 def delete_image(public_id: str | None) -> bool:
