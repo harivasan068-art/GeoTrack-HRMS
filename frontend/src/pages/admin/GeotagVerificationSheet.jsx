@@ -33,7 +33,7 @@ const GeotagVerificationSheet = () => {
     try {
       const data = await adminService.getAttendanceSheet({ status_filter: statusFilter });
       setSheetData(data);
-    } catch (e) {
+    } catch {
       toast.error("Failed to load attendance approval sheet");
     } finally {
       setLoading(false);
@@ -65,7 +65,7 @@ const GeotagVerificationSheet = () => {
         setSelectedRequest(null);
         setRemarksInput("");
       }
-    } catch (e) {
+    } catch {
       toast.error("Failed to process verification request");
     } finally {
       setActionLoadingId(null);
@@ -96,7 +96,7 @@ const GeotagVerificationSheet = () => {
       URL.revokeObjectURL(blobUrl);
 
       toast.success("Selfie proof saved to your device!");
-    } catch (error) {
+    } catch {
       const fullUrl = getImageUrl(photoUrl);
       const link = document.createElement("a");
       link.href = fullUrl;
@@ -166,14 +166,14 @@ const GeotagVerificationSheet = () => {
   });
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-white flex items-center gap-2">
-            <FiGrid className="text-indigo-400" /> Attendance Requests Approval Console
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+            <FiGrid className="text-indigo-600 dark:text-indigo-400" /> Attendance Requests Approval Console
           </h1>
-          <p className="mt-1 text-sm text-slate-400">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
             Inspect live selfies, interactive maps, and GPS geofence status. Admins decide and grant <strong>Present</strong> or <strong>Absent</strong>.
           </p>
         </div>
@@ -181,13 +181,13 @@ const GeotagVerificationSheet = () => {
         <div className="flex items-center gap-3">
           <button
             onClick={fetchSheetData}
-            className="inline-flex items-center gap-2 rounded-xl bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-700 transition"
+            className="inline-flex items-center gap-2 rounded-2xl bg-white dark:bg-slate-800 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700 shadow-sm"
           >
             <FiRefreshCw className="h-3.5 w-3.5" /> Refresh Requests
           </button>
           <button
             onClick={exportToCSV}
-            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 text-xs font-semibold text-white shadow-md hover:bg-emerald-500 transition"
+            className="inline-flex items-center gap-2 rounded-2xl bg-emerald-600 px-4 py-2 text-xs font-bold text-white shadow-md hover:bg-emerald-700 transition"
           >
             <FiDownload className="h-3.5 w-3.5" /> Export Excel / CSV
           </button>
@@ -195,30 +195,30 @@ const GeotagVerificationSheet = () => {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="flex flex-col gap-4 rounded-2xl bg-slate-900 p-4 border border-slate-800 sm:flex-row sm:items-center sm:justify-between">
+      <div className="flex flex-col gap-4 rounded-3xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between shadow-sm">
         <div className="relative flex-1 max-w-md">
-          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 h-4 w-4" />
+          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
           <input
             type="text"
             placeholder="Search by employee name, ID, or department..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl bg-slate-950 border border-slate-800 pl-10 pr-4 py-2 text-sm text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
           />
         </div>
 
         <div className="flex items-center gap-2 overflow-x-auto">
-          <span className="text-xs text-slate-400 flex items-center gap-1">
+          <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 font-bold">
             <FiFilter /> Filter:
           </span>
           {["all", "pending", "present", "absent"].map((st) => (
             <button
               key={st}
               onClick={() => setStatusFilter(st)}
-              className={`rounded-lg px-3 py-1.5 text-xs font-semibold uppercase tracking-wider transition ${
+              className={`rounded-xl px-3 py-1.5 text-xs font-extrabold uppercase tracking-wider transition ${
                 statusFilter === st
-                  ? "bg-indigo-600 text-white"
-                  : "bg-slate-950 text-slate-400 hover:bg-slate-800"
+                  ? "bg-indigo-600 text-white shadow-sm"
+                  : "bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800"
               }`}
             >
               {st}
@@ -228,10 +228,10 @@ const GeotagVerificationSheet = () => {
       </div>
 
       {/* Spreadsheet Approval Grid */}
-      <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl">
+      <div className="overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-300">
-            <thead className="bg-slate-950/90 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+          <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+            <thead className="bg-slate-100 dark:bg-slate-950/90 text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-4 py-3.5">#</th>
                 <th className="px-4 py-3.5">Employee Details</th>
@@ -242,23 +242,23 @@ const GeotagVerificationSheet = () => {
                 <th className="px-4 py-3.5 text-center">Admin Approval Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-xs">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs font-medium bg-white dark:bg-slate-900">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-400">
+                  <td colSpan={7} className="py-12 text-center text-slate-500 dark:text-slate-400">
                     <LoadingSpinner size="md" />
                   </td>
                 </tr>
               ) : filteredData.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="py-12 text-center text-slate-500">
+                  <td colSpan={7} className="py-12 text-center text-slate-500 dark:text-slate-400">
                     No attendance requests matching current filters.
                   </td>
                 </tr>
               ) : (
                 filteredData.map((item, idx) => (
-                  <tr key={item.id} className="hover:bg-slate-800/40 transition">
-                    <td className="px-4 py-3 font-mono text-slate-500">{idx + 1}</td>
+                  <tr key={item.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                    <td className="px-4 py-3 font-mono text-slate-400 dark:text-slate-500">{idx + 1}</td>
 
                     {/* Employee info */}
                     <td className="px-4 py-3">
@@ -266,21 +266,21 @@ const GeotagVerificationSheet = () => {
                         <img
                           src={getImageUrl(item.employee_photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
                           alt={item.full_name}
-                          className="h-9 w-9 rounded-xl object-cover border border-slate-700"
+                          className="h-9 w-9 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                           onError={(e) => {
                             e.target.onerror = null;
                             e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
                           }}
                         />
                         <div>
-                          <div className="font-bold text-white">{item.full_name}</div>
-                          <div className="font-mono text-[11px] text-indigo-400">{item.employee_id} &bull; {item.department}</div>
+                          <div className="font-extrabold text-slate-900 dark:text-white">{item.full_name}</div>
+                          <div className="font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400">{item.employee_id} &bull; {item.department}</div>
                         </div>
                       </div>
                     </td>
 
                     {/* Check In Time */}
-                    <td className="px-4 py-3 text-slate-300 font-mono">
+                    <td className="px-4 py-3 text-slate-800 dark:text-slate-300 font-mono font-bold">
                       {item.check_in ? new Date(item.check_in).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true }) : "--"}
                     </td>
 
@@ -293,44 +293,44 @@ const GeotagVerificationSheet = () => {
                               setSelectedRequest(item);
                               setRemarksInput(item.remarks || "");
                             }}
-                            className="group flex items-center gap-2 rounded-lg bg-slate-950 p-1 border border-slate-800 hover:border-indigo-500 transition"
+                            className="group flex items-center gap-2 rounded-xl bg-slate-50 dark:bg-slate-950 p-1 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition"
                           >
                             <img
                               src={getImageUrl(item.photo_url) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80"}
                               alt="Selfie"
-                              className="h-10 w-12 object-cover rounded"
+                              className="h-10 w-12 object-cover rounded-lg"
                               onError={(e) => {
                                 e.target.onerror = null;
                                 e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80";
                               }}
                             />
-                            <span className="text-[11px] text-indigo-400 group-hover:underline flex items-center gap-1 pr-1">
+                            <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 group-hover:underline flex items-center gap-1 pr-1">
                               <FiEye /> Inspect
                             </span>
                           </button>
                           <button
                             onClick={() => downloadPhoto(item.photo_url, item.full_name, item.employee_id)}
-                            className="rounded-lg bg-slate-950 p-2 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800 transition"
+                            className="rounded-xl bg-slate-50 dark:bg-slate-950 p-2 text-slate-500 hover:text-slate-900 dark:hover:text-white border border-slate-200 dark:border-slate-800 transition"
                             title="Download selfie photo to device"
                           >
                             <FiDownload className="h-3.5 w-3.5" />
                           </button>
                         </div>
                       ) : (
-                        <span className="text-slate-500 italic">No Selfie</span>
+                        <span className="text-slate-400 dark:text-slate-500 italic">No Selfie</span>
                       )}
                     </td>
 
                     {/* Location & Geofence */}
                     <td className="px-4 py-3">
-                      <div className="flex items-center gap-1 font-semibold text-slate-200 max-w-xs truncate">
-                        <FiMapPin className="text-emerald-400 shrink-0" /> {item.location_name || "Check-In Site"}
+                      <div className="flex items-center gap-1 font-bold text-slate-900 dark:text-slate-200 max-w-xs truncate">
+                        <FiMapPin className="text-emerald-600 dark:text-emerald-400 shrink-0" /> {item.location_name || "Check-In Site"}
                       </div>
                       <div className="mt-0.5">
                         {item.is_inside_geofence ? (
-                          <span className="text-[10px] font-bold text-emerald-400">Inside Allowed Geofence</span>
+                          <span className="text-[10px] font-extrabold text-emerald-700 dark:text-emerald-400">Inside Allowed Geofence</span>
                         ) : (
-                          <span className="text-[10px] font-bold text-amber-400 flex items-center gap-1">
+                          <span className="text-[10px] font-extrabold text-amber-800 dark:text-amber-400 flex items-center gap-1">
                             <FiAlertTriangle /> Outside Allowed Zone
                           </span>
                         )}
@@ -340,17 +340,17 @@ const GeotagVerificationSheet = () => {
                     {/* Status */}
                     <td className="px-4 py-3 text-center">
                       {item.status === "Present" && (
-                        <span className="inline-flex rounded-full bg-emerald-500/10 px-2.5 py-1 text-xs font-bold text-emerald-400 border border-emerald-500/30">
+                        <span className="inline-flex rounded-full bg-emerald-100 dark:bg-emerald-950/50 px-2.5 py-1 text-xs font-extrabold text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
                           Present
                         </span>
                       )}
                       {item.status === "Absent" && (
-                        <span className="inline-flex rounded-full bg-rose-500/10 px-2.5 py-1 text-xs font-bold text-rose-400 border border-rose-500/30">
+                        <span className="inline-flex rounded-full bg-rose-100 dark:bg-rose-950/50 px-2.5 py-1 text-xs font-extrabold text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800">
                           Absent
                         </span>
                       )}
                       {(!item.status || item.status.includes("Pending")) && (
-                        <span className="inline-flex rounded-full bg-amber-500/10 px-2.5 py-1 text-xs font-bold text-amber-400 border border-amber-500/30">
+                        <span className="inline-flex rounded-full bg-amber-100 dark:bg-amber-950/50 px-2.5 py-1 text-xs font-extrabold text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
                           Pending Approval
                         </span>
                       )}
@@ -362,14 +362,14 @@ const GeotagVerificationSheet = () => {
                         <button
                           disabled={actionLoadingId === item.id || item.status === "Present"}
                           onClick={() => handleVerify(item.id, "Present")}
-                          className="inline-flex items-center gap-1 rounded-lg bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow hover:bg-emerald-500 disabled:opacity-30 transition"
+                          className="inline-flex items-center gap-1 rounded-xl bg-emerald-600 px-3 py-1.5 text-xs font-bold text-white shadow hover:bg-emerald-700 disabled:opacity-30 transition"
                         >
                           <FiCheckCircle /> Present
                         </button>
                         <button
                           disabled={actionLoadingId === item.id || item.status === "Absent"}
                           onClick={() => handleVerify(item.id, "Absent")}
-                          className="inline-flex items-center gap-1 rounded-lg bg-rose-600 px-3 py-1.5 text-xs font-bold text-white shadow hover:bg-rose-500 disabled:opacity-30 transition"
+                          className="inline-flex items-center gap-1 rounded-xl bg-rose-600 px-3 py-1.5 text-xs font-bold text-white shadow hover:bg-rose-700 disabled:opacity-30 transition"
                         >
                           <FiXCircle /> Absent
                         </button>
@@ -385,28 +385,28 @@ const GeotagVerificationSheet = () => {
 
       {/* Full Approval Inspection Modal with Interactive Map */}
       {selectedRequest && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto">
-          <div className="relative max-w-3xl w-full rounded-2xl bg-slate-900 p-6 border border-slate-800 space-y-5 shadow-2xl my-8">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 dark:bg-slate-950/80 p-4 backdrop-blur-sm overflow-y-auto">
+          <div className="relative max-w-3xl w-full rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-5 shadow-2xl my-8 text-slate-900 dark:text-slate-200">
             <button
               onClick={() => setSelectedRequest(null)}
-              className="absolute right-4 top-4 text-slate-400 hover:text-white"
+              className="absolute right-4 top-4 text-slate-400 hover:text-slate-900 dark:hover:text-white"
             >
               <FiX className="h-6 w-6" />
             </button>
 
-            <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
+            <div className="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-3">
               <img
                 src={getImageUrl(selectedRequest.employee_photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
                 alt={selectedRequest.full_name}
-                className="h-12 w-12 object-cover rounded-xl border border-slate-700"
+                className="h-12 w-12 object-cover rounded-2xl border border-slate-200 dark:border-slate-700 shrink-0"
                 onError={(e) => {
                   e.target.onerror = null;
                   e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
                 }}
               />
               <div>
-                <h3 className="text-lg font-bold text-white">{selectedRequest.full_name}</h3>
-                <div className="text-xs text-indigo-400 font-mono">
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{selectedRequest.full_name}</h3>
+                <div className="text-xs text-indigo-600 dark:text-indigo-400 font-mono font-bold">
                   ID: {selectedRequest.employee_id} &bull; {selectedRequest.designation} ({selectedRequest.department})
                 </div>
               </div>
@@ -417,11 +417,11 @@ const GeotagVerificationSheet = () => {
               {/* Large Selfie */}
               <div>
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-xs font-bold text-slate-400">Live Captured Selfie Proof:</span>
+                  <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Live Captured Selfie Proof:</span>
                   {selectedRequest.photo_url && (
                     <button
                       onClick={() => downloadPhoto(selectedRequest.photo_url, selectedRequest.full_name, selectedRequest.employee_id)}
-                      className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1 text-xs font-bold text-white shadow hover:bg-indigo-500 transition"
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1 text-xs font-bold text-white shadow hover:bg-indigo-700 transition"
                       title="Download photo to device"
                     >
                       <FiDownload className="h-3.5 w-3.5" /> Save Photo
@@ -432,7 +432,7 @@ const GeotagVerificationSheet = () => {
                   <img
                     src={getImageUrl(selectedRequest.photo_url) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80"}
                     alt="Large Selfie Proof"
-                    className="h-64 w-full object-cover rounded-2xl border border-slate-800 shadow-md"
+                    className="h-64 w-full object-cover rounded-2xl border border-slate-200 dark:border-slate-800 shadow-sm"
                     onError={(e) => {
                       e.target.onerror = null;
                       e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80";
@@ -441,7 +441,7 @@ const GeotagVerificationSheet = () => {
                   {selectedRequest.photo_url && (
                     <button
                       onClick={() => downloadPhoto(selectedRequest.photo_url, selectedRequest.full_name, selectedRequest.employee_id)}
-                      className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-xl bg-slate-950/90 backdrop-blur px-3 py-2 text-xs font-bold text-white border border-slate-700 shadow-xl hover:bg-indigo-600 hover:border-indigo-500 transition"
+                      className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-2xl bg-slate-900/90 backdrop-blur px-3 py-2 text-xs font-bold text-white border border-slate-700 shadow-xl hover:bg-indigo-600 transition"
                     >
                       <FiDownload className="h-4 w-4" /> Download Photo to Device
                     </button>
@@ -451,7 +451,7 @@ const GeotagVerificationSheet = () => {
 
               {/* Interactive Map Component */}
               <div>
-                <span className="text-xs font-bold text-slate-400 block mb-2">GPS Location & Geofence Map:</span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-2">GPS Location & Geofence Map:</span>
                 <InteractiveMap
                   latitude={selectedRequest.latitude}
                   longitude={selectedRequest.longitude}
@@ -464,30 +464,30 @@ const GeotagVerificationSheet = () => {
             </div>
 
             {/* Device & Submission Details */}
-            <div className="rounded-xl bg-slate-950 p-4 border border-slate-800 grid gap-3 sm:grid-cols-3 text-xs">
+            <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 grid gap-3 sm:grid-cols-3 text-xs">
               <div>
-                <span className="text-slate-400">Submission Timestamp:</span>
-                <div className="font-semibold text-white mt-0.5">{selectedRequest.check_in ? new Date(selectedRequest.check_in).toLocaleString() : "N/A"}</div>
+                <span className="text-slate-500 dark:text-slate-400 font-bold">Submission Timestamp:</span>
+                <div className="font-bold text-slate-900 dark:text-white mt-0.5">{selectedRequest.check_in ? new Date(selectedRequest.check_in).toLocaleString() : "N/A"}</div>
               </div>
               <div>
-                <span className="text-slate-400 flex items-center gap-1"><FiSmartphone /> Device / Client:</span>
-                <div className="font-semibold text-slate-200 mt-0.5 truncate">{selectedRequest.device || "Web Browser"}</div>
+                <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1 font-bold"><FiSmartphone /> Device / Client:</span>
+                <div className="font-bold text-slate-800 dark:text-slate-200 mt-0.5 truncate">{selectedRequest.device || "Web Browser"}</div>
               </div>
               <div>
-                <span className="text-slate-400">IP Address:</span>
-                <div className="font-mono text-indigo-300 mt-0.5">{selectedRequest.ip_address || "N/A"}</div>
+                <span className="text-slate-500 dark:text-slate-400 font-bold">IP Address:</span>
+                <div className="font-mono font-bold text-indigo-600 dark:text-indigo-300 mt-0.5">{selectedRequest.ip_address || "N/A"}</div>
               </div>
             </div>
 
             {/* Admin Remarks Input Box */}
             <div>
-              <label className="block text-xs font-bold text-slate-300 mb-1.5">Admin Remarks / Approval Reason</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Admin Remarks / Approval Reason</label>
               <textarea
                 rows={2}
                 placeholder="Enter approval or rejection remarks for audit log..."
                 value={remarksInput}
                 onChange={(e) => setRemarksInput(e.target.value)}
-                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
               />
             </div>
 
@@ -495,13 +495,13 @@ const GeotagVerificationSheet = () => {
             <div className="flex items-center justify-end gap-3 pt-2">
               <button
                 onClick={() => handleVerify(selectedRequest.id, "Absent", remarksInput)}
-                className="rounded-xl bg-rose-600 px-6 py-2.5 text-xs font-bold text-white hover:bg-rose-500 shadow-md transition"
+                className="rounded-2xl bg-rose-600 px-6 py-2.5 text-xs font-bold text-white hover:bg-rose-700 shadow-md transition"
               >
                 Reject (Mark Absent)
               </button>
               <button
                 onClick={() => handleVerify(selectedRequest.id, "Present", remarksInput)}
-                className="rounded-xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white hover:bg-emerald-500 shadow-md transition"
+                className="rounded-2xl bg-emerald-600 px-6 py-2.5 text-xs font-bold text-white hover:bg-emerald-700 shadow-md transition"
               >
                 Approve (Mark Present)
               </button>

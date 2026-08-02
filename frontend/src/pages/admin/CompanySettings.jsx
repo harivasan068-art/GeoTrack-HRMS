@@ -7,8 +7,7 @@ import { adminService } from "../../services/attendanceService";
 import { getImageUrl } from "../../services/api";
 
 const CompanySettings = () => {
-  const { company, updateBrandingState, refreshBranding } = useBranding();
-  const [loading, setLoading] = useState(false);
+  const { company, updateBrandingState } = useBranding();
   const [saving, setSaving] = useState(false);
   const [logoPreviewError, setLogoPreviewError] = useState(false);
 
@@ -95,58 +94,58 @@ const CompanySettings = () => {
     <div className="mx-auto max-w-4xl space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-extrabold text-white flex items-center gap-2">
-          <FiSettings className="text-indigo-400" /> White-Label Company Branding & Geofencing
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
+          <FiSettings className="text-indigo-600 dark:text-indigo-400" /> White-Label Company Branding & Geofencing
         </h1>
-        <p className="mt-1 text-sm text-slate-400">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
           Changing Company Name, Logo, Theme Color, or Office Geofence Radius will automatically update the entire HRMS.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="rounded-2xl bg-slate-900 p-8 border border-slate-800 space-y-8 shadow-2xl">
+      <form onSubmit={handleSubmit} className="rounded-3xl bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 space-y-8 shadow-sm">
         {/* Branding Section */}
         <div className="space-y-4">
-          <h2 className="text-base font-bold text-white uppercase tracking-wider text-indigo-400 border-b border-slate-800 pb-2">
+          <h2 className="text-sm font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2">
             1. Company Identity & Branding
           </h2>
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-medium text-slate-300">Company Name</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Company Name</label>
               <input
                 type="text"
                 required
                 value={formData.company_name}
                 onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                className="mt-1.5 w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300">Theme Primary Color (Hex)</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Theme Primary Color (Hex)</label>
               <div className="mt-1.5 flex items-center gap-3">
                 <input
                   type="color"
                   value={formData.theme_color}
                   onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
-                  className="h-10 w-12 rounded-lg bg-slate-950 border border-slate-800 p-1 cursor-pointer"
+                  className="h-10 w-12 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-1 cursor-pointer"
                 />
                 <input
                   type="text"
                   value={formData.theme_color}
                   onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
-                  className="w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-sm text-white font-mono"
+                  className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold"
                 />
               </div>
             </div>
           </div>
 
           <div className="space-y-3">
-            <label className="block text-xs font-medium text-slate-300">Company Logo (Upload File, Direct Image Link, or Presets)</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Company Logo (Upload File, Direct Image Link, or Presets)</label>
             
             {/* Live Logo Preview Box */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-xl bg-slate-950 p-4 border border-slate-800">
-              <div className="flex h-16 w-16 items-center justify-center rounded-xl bg-slate-900 border border-slate-700 overflow-hidden shrink-0">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800">
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 overflow-hidden shrink-0 shadow-sm">
                 {formData.company_logo && !logoPreviewError ? (
                   <img
                     src={getImageUrl(formData.company_logo)}
@@ -173,12 +172,12 @@ const CompanySettings = () => {
                     setLogoPreviewError(false);
                     setFormData({ ...formData, company_logo: e.target.value });
                   }}
-                  className="w-full rounded-xl bg-slate-900 border border-slate-800 px-4 py-2 text-xs text-white placeholder-slate-600 focus:border-indigo-500 focus:outline-none"
+                  className="w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
                 />
 
                 <div className="flex flex-wrap items-center gap-2">
                   {/* Local Image File Upload Button */}
-                  <label className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600/20 border border-indigo-500/30 px-3 py-1.5 text-[11px] font-bold text-indigo-300 hover:bg-indigo-600 hover:text-white transition cursor-pointer">
+                  <label className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800 px-3 py-1.5 text-[11px] font-bold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white transition cursor-pointer">
                     <FiUpload className="h-3.5 w-3.5" /> Upload Image File
                     <input
                       type="file"
@@ -210,7 +209,7 @@ const CompanySettings = () => {
                         company_logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80",
                       });
                     }}
-                    className="inline-flex items-center gap-1 rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] text-slate-300 hover:bg-slate-700 transition"
+                    className="inline-flex items-center gap-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-[11px] font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 transition shadow-sm"
                   >
                     Preset 1
                   </button>
@@ -224,7 +223,7 @@ const CompanySettings = () => {
                         company_logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&auto=format&fit=crop&q=80",
                       });
                     }}
-                    className="inline-flex items-center gap-1 rounded-lg bg-slate-800 px-2.5 py-1 text-[11px] text-slate-300 hover:bg-slate-700 transition"
+                    className="inline-flex items-center gap-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-[11px] font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 transition shadow-sm"
                   >
                     Preset 2
                   </button>
@@ -236,7 +235,7 @@ const CompanySettings = () => {
                         setLogoPreviewError(false);
                         setFormData({ ...formData, company_logo: "" });
                       }}
-                      className="inline-flex items-center gap-1 rounded-lg bg-rose-500/10 border border-rose-500/20 px-2.5 py-1 text-[11px] font-semibold text-rose-400 hover:bg-rose-600 hover:text-white transition"
+                      className="inline-flex items-center gap-1 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 px-2.5 py-1 text-[11px] font-bold text-rose-700 dark:text-rose-400 hover:bg-rose-600 hover:text-white transition"
                     >
                       Reset Default Icon
                     </button>
@@ -247,8 +246,8 @@ const CompanySettings = () => {
 
             {/* Webpage HTML URL Warning */}
             {formData.company_logo && (formData.company_logo.includes(".htm") || formData.company_logo.includes(".html")) && (
-              <div className="flex items-center gap-2 rounded-xl bg-amber-500/10 border border-amber-500/30 p-3 text-xs text-amber-300">
-                <FiAlertTriangle className="h-4 w-4 shrink-0 text-amber-400" />
+              <div className="flex items-center gap-2 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 p-3 text-xs text-amber-800 dark:text-amber-300">
+                <FiAlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
                 <span>
                   The URL entered ends in <code>.htm</code> (web page). Please upload an image file (`.png`, `.jpg`, `.svg`) or click <strong>Upload Image File</strong> above.
                 </span>
@@ -259,85 +258,85 @@ const CompanySettings = () => {
 
         {/* Contact Info Section */}
         <div className="space-y-4">
-          <h2 className="text-base font-bold text-white uppercase tracking-wider text-purple-400 border-b border-slate-800 pb-2">
+          <h2 className="text-sm font-extrabold text-purple-600 dark:text-purple-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2">
             2. Contact & Headquarters Address
           </h2>
 
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-medium text-slate-300">Corporate Email</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Corporate Email</label>
               <input
                 type="email"
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="mt-1.5 w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300">Phone Number</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Phone Number</label>
               <input
                 type="text"
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="mt-1.5 w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none font-medium"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-slate-300">Office Physical Address</label>
+            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Office Physical Address</label>
             <input
               type="text"
               required
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              className="mt-1.5 w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-sm text-white focus:border-indigo-500 focus:outline-none"
+              className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none font-medium"
             />
           </div>
         </div>
 
         {/* Geofencing Parameters Section */}
         <div className="space-y-4">
-          <h2 className="text-base font-bold text-white uppercase tracking-wider text-emerald-400 border-b border-slate-800 pb-2">
+          <h2 className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2">
             3. Office Geofence Radius Parameters
           </h2>
 
           <div className="grid gap-6 sm:grid-cols-3">
             <div>
-              <label className="block text-xs font-medium text-slate-300">Office Latitude</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Office Latitude</label>
               <input
                 type="number"
                 step="any"
                 required
                 value={formData.office_latitude}
                 onChange={(e) => setFormData({ ...formData, office_latitude: parseFloat(e.target.value) })}
-                className="mt-1.5 w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-sm text-white font-mono focus:border-indigo-500 focus:outline-none"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-indigo-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300">Office Longitude</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Office Longitude</label>
               <input
                 type="number"
                 step="any"
                 required
                 value={formData.office_longitude}
                 onChange={(e) => setFormData({ ...formData, office_longitude: parseFloat(e.target.value) })}
-                className="mt-1.5 w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-sm text-white font-mono focus:border-indigo-500 focus:outline-none"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-indigo-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-slate-300">Allowed Radius (Meters)</label>
+              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Allowed Radius (Meters)</label>
               <input
                 type="number"
                 required
                 value={formData.geofence_radius_meters}
                 onChange={(e) => setFormData({ ...formData, geofence_radius_meters: parseFloat(e.target.value) })}
-                className="mt-1.5 w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-sm text-white font-mono focus:border-indigo-500 focus:outline-none"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-indigo-500 focus:outline-none"
               />
             </div>
           </div>
@@ -347,7 +346,7 @@ const CompanySettings = () => {
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-6 py-3.5 text-sm font-bold text-white shadow-lg shadow-indigo-600/30 hover:scale-[1.01] transition"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3.5 text-xs font-bold text-white shadow-md hover:bg-indigo-700 transition"
         >
           {saving ? <LoadingSpinner size="sm" /> : <><FiSave /> Save White-Label Settings & Geofence</>}
         </button>

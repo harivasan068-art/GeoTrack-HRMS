@@ -96,30 +96,30 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto">
-      <div className="relative max-w-lg w-full rounded-3xl bg-slate-900 p-6 sm:p-8 border border-slate-800 space-y-6 shadow-2xl my-8 text-slate-200 font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 dark:bg-slate-950/80 p-4 backdrop-blur-sm overflow-y-auto">
+      <div className="relative max-w-lg w-full rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6 shadow-2xl my-8 text-slate-900 dark:text-slate-200 font-sans">
         {/* Header */}
-        <div className="flex items-center justify-between border-b border-slate-800 pb-4">
+        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-600/20 text-indigo-400 border border-indigo-500/30">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
               <FiShield className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-xl font-extrabold text-white">Edit Admin Details</h2>
-              <p className="text-xs text-slate-400">Update administrative credentials & profile info</p>
+              <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">Edit Admin Details</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400">Update administrative credentials & profile info</p>
             </div>
           </div>
           <button
             onClick={onClose}
-            className="rounded-xl p-2 text-slate-400 hover:bg-slate-800 hover:text-white transition"
+            className="rounded-xl p-2 text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-800 hover:text-slate-900 dark:hover:text-white transition"
           >
             <FiX className="h-5 w-5" />
           </button>
         </div>
 
         {/* Photo Uploader */}
-        <div className="flex items-center gap-4 rounded-2xl bg-slate-950 p-4 border border-slate-800">
-          <div className="relative h-16 w-16 overflow-hidden rounded-2xl border-2 border-indigo-500 shrink-0">
+        <div className="flex items-center gap-4 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800">
+          <div className="relative h-16 w-16 overflow-hidden rounded-2xl border-2 border-indigo-500 shrink-0 shadow-sm">
             <img
               src={getImageUrl(user?.photo) || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80"}
               alt="Admin Avatar"
@@ -132,8 +132,8 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
           </div>
 
           <div className="space-y-1.5 flex-1">
-            <div className="text-xs font-bold text-white">Admin Profile Avatar</div>
-            <label className="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-slate-800 px-3 py-1.5 text-xs font-semibold text-indigo-300 border border-slate-700 hover:bg-slate-700 transition">
+            <div className="text-xs font-bold text-slate-900 dark:text-white">Admin Profile Avatar</div>
+            <label className="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 transition shadow-sm">
               {uploadingPhoto ? <LoadingSpinner size="sm" /> : <><FiCamera /> Change Photo</>}
               <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
             </label>
@@ -143,32 +143,32 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
         {/* Form Fields */}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="mb-1 block text-xs font-bold text-slate-300">Admin Full Name</label>
+            <label className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300">Admin Full Name</label>
             <div className="relative">
-              <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 h-4 w-4" />
+              <FiUser className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
               <input
                 type="text"
                 name="full_name"
                 value={formData.full_name}
                 onChange={handleChange}
                 required
-                className="w-full rounded-xl bg-slate-950 border border-slate-800 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
                 placeholder="Sarah Jenkins"
               />
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-bold text-slate-300">Admin Email Address</label>
+            <label className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300">Admin Email Address</label>
             <div className="relative">
-              <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 h-4 w-4" />
+              <FiMail className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full rounded-xl bg-slate-950 border border-slate-800 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
                 placeholder="admin@geotrack.com"
               />
             </div>
@@ -176,69 +176,69 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
 
           <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="mb-1 block text-xs font-bold text-slate-300">Phone Number</label>
+              <label className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300">Phone Number</label>
               <div className="relative">
-                <FiPhone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 h-4 w-4" />
+                <FiPhone className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
                 <input
                   type="text"
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full rounded-xl bg-slate-950 border border-slate-800 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+                  className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
                   placeholder="+1-555-0100"
                 />
               </div>
             </div>
 
             <div>
-              <label className="mb-1 block text-xs font-bold text-slate-300">Department</label>
+              <label className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300">Department</label>
               <input
                 type="text"
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
-                className="w-full rounded-xl bg-slate-950 border border-slate-800 px-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
                 placeholder="Executive Management"
               />
             </div>
           </div>
 
           <div>
-            <label className="mb-1 block text-xs font-bold text-slate-300">
-              New Password <span className="font-normal text-slate-500">(Leave blank to keep current)</span>
+            <label className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300">
+              New Password <span className="font-normal text-slate-400">(Leave blank to keep current)</span>
             </label>
             <div className="relative">
-              <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 h-4 w-4" />
+              <FiLock className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
               <input
                 type={showPassword ? "text" : "password"}
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full rounded-xl bg-slate-950 border border-slate-800 pl-10 pr-10 py-2.5 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-10 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
                 placeholder="Enter new admin password"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 dark:hover:text-slate-300"
               >
                 {showPassword ? <FiEyeOff className="h-4 w-4" /> : <FiEye className="h-4 w-4" />}
               </button>
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
             <button
               type="button"
               onClick={onClose}
-              className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-xs font-semibold text-slate-300 hover:bg-slate-700 transition"
+              className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-4 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
             >
               Cancel
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="rounded-xl bg-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-indigo-500 disabled:opacity-50 transition"
+              className="rounded-2xl bg-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-indigo-700 disabled:opacity-50 transition"
             >
               {loading ? <LoadingSpinner size="sm" /> : "Save Admin Details"}
             </button>

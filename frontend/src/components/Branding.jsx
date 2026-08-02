@@ -31,7 +31,7 @@ const Branding = ({ size = "md", showSubtitle = true, dark = true }) => {
         <img
           src={logoUrl}
           alt={company?.company_name || "Logo"}
-          className={`${logoSizes[size]} object-contain rounded-xl border border-slate-800 bg-slate-900 shadow-md`}
+          className={`${logoSizes[size]} object-contain rounded-xl border ${dark ? "border-slate-800 bg-slate-900" : "border-slate-200 bg-white"} shadow-sm`}
           onError={() => setImageError(true)}
         />
       ) : (

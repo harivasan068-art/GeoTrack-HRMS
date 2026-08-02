@@ -42,27 +42,27 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
   return (
     <div className="space-y-6 font-sans">
       {/* Search & Filter Header Bar */}
-      <div className="flex flex-col gap-4 rounded-2xl bg-slate-900 p-4 border border-slate-800 sm:flex-row sm:items-center sm:justify-between shadow-xl">
+      <div className="flex flex-col gap-4 rounded-3xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between shadow-sm">
         <div className="relative flex-1 max-w-md">
-          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-500 h-4 w-4" />
+          <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
           <input
             type="text"
             placeholder="Search by employee name, ID, email, or department..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-xl bg-slate-950 border border-slate-800 pl-10 pr-4 py-2.5 text-xs text-white placeholder-slate-500 focus:border-indigo-500 focus:outline-none"
+            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
           />
         </div>
 
         <div className="flex items-center gap-3 flex-wrap">
           <div className="flex items-center gap-2 overflow-x-auto">
-            <span className="text-xs text-slate-400 flex items-center gap-1">
+            <span className="text-xs text-slate-500 dark:text-slate-400 flex items-center gap-1 font-bold">
               <FiFilter /> Dept:
             </span>
             <select
               value={departmentFilter}
               onChange={(e) => setDepartmentFilter(e.target.value)}
-              className="rounded-xl bg-slate-950 border border-slate-800 px-3 py-2 text-xs font-semibold text-slate-300 focus:border-indigo-500 focus:outline-none"
+              className="rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-3 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 focus:border-indigo-500 focus:outline-none"
             >
               {departments.map((dept) => (
                 <option key={dept} value={dept}>
@@ -75,7 +75,7 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
           {onAddEmployee && (
             <button
               onClick={onAddEmployee}
-              className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-indigo-500 transition"
+              className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white shadow hover:bg-indigo-700 transition"
             >
               <FiUserPlus className="h-4 w-4" /> Register New Employee
             </button>
@@ -84,10 +84,10 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
       </div>
 
       {/* Table Container */}
-      <div className="overflow-hidden rounded-2xl border border-slate-800 bg-slate-900 shadow-2xl">
+      <div className="overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-300">
-            <thead className="bg-slate-950/90 text-xs font-bold uppercase tracking-wider text-slate-400 border-b border-slate-800">
+          <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+            <thead className="bg-slate-100 dark:bg-slate-950/90 text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
               <tr>
                 <th className="px-5 py-4">Employee Details</th>
                 <th className="px-5 py-4">Employee ID</th>
@@ -97,10 +97,10 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
                 <th className="px-5 py-4 text-center">Actions</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800/60 text-xs">
+            <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs font-medium bg-white dark:bg-slate-900">
               {filteredEmployees.length === 0 ? (
                 <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-500">
+                  <td colSpan={6} className="py-12 text-center text-slate-500 dark:text-slate-400">
                     No employee records match the search criteria.
                   </td>
                 </tr>
@@ -108,29 +108,29 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
                 filteredEmployees.map((emp) => {
                   const isAdmin = emp.designation?.toLowerCase() === "admin";
                   return (
-                    <tr key={emp.id || emp.employee_id} className="hover:bg-slate-800/40 transition">
+                    <tr key={emp.id || emp.employee_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
                       {/* Name & Avatar */}
                       <td className="px-5 py-3.5">
                         <div className="flex items-center gap-3">
                           <img
                             src={getImageUrl(emp.photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
                             alt={emp.full_name}
-                            className="h-10 w-10 rounded-xl object-cover border border-slate-700 shadow-sm"
+                            className="h-10 w-10 rounded-2xl object-cover border border-slate-200 dark:border-slate-700 shadow-sm"
                             onError={(e) => {
                               e.target.onerror = null;
                               e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
                             }}
                           />
                           <div>
-                            <div className="font-bold text-white flex items-center gap-1.5">
+                            <div className="font-extrabold text-slate-900 dark:text-white flex items-center gap-1.5">
                               {emp.full_name}
                               {isAdmin && (
-                                <span className="rounded-full bg-indigo-500/20 px-2 py-0.5 text-[9px] font-extrabold text-indigo-400 border border-indigo-500/30 uppercase">
+                                <span className="rounded-full bg-indigo-100 dark:bg-indigo-950/50 px-2 py-0.5 text-[9px] font-extrabold text-indigo-700 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800 uppercase">
                                   Admin
                                 </span>
                               )}
                             </div>
-                            <div className="text-[11px] text-slate-400">
+                            <div className="text-[11px] text-slate-500 dark:text-slate-400">
                               Joined {emp.joining_date ? new Date(emp.joining_date).toLocaleDateString() : "N/A"}
                             </div>
                           </div>
@@ -138,24 +138,24 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
                       </td>
 
                       {/* Employee ID */}
-                      <td className="px-5 py-3.5 font-mono font-bold text-indigo-400">
+                      <td className="px-5 py-3.5 font-mono font-bold text-indigo-600 dark:text-indigo-400">
                         {emp.employee_id}
                       </td>
 
                       {/* Dept & Designation */}
                       <td className="px-5 py-3.5">
-                        <div className="font-semibold text-slate-200">{emp.department}</div>
-                        <div className="text-[11px] text-slate-400">{emp.designation}</div>
+                        <div className="font-bold text-slate-900 dark:text-slate-200">{emp.department}</div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-400">{emp.designation}</div>
                       </td>
 
                       {/* Contact */}
                       <td className="px-5 py-3.5 space-y-1">
-                        <div className="flex items-center gap-1.5 text-slate-300">
-                          <FiMail className="h-3.5 w-3.5 text-indigo-400 shrink-0" />
+                        <div className="flex items-center gap-1.5 text-slate-700 dark:text-slate-300">
+                          <FiMail className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400 shrink-0" />
                           <span className="truncate">{emp.email}</span>
                         </div>
-                        <div className="flex items-center gap-1.5 text-slate-400">
-                          <FiPhone className="h-3.5 w-3.5 text-emerald-400 shrink-0" />
+                        <div className="flex items-center gap-1.5 text-slate-500 dark:text-slate-400">
+                          <FiPhone className="h-3.5 w-3.5 text-emerald-600 dark:text-emerald-400 shrink-0" />
                           <span>{emp.phone || "N/A"}</span>
                         </div>
                       </td>
@@ -163,10 +163,10 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
                       {/* Status */}
                       <td className="px-5 py-3.5 text-center">
                         <span
-                          className={`inline-flex rounded-full px-2.5 py-1 text-[11px] font-bold ${
+                          className={`inline-flex rounded-full px-2.5 py-1 text-[10px] font-extrabold ${
                             emp.status === "Active"
-                              ? "bg-emerald-500/10 text-emerald-400 border border-emerald-500/30"
-                              : "bg-slate-800 text-slate-400 border border-slate-700"
+                              ? "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
+                              : "bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 border border-slate-200 dark:border-slate-700"
                           }`}
                         >
                           {emp.status || "Active"}
@@ -178,7 +178,7 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
                         <div className="flex items-center justify-center gap-2">
                           <button
                             onClick={() => setSelectedEmployee(emp)}
-                            className="inline-flex items-center gap-1 rounded-lg bg-slate-950 px-3 py-1.5 text-xs font-semibold text-indigo-400 border border-slate-800 hover:border-indigo-500 hover:text-white transition"
+                            className="inline-flex items-center gap-1 rounded-xl bg-slate-100 dark:bg-slate-950 px-3 py-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-400 border border-slate-200 dark:border-slate-800 hover:bg-indigo-50 dark:hover:border-indigo-500 transition"
                             title="Inspect Employee Profile & ID Card"
                           >
                             <FiEye className="h-3.5 w-3.5" /> Details
@@ -188,13 +188,13 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
                             <button
                               onClick={() => setDeleteConfirmEmp(emp)}
                               disabled={loading}
-                              className="inline-flex items-center gap-1 rounded-lg bg-rose-500/10 px-3 py-1.5 text-xs font-bold text-rose-400 border border-rose-500/30 hover:bg-rose-600 hover:text-white transition disabled:opacity-30"
+                              className="inline-flex items-center gap-1 rounded-xl bg-rose-50 dark:bg-rose-950/40 px-3 py-1.5 text-xs font-bold text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 hover:bg-rose-600 hover:text-white transition disabled:opacity-30"
                               title="Delete employee account permanently"
                             >
                               <FiTrash2 className="h-3.5 w-3.5" /> Delete
                             </button>
                           ) : (
-                            <span className="text-[10px] text-slate-500 italic px-2">System Admin</span>
+                            <span className="text-[10px] text-slate-400 dark:text-slate-500 italic font-semibold px-2">System Admin</span>
                           )}
                         </div>
                       </td>
@@ -209,32 +209,32 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
 
       {/* Delete Confirmation Modal */}
       {deleteConfirmEmp && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md">
-          <div className="relative max-w-md w-full rounded-2xl bg-slate-900 p-6 border border-slate-800 space-y-4 shadow-2xl text-slate-200">
-            <div className="flex items-center gap-3 border-b border-slate-800 pb-3 text-rose-400">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-rose-500/10 border border-rose-500/30">
-                <FiAlertTriangle className="h-5 w-5 text-rose-400" />
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 dark:bg-slate-950/80 p-4 backdrop-blur-sm">
+          <div className="relative max-w-md w-full rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-4 shadow-2xl text-slate-900 dark:text-slate-200">
+            <div className="flex items-center gap-3 border-b border-slate-200 dark:border-slate-800 pb-3 text-rose-600 dark:text-rose-400">
+              <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-rose-50 dark:bg-rose-950/50 border border-rose-200 dark:border-rose-800">
+                <FiAlertTriangle className="h-5 w-5 text-rose-600 dark:text-rose-400" />
               </div>
               <div>
-                <h3 className="text-base font-bold text-white">Delete Employee Account?</h3>
-                <p className="text-xs text-rose-300/80">This action cannot be undone.</p>
+                <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Delete Employee Account?</h3>
+                <p className="text-xs text-rose-600 dark:text-rose-300">This action cannot be undone.</p>
               </div>
             </div>
 
-            <p className="text-xs text-slate-300 leading-relaxed">
+            <p className="text-xs text-slate-600 dark:text-slate-300 leading-relaxed font-medium">
               Are you sure you want to permanently delete employee{" "}
-              <strong className="text-white">{deleteConfirmEmp.full_name}</strong> (ID:{" "}
-              <span className="font-mono text-indigo-400">{deleteConfirmEmp.employee_id}</span>)?
+              <strong className="text-slate-900 dark:text-white font-extrabold">{deleteConfirmEmp.full_name}</strong> (ID:{" "}
+              <span className="font-mono text-indigo-600 dark:text-indigo-400 font-bold">{deleteConfirmEmp.employee_id}</span>)?
               <br />
-              <span className="text-slate-400 mt-2 block">
+              <span className="text-slate-500 dark:text-slate-400 mt-2 block">
                 All associated attendance logs, check-in selfies, and records for this employee will be deleted from the database.
               </span>
             </p>
 
-            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-800">
+            <div className="flex items-center justify-end gap-3 pt-3 border-t border-slate-200 dark:border-slate-800">
               <button
                 onClick={() => setDeleteConfirmEmp(null)}
-                className="rounded-xl border border-slate-700 bg-slate-800 px-4 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-700 transition"
+                className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
               >
                 Cancel
               </button>
@@ -244,7 +244,7 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
                   setDeleteConfirmEmp(null);
                 }}
                 disabled={loading}
-                className="inline-flex items-center gap-1.5 rounded-xl bg-rose-600 px-5 py-2 text-xs font-bold text-white shadow hover:bg-rose-500 transition disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 rounded-2xl bg-rose-600 px-5 py-2 text-xs font-bold text-white shadow hover:bg-rose-700 transition disabled:opacity-50"
               >
                 <FiTrash2 className="h-3.5 w-3.5" /> Permanently Delete
               </button>
@@ -255,25 +255,25 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
 
       {/* Employee Inspection Modal */}
       {selectedEmployee && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-950/80 p-4 backdrop-blur-md overflow-y-auto">
-          <div className="relative max-w-xl w-full rounded-3xl bg-slate-900 p-6 sm:p-8 border border-slate-800 space-y-6 shadow-2xl my-8 text-slate-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 dark:bg-slate-950/80 p-4 backdrop-blur-sm overflow-y-auto">
+          <div className="relative max-w-xl w-full rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6 shadow-2xl my-8 text-slate-900 dark:text-slate-200">
             <button
               onClick={() => setSelectedEmployee(null)}
-              className="absolute right-4 top-4 text-slate-400 hover:text-white"
+              className="absolute right-4 top-4 text-slate-400 hover:text-slate-900 dark:hover:text-white"
             >
               <FiX className="h-6 w-6" />
             </button>
 
-            <div className="text-center border-b border-slate-800 pb-4">
-              <h3 className="text-xl font-bold text-white">Employee Profile & Digital ID</h3>
-              <p className="text-xs text-indigo-400 font-mono mt-0.5">ID: {selectedEmployee.employee_id}</p>
+            <div className="text-center border-b border-slate-200 dark:border-slate-800 pb-4">
+              <h3 className="text-xl font-extrabold text-slate-900 dark:text-white">Employee Profile & Digital ID</h3>
+              <p className="text-xs text-indigo-600 dark:text-indigo-400 font-mono font-bold mt-0.5">ID: {selectedEmployee.employee_id}</p>
             </div>
 
             {/* Digital ID Card Preview */}
             <DigitalIdCard employee={selectedEmployee} />
 
             {/* Action footer */}
-            <div className="flex items-center justify-between pt-4 border-t border-slate-800">
+            <div className="flex items-center justify-between pt-4 border-t border-slate-200 dark:border-slate-800">
               {selectedEmployee.designation?.toLowerCase() !== "admin" ? (
                 <button
                   onClick={() => {
@@ -281,19 +281,19 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
                     setSelectedEmployee(null);
                     setDeleteConfirmEmp(emp);
                   }}
-                  className="inline-flex items-center gap-1.5 rounded-xl bg-rose-500/10 px-4 py-2 text-xs font-bold text-rose-400 border border-rose-500/30 hover:bg-rose-600 hover:text-white transition"
+                  className="inline-flex items-center gap-1.5 rounded-2xl bg-rose-50 dark:bg-rose-950/40 px-4 py-2 text-xs font-bold text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 hover:bg-rose-600 hover:text-white transition"
                 >
                   <FiTrash2 className="h-4 w-4" /> Delete Account
                 </button>
               ) : (
-                <span className="text-xs text-indigo-400 font-semibold flex items-center gap-1">
+                <span className="text-xs text-indigo-600 dark:text-indigo-400 font-bold flex items-center gap-1">
                   <FiShield /> Protected Admin Account
                 </span>
               )}
 
               <button
                 onClick={() => setSelectedEmployee(null)}
-                className="rounded-xl border border-slate-700 bg-slate-800 px-5 py-2 text-xs font-semibold text-slate-300 hover:bg-slate-700 transition"
+                className="rounded-2xl border border-slate-300 dark:border-slate-700 bg-slate-100 dark:bg-slate-800 px-5 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
               >
                 Close Window
               </button>
