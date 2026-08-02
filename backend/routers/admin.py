@@ -163,6 +163,7 @@ def get_attendance_sheet(
                 address=att.address,
                 campaign_name=att.campaign_name,
                 photo_url=att.photo_url,
+                selfie_url=att.photo_url,
                 status=att.status or "Pending Approval",
                 is_inside_geofence=att.is_inside_geofence,
                 browser=att.browser,

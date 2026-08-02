@@ -61,6 +61,7 @@ class AttendanceResponse(BaseModel):
     address: str | None = None
     campaign_name: str | None = None
     photo_url: str | None = None
+    selfie_url: str | None = None
     status: str
     is_inside_geofence: bool
     browser: str | None = None
@@ -104,6 +105,7 @@ class GeotagAttendanceSheetItem(BaseModel):
     address: str | None = None
     campaign_name: str | None = None
     photo_url: str | None = None
+    selfie_url: str | None = None
     status: str
     is_inside_geofence: bool
     browser: str | None = None

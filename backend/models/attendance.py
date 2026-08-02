@@ -46,3 +46,8 @@ class Attendance(Base):
     work_video_url = Column(Text, nullable=True)
 
     employee = relationship("Employee", backref="attendance_records")
+
+    @property
+    def selfie_url(self) -> str | None:
+        return self.photo_url
+
