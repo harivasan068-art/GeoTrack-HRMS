@@ -30,9 +30,11 @@ class EmployeeUpdate(BaseModel):
 
 class EmployeeProfileUpdate(BaseModel):
     full_name: str | None = Field(None, min_length=2, max_length=150)
+    email: EmailStr | None = None
     phone: str | None = Field(None, min_length=5, max_length=20)
     department: str | None = None
     designation: str | None = None
+    password: str | None = Field(None, min_length=6, max_length=128)
     photo: str | None = None
 
 

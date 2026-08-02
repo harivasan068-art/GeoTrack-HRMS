@@ -6,17 +6,25 @@ import {
   FiCheckCircle,
   FiCheckSquare,
   FiClock,
+  FiEdit,
   FiMapPin,
   FiPieChart,
+  FiShield,
+  FiUserCheck,
   FiUsers,
   FiXCircle,
 } from "react-icons/fi";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import AdminProfileModal from "../../components/AdminProfileModal";
 import { adminService } from "../../services/attendanceService";
+import { useAuth } from "../../hooks/useAuth";
+import { getImageUrl } from "../../services/api";
 
 const AdminDashboard = () => {
+  const { user } = useAuth();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
 
   useEffect(() => {
     const fetchDashboard = async () => {
@@ -104,12 +112,53 @@ const AdminDashboard = () => {
           <p className="mt-1 text-sm text-slate-400">Real-time executive oversight, attendance rates, and pending approval items</p>
         </div>
 
-        <Link
-          to="/admin/verifications"
-          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-500"
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsEditProfileOpen(true)}
+            className="inline-flex items-center gap-2 rounded-xl border border-slate-700 bg-slate-800 px-4 py-2.5 text-sm font-semibold text-slate-200 transition hover:bg-slate-700 hover:text-white"
+          >
+            <FiUserCheck className="h-4 w-4 text-indigo-400" /> Edit Admin Details
+          </button>
+          <Link
+            to="/admin/verifications"
+            className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-500"
+          >
+            <FiCheckSquare className="h-4 w-4" /> Open Approval Console
+          </Link>
+        </div>
+      </div>
+
+      {/* Admin Profile Overview Banner */}
+      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-2xl bg-gradient-to-r from-slate-900 via-indigo-950/40 to-slate-900 p-5 border border-slate-800 shadow-lg">
+        <div className="flex items-center gap-4">
+          <img
+            src={getImageUrl(user?.photo) || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80"}
+            alt="Admin Avatar"
+            className="h-14 w-14 object-cover rounded-2xl border-2 border-indigo-500 shadow-md"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80";
+            }}
+          />
+          <div>
+            <div className="flex items-center gap-2">
+              <h2 className="text-lg font-bold text-white">{user?.full_name || "Administrator"}</h2>
+              <span className="inline-flex items-center gap-1 rounded-full bg-indigo-500/20 px-2 py-0.5 text-[10px] font-extrabold text-indigo-300 border border-indigo-500/30 uppercase tracking-wider">
+                <FiShield /> Super Admin
+              </span>
+            </div>
+            <p className="text-xs text-slate-400 font-mono mt-0.5">
+              Email: <span className="text-slate-200">{user?.email || "admin@geotrack.com"}</span> &bull; ID: <span className="text-indigo-400">{user?.employee_id || "EMP001"}</span>
+            </p>
+          </div>
+        </div>
+
+        <button
+          onClick={() => setIsEditProfileOpen(true)}
+          className="inline-flex items-center gap-2 rounded-xl bg-indigo-600/10 border border-indigo-500/30 px-4 py-2 text-xs font-bold text-indigo-300 hover:bg-indigo-600 hover:text-white transition"
         >
-          <FiCheckSquare className="h-4 w-4" /> Open Approval Console
-        </Link>
+          <FiEdit className="h-3.5 w-3.5" /> Edit Admin Profile & Password
+        </button>
       </div>
 
       {/* Pending Approvals Alert Banner */}
@@ -200,6 +249,9 @@ const AdminDashboard = () => {
           </div>
         )}
       </div>
+
+      {/* Admin Profile Modal */}
+      <AdminProfileModal isOpen={isEditProfileOpen} onClose={() => setIsEditProfileOpen(false)} />
     </div>
   );
 };

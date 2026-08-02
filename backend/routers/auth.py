@@ -92,8 +92,21 @@ def update_profile(
     db: Session = Depends(get_db),
 ):
     update_data = payload.model_dump(exclude_unset=True)
+
+    if "email" in update_data and update_data["email"] and update_data["email"] != current_user.email:
+        existing = db.query(Employee).filter(Employee.email == update_data["email"]).first()
+        if existing:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail="Email address is already registered to another account",
+            )
+        current_user.email = update_data["email"]
+
+    if "password" in update_data and update_data["password"]:
+        current_user.password = hash_password(update_data["password"])
+
     for field, value in update_data.items():
-        if value is not None:
+        if field not in ("email", "password") and value is not None:
             setattr(current_user, field, value)
 
     db.commit()
