@@ -20,6 +20,13 @@ async def lifespan(app: FastAPI):
                 conn.commit()
             except Exception:
                 pass
+
+            try:
+                for col in ["photo_url", "work_photo_url", "work_video_url", "checkout_selfie_url", "checkout_work_photo_url", "checkout_work_video_url"]:
+                    conn.execute(text(f"UPDATE attendance SET {col} = NULL WHERE {col} LIKE 'data:%' AND LENGTH({col}) < 100;"))
+                conn.commit()
+            except Exception:
+                pass
     except Exception:
         pass
 

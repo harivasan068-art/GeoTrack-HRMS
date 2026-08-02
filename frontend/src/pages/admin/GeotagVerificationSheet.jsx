@@ -283,7 +283,7 @@ const GeotagVerificationSheet = () => {
                         onClick={() => { setSelectedRequest(item); setRemarksInput(item.remarks || ""); }}
                         className="inline-flex items-center gap-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/50 px-3 py-1.5 text-xs font-bold text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800 hover:bg-orange-600 hover:text-white transition"
                       >
-                        <FiEye /> Inspect Media ({[item.photo_url, item.work_photo_url, item.work_video_url, item.checkout_work_photo_url, item.checkout_work_video_url].filter(Boolean).length})
+                        <FiEye /> Inspect Media ({[item.photo_url, item.work_photo_url, item.work_video_url, item.checkout_selfie_url, item.checkout_work_photo_url, item.checkout_work_video_url].filter((u) => getImageUrl(u)).length})
                       </button>
                     </td>
 
@@ -375,77 +375,126 @@ const GeotagVerificationSheet = () => {
                 <FiCamera className="text-orange-600" /> Uploaded Work Proofs & Media
               </h4>
 
-              <div className="grid gap-4 sm:grid-cols-2">
-                {/* 1. Morning Selfie */}
-                {selectedRequest.photo_url && typeof selectedRequest.photo_url === "string" && (
-                  <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
-                    <div className="flex justify-between items-center text-xs font-bold font-sans">
-                      <span>Morning Live Selfie</span>
-                      <button onClick={() => downloadMedia(selectedRequest.photo_url, selectedRequest.full_name, "Selfie")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save</button>
+              {[
+                selectedRequest.photo_url,
+                selectedRequest.work_photo_url,
+                selectedRequest.checkout_selfie_url,
+                selectedRequest.checkout_work_photo_url,
+                selectedRequest.work_video_url,
+                selectedRequest.checkout_work_video_url,
+              ].filter((u) => getImageUrl(u)).length === 0 ? (
+                <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/40 p-5 border border-amber-200 dark:border-amber-800 text-center font-sans text-xs text-amber-800 dark:text-amber-300">
+                  <FiAlertTriangle className="mx-auto h-6 w-6 mb-2 text-amber-500" />
+                  <p className="font-bold">No Media Files Available</p>
+                  <p className="mt-1 text-[11px] text-amber-600 dark:text-amber-400">
+                    No valid selfie photo, work photo, or video was uploaded for this record.
+                  </p>
+                </div>
+              ) : (
+                <div className="grid gap-4 sm:grid-cols-2">
+                  {/* 1. Morning Selfie */}
+                  {getImageUrl(selectedRequest.photo_url) && (
+                    <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
+                      <div className="flex justify-between items-center text-xs font-bold font-sans">
+                        <span>Morning Live Selfie</span>
+                        <button onClick={() => downloadMedia(selectedRequest.photo_url, selectedRequest.full_name, "Selfie")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save</button>
+                      </div>
+                      <img
+                        src={getImageUrl(selectedRequest.photo_url)}
+                        alt="Selfie"
+                        className="h-44 w-full object-cover rounded-xl border border-slate-200 dark:border-slate-800"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80";
+                        }}
+                      />
                     </div>
-                    <img src={getImageUrl(selectedRequest.photo_url)} alt="Selfie" className="h-44 w-full object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
-                  </div>
-                )}
+                  )}
 
-                {/* 2. Work Photo */}
-                {selectedRequest.work_photo_url && typeof selectedRequest.work_photo_url === "string" && (
-                  <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
-                    <div className="flex justify-between items-center text-xs font-bold font-sans">
-                      <span>Morning Work Photo</span>
-                      <button onClick={() => downloadMedia(selectedRequest.work_photo_url, selectedRequest.full_name, "Work_Photo")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save</button>
+                  {/* 2. Work Photo */}
+                  {getImageUrl(selectedRequest.work_photo_url) && (
+                    <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
+                      <div className="flex justify-between items-center text-xs font-bold font-sans">
+                        <span>Morning Work Photo</span>
+                        <button onClick={() => downloadMedia(selectedRequest.work_photo_url, selectedRequest.full_name, "Work_Photo")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save</button>
+                      </div>
+                      <img
+                        src={getImageUrl(selectedRequest.work_photo_url)}
+                        alt="Work Photo"
+                        className="h-44 w-full object-cover rounded-xl border border-slate-200 dark:border-slate-800"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&auto=format&fit=crop&q=80";
+                        }}
+                      />
                     </div>
-                    <img src={getImageUrl(selectedRequest.work_photo_url)} alt="Work Photo" className="h-44 w-full object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
-                  </div>
-                )}
+                  )}
 
-                {/* 3. Checkout Selfie */}
-                {selectedRequest.checkout_selfie_url && typeof selectedRequest.checkout_selfie_url === "string" && (
-                  <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
-                    <div className="flex justify-between items-center text-xs font-bold font-sans">
-                      <span>Evening Checkout Selfie</span>
-                      <button onClick={() => downloadMedia(selectedRequest.checkout_selfie_url, selectedRequest.full_name, "Checkout_Selfie")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save</button>
+                  {/* 3. Checkout Selfie */}
+                  {getImageUrl(selectedRequest.checkout_selfie_url) && (
+                    <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
+                      <div className="flex justify-between items-center text-xs font-bold font-sans">
+                        <span>Evening Checkout Selfie</span>
+                        <button onClick={() => downloadMedia(selectedRequest.checkout_selfie_url, selectedRequest.full_name, "Checkout_Selfie")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save</button>
+                      </div>
+                      <img
+                        src={getImageUrl(selectedRequest.checkout_selfie_url)}
+                        alt="Checkout Selfie"
+                        className="h-44 w-full object-cover rounded-xl border border-slate-200 dark:border-slate-800"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80";
+                        }}
+                      />
                     </div>
-                    <img src={getImageUrl(selectedRequest.checkout_selfie_url)} alt="Checkout Selfie" className="h-44 w-full object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
-                  </div>
-                )}
+                  )}
 
-                {/* 4. Checkout Work Photo */}
-                {selectedRequest.checkout_work_photo_url && typeof selectedRequest.checkout_work_photo_url === "string" && (
-                  <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
-                    <div className="flex justify-between items-center text-xs font-bold font-sans">
-                      <span>Evening Checkout Photo</span>
-                      <button onClick={() => downloadMedia(selectedRequest.checkout_work_photo_url, selectedRequest.full_name, "Checkout_Photo")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save</button>
+                  {/* 4. Checkout Work Photo */}
+                  {getImageUrl(selectedRequest.checkout_work_photo_url) && (
+                    <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
+                      <div className="flex justify-between items-center text-xs font-bold font-sans">
+                        <span>Evening Checkout Photo</span>
+                        <button onClick={() => downloadMedia(selectedRequest.checkout_work_photo_url, selectedRequest.full_name, "Checkout_Photo")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save</button>
+                      </div>
+                      <img
+                        src={getImageUrl(selectedRequest.checkout_work_photo_url)}
+                        alt="Checkout Photo"
+                        className="h-44 w-full object-cover rounded-xl border border-slate-200 dark:border-slate-800"
+                        onError={(e) => {
+                          e.currentTarget.onerror = null;
+                          e.currentTarget.src = "https://images.unsplash.com/photo-1497366216548-37526070297c?w=600&auto=format&fit=crop&q=80";
+                        }}
+                      />
                     </div>
-                    <img src={getImageUrl(selectedRequest.checkout_work_photo_url)} alt="Checkout Photo" className="h-44 w-full object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
-                  </div>
-                )}
+                  )}
 
-                {/* 5. Work Video */}
-                {selectedRequest.work_video_url && typeof selectedRequest.work_video_url === "string" && (
-                  <div className="col-span-2 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
-                    <div className="flex justify-between items-center text-xs font-bold font-sans">
-                      <span className="flex items-center gap-1.5"><FiFilm className="text-orange-600" /> Morning Work Completion Video</span>
-                      <button onClick={() => downloadMedia(selectedRequest.work_video_url, selectedRequest.full_name, "Work_Video")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save Video</button>
+                  {/* 5. Work Video */}
+                  {getImageUrl(selectedRequest.work_video_url) && (
+                    <div className="col-span-2 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
+                      <div className="flex justify-between items-center text-xs font-bold font-sans">
+                        <span className="flex items-center gap-1.5"><FiFilm className="text-orange-600" /> Morning Work Completion Video</span>
+                        <button onClick={() => downloadMedia(selectedRequest.work_video_url, selectedRequest.full_name, "Work_Video")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save Video</button>
+                      </div>
+                      <ErrorBoundary>
+                        <VideoPlayer src={selectedRequest.work_video_url} className="max-w-lg mx-auto" />
+                      </ErrorBoundary>
                     </div>
-                    <ErrorBoundary>
-                      <VideoPlayer src={selectedRequest.work_video_url} className="max-w-lg mx-auto" />
-                    </ErrorBoundary>
-                  </div>
-                )}
+                  )}
 
-                {/* 6. Checkout Work Video */}
-                {selectedRequest.checkout_work_video_url && typeof selectedRequest.checkout_work_video_url === "string" && (
-                  <div className="col-span-2 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
-                    <div className="flex justify-between items-center text-xs font-bold font-sans">
-                      <span className="flex items-center gap-1.5"><FiFilm className="text-orange-600" /> Evening Checkout Video</span>
-                      <button onClick={() => downloadMedia(selectedRequest.checkout_work_video_url, selectedRequest.full_name, "Checkout_Video")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save Video</button>
+                  {/* 6. Checkout Work Video */}
+                  {getImageUrl(selectedRequest.checkout_work_video_url) && (
+                    <div className="col-span-2 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
+                      <div className="flex justify-between items-center text-xs font-bold font-sans">
+                        <span className="flex items-center gap-1.5"><FiFilm className="text-orange-600" /> Evening Checkout Video</span>
+                        <button onClick={() => downloadMedia(selectedRequest.checkout_work_video_url, selectedRequest.full_name, "Checkout_Video")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save Video</button>
+                      </div>
+                      <ErrorBoundary>
+                        <VideoPlayer src={selectedRequest.checkout_work_video_url} className="max-w-lg mx-auto" />
+                      </ErrorBoundary>
                     </div>
-                    <ErrorBoundary>
-                      <VideoPlayer src={selectedRequest.checkout_work_video_url} className="max-w-lg mx-auto" />
-                    </ErrorBoundary>
-                  </div>
-                )}
-              </div>
+                  )}
+                </div>
+              )}
             </div>
 
             {/* Interactive Map */}

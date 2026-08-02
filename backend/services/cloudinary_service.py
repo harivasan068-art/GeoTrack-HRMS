@@ -242,3 +242,74 @@ def delete_image(public_id: str | None) -> bool:
         return res.get("result") == "ok"
     except Exception:
         return False
+
+
+def save_local_file(content: bytes, filename: str | None, folder: str) -> str:
+    """Save binary file to uploads directory on local disk."""
+    subfolder = folder.replace("geotrack_hrms/", "").strip("/")
+    target_dir = os.path.join("uploads", subfolder)
+    os.makedirs(target_dir, exist_ok=True)
+
+    clean_name = sanitize_filename(filename or "file")
+    ext = os.path.splitext(clean_name)[1].lower()
+    if not ext:
+        ext = ".jpg"
+
+    unique_filename = f"{uuid.uuid4().hex[:10]}_{clean_name}"
+    file_path = os.path.join(target_dir, unique_filename)
+
+    with open(file_path, "wb") as f:
+        f.write(content)
+
+    rel_path = f"/uploads/{subfolder}/{unique_filename}".replace("\\", "/")
+    return rel_path
+
+
+async def process_media_upload(
+    file_input: UploadFile | bytes | None,
+    folder: str = "geotrack_hrms/media",
+    resource_type: str = "image",
+) -> str | None:
+    """
+    Safely reads media file bytes once, attempts Cloudinary upload if valid credentials exist,
+    and falls back seamlessly to local disk file storage inside uploads/.
+    """
+    if not file_input:
+        return None
+
+    content: bytes = b""
+    filename: str | None = None
+    content_type: str | None = None
+
+    if isinstance(file_input, UploadFile):
+        filename = file_input.filename
+        content_type = file_input.content_type
+        content = await file_input.read()
+    elif isinstance(file_input, bytes):
+        content = file_input
+
+    if not content or len(content) == 0:
+        return None
+
+    # Check if Cloudinary is configured with valid production/dev credentials (not dummy keys)
+    is_cloudinary_configured = bool(
+        CLOUDINARY_CLOUD_NAME
+        and CLOUDINARY_CLOUD_NAME != "geotrack_demo"
+        and CLOUDINARY_API_KEY
+        and CLOUDINARY_API_KEY != "123456789012345"
+    )
+
+    if is_cloudinary_configured:
+        try:
+            if resource_type == "video":
+                res = await upload_video(content, filename=filename, folder=folder)
+            else:
+                res = await upload_image(content, filename=filename, folder=folder)
+            if res and res.get("secure_url"):
+                return res.get("secure_url")
+        except Exception as e:
+            print(f"Cloudinary upload warning: {e}. Storing media file locally...")
+
+    # Fallback to saving file locally on server disk under uploads/
+    return save_local_file(content, filename=filename, folder=folder)
+

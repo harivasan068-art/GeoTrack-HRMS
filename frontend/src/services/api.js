@@ -8,11 +8,23 @@ if (!API_BASE_URL) {
 
 export const getImageUrl = (url) => {
   if (!url || typeof url !== "string") return null;
-  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:") || url.startsWith("blob:")) {
-    return url;
+  const trimmed = url.trim();
+  if (!trimmed) return null;
+
+  // Filter out invalid or empty Base64 data URIs
+  if (trimmed.startsWith("data:")) {
+    const parts = trimmed.split(",");
+    if (parts.length < 2 || !parts[1] || parts[1].trim().length < 30) {
+      return null;
+    }
+    return trimmed;
+  }
+
+  if (trimmed.startsWith("http://") || trimmed.startsWith("https://") || trimmed.startsWith("blob:")) {
+    return trimmed;
   }
   const rootUrl = API_BASE_URL ? API_BASE_URL.replace(/\/api\/?$/, "") : "";
-  const cleanPath = url.startsWith("/") ? url : `/${url}`;
+  const cleanPath = trimmed.startsWith("/") ? trimmed : `/${trimmed}`;
   return `${rootUrl}${cleanPath}`;
 };
 

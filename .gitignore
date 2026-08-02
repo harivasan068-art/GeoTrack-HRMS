@@ -58,6 +58,7 @@ uploads/
 
 # PWA
 dev-dist/
+frontend/dev-dist/
 
 # PostgreSQL
 *.backup

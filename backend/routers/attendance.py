@@ -13,7 +13,7 @@ from models.attendance import Attendance
 from models.company import CompanySettings
 from models.employee import Employee
 from schemas.attendance import AttendanceResponse, CheckInRequest, CheckOutRequest
-from services.cloudinary_service import upload_image, upload_video
+from services.cloudinary_service import process_media_upload, upload_image, upload_video
 
 router = APIRouter()
 
@@ -70,48 +70,45 @@ async def submit_geotag_photo(
 
     # Note: Employees are permitted to submit continuous location & work proof updates throughout the day after initial check-in.
     # 1. Selfie Upload
-    selfie_url = None
-    if photo:
-        try:
-            res = await upload_image(photo, folder="geotrack_hrms/selfies")
-            selfie_url = res.get("secure_url")
-        except Exception:
-            content = await photo.read()
-            mime_type = photo.content_type or "image/jpeg"
-            b64 = base64.b64encode(content).decode("utf-8")
-            selfie_url = f"data:{mime_type};base64,{b64}"
+    selfie_url = await process_media_upload(photo, folder="geotrack_hrms/selfies", resource_type="image")
 
     # 2. Work Photo Upload (Optional)
-    work_photo_url = None
-    if work_photo:
-        try:
-            res = await upload_image(work_photo, folder="geotrack_hrms/work_photos")
-            work_photo_url = res.get("secure_url")
-        except Exception as e:
-            content = await work_photo.read()
-            if content:
-                mime_type = work_photo.content_type or "image/jpeg"
-                b64 = base64.b64encode(content).decode("utf-8")
-                work_photo_url = f"data:{mime_type};base64,{b64}"
+    work_photo_url = await process_media_upload(work_photo, folder="geotrack_hrms/work_photos", resource_type="image")
 
     # 3. Work Video Upload (Optional)
-    work_video_url = None
-    if work_video:
-        try:
-            res = await upload_video(work_video, folder="geotrack_hrms/work_videos")
-            work_video_url = res.get("secure_url")
-        except Exception:
-            content = await work_video.read()
-            if content:
-                mime_type = work_video.content_type or "video/mp4"
-                b64 = base64.b64encode(content).decode("utf-8")
-                work_video_url = f"data:{mime_type};base64,{b64}"
+    work_video_url = await process_media_upload(work_video, folder="geotrack_hrms/work_videos", resource_type="video")
 
     user_agent = request.headers.get("user-agent", "Unknown Device")
     client_ip = request.client.host if request.client else "0.0.0.0"
     is_inside = get_geofence_status(db, latitude, longitude)
     status_label = "Pending Approval" if is_inside else "Pending Approval (Outside Zone)"
     now_local = datetime.now()
+
+    existing_record = (
+        db.query(Attendance)
+        .filter(Attendance.employee_id == current_user.employee_id, Attendance.date == today)
+        .order_by(Attendance.check_in.desc())
+        .first()
+    )
+
+    if existing_record:
+        if selfie_url:
+            existing_record.photo_url = selfie_url
+        if work_photo_url:
+            existing_record.work_photo_url = work_photo_url
+        if work_video_url:
+            existing_record.work_video_url = work_video_url
+        existing_record.latitude = latitude
+        existing_record.longitude = longitude
+        existing_record.location_name = location_name
+        existing_record.address = address or location_name
+        if campaign_name:
+            existing_record.campaign_name = campaign_name
+        existing_record.is_inside_geofence = is_inside
+        existing_record.status = status_label
+        db.commit()
+        db.refresh(existing_record)
+        return existing_record
 
     attendance = Attendance(
         employee_id=current_user.employee_id,
@@ -234,38 +231,15 @@ async def check_out_full(
 
     # Optional Checkout Selfie
     if checkout_selfie:
-        try:
-            res = await upload_image(checkout_selfie, folder="geotrack_hrms/checkout_selfies")
-            attendance.checkout_selfie_url = res.get("secure_url")
-        except Exception:
-            content = await checkout_selfie.read()
-            mime_type = checkout_selfie.content_type or "image/jpeg"
-            b64 = base64.b64encode(content).decode("utf-8")
-            attendance.checkout_selfie_url = f"data:{mime_type};base64,{b64}"
+        attendance.checkout_selfie_url = await process_media_upload(checkout_selfie, folder="geotrack_hrms/checkout_selfies", resource_type="image")
 
     # Optional Checkout Work Photo
     if checkout_work_photo:
-        try:
-            res = await upload_image(checkout_work_photo, folder="geotrack_hrms/checkout_photos")
-            attendance.checkout_work_photo_url = res.get("secure_url")
-        except Exception:
-            content = await checkout_work_photo.read()
-            if content:
-                mime_type = checkout_work_photo.content_type or "image/jpeg"
-                b64 = base64.b64encode(content).decode("utf-8")
-                attendance.checkout_work_photo_url = f"data:{mime_type};base64,{b64}"
+        attendance.checkout_work_photo_url = await process_media_upload(checkout_work_photo, folder="geotrack_hrms/checkout_photos", resource_type="image")
 
     # Optional Checkout Work Video
     if checkout_work_video:
-        try:
-            res = await upload_video(checkout_work_video, folder="geotrack_hrms/checkout_videos")
-            attendance.checkout_work_video_url = res.get("secure_url")
-        except Exception:
-            content = await checkout_work_video.read()
-            if content:
-                mime_type = checkout_work_video.content_type or "video/mp4"
-                b64 = base64.b64encode(content).decode("utf-8")
-                attendance.checkout_work_video_url = f"data:{mime_type};base64,{b64}"
+        attendance.checkout_work_video_url = await process_media_upload(checkout_work_video, folder="geotrack_hrms/checkout_videos", resource_type="video")
 
     # Automatic Working Hours calculation from earliest check-in
     start_dt = first_record.check_in_time or first_record.check_in
