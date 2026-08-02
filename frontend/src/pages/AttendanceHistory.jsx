@@ -50,12 +50,12 @@ const AttendanceHistory = () => {
   };
 
   return (
-    <div className="mx-auto max-w-5xl space-y-6">
+    <div className="mx-auto max-w-5xl space-y-6 font-sans">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-          <FiCalendar className="text-indigo-600 dark:text-indigo-400" /> Attendance Log History
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+          <FiCalendar className="text-orange-600 dark:text-orange-400" /> Attendance Log History
         </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">View and filter your complete site check-in logs</p>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-medium">View and filter your complete site check-in logs</p>
       </div>
 
       <form onSubmit={handleFilter} className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 shadow-sm flex flex-wrap items-end gap-4">
@@ -67,7 +67,7 @@ const AttendanceHistory = () => {
             type="date"
             value={filters.start_date}
             onChange={(e) => setFilters({ ...filters, start_date: e.target.value })}
-            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
           />
         </div>
         <div className="flex-1 min-w-[200px]">
@@ -78,10 +78,10 @@ const AttendanceHistory = () => {
             type="date"
             value={filters.end_date}
             onChange={(e) => setFilters({ ...filters, end_date: e.target.value })}
-            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
           />
         </div>
-        <button type="submit" className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-indigo-700 transition">
+        <button type="submit" className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-orange-700 transition">
           <FiFilter /> Filter Records
         </button>
       </form>
@@ -98,13 +98,13 @@ const AttendanceHistory = () => {
       ) : (
         <div className="space-y-3">
           {records.map((record) => (
-            <div key={record.id} className="rounded-2xl bg-white dark:bg-slate-900 p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-indigo-300 transition">
+            <div key={record.id} className="rounded-2xl bg-white dark:bg-slate-900 p-5 border border-slate-200 dark:border-slate-800 shadow-sm hover:border-orange-300 transition">
               <div className="flex flex-wrap items-center justify-between gap-4">
                 <div>
-                  <p className="font-extrabold text-xs text-slate-900 dark:text-white">{formatDate(record.date)}</p>
+                  <p className="font-extrabold text-xs text-slate-900 dark:text-white font-display">{formatDate(record.date)}</p>
                   {record.location_name && (
-                    <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400">
-                      <FiMapPin className="h-3.5 w-3.5 text-indigo-600 dark:text-indigo-400" />
+                    <div className="mt-1 flex items-center gap-1.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
+                      <FiMapPin className="h-3.5 w-3.5 text-orange-600 dark:text-orange-400" />
                       {record.location_name}
                     </div>
                   )}

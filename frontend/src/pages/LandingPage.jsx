@@ -2,22 +2,21 @@ import { useState } from "react";
 import { Link } from "react-router-dom";
 import {
   FiArrowRight,
-  FiBarChart2,
+  FiAward,
+  FiCalendar,
   FiCamera,
   FiCheckCircle,
   FiChevronDown,
   FiChevronUp,
   FiClock,
-  FiCreditCard,
   FiGlobe,
   FiLock,
   FiMapPin,
   FiShield,
   FiUsers,
 } from "react-icons/fi";
-import Branding from "../components/Branding";
-import Footer from "../components/Footer";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const LandingPage = () => {
   const [openFaq, setOpenFaq] = useState(null);
@@ -25,107 +24,111 @@ const LandingPage = () => {
   const features = [
     {
       icon: FiMapPin,
-      title: "GPS Geofencing Radius Check",
-      description: "Automatic office & client site location validation. Warns employees when outside allowed distance boundaries while preserving submission tracking.",
+      title: "Real-Time GPS Location Validation",
+      description:
+        "Every check-in captures precise latitude, longitude, and reverse-geocoded physical customer addresses to eliminate attendance fraud.",
     },
     {
       icon: FiCamera,
-      title: "Live Camera Selfie Validation",
-      description: "Zero proxy check-ins. Employees capture live selfies with instant retake options and real-time reverse geocoded site address embedding.",
+      title: "Live Selfie Camera Proof",
+      description:
+        "Field staff and employees take live camera selfies during clock-in to verify identity on customer sites.",
     },
     {
       icon: FiShield,
-      title: "Enterprise Approval Console",
-      description: "Excel-style admin approval dashboard with interactive map view, Google Maps markers, remarks input, and one-click Present/Absent actions.",
+      title: "Geofence Radius Boundaries",
+      description:
+        "Configure custom office and site radius perimeters in meters. Out-of-bounds check-ins trigger instant Admin review alerts.",
     },
     {
-      icon: FiCreditCard,
-      title: "Digital Employee ID Cards",
-      description: "Automated digital employee credentials with custom QR codes, department badges, and printable PDF output.",
+      icon: FiUsers,
+      title: "Employee Directory & ID Badges",
+      description:
+        "Auto-generate digital identity credentials with QR codes for fast scanning and exportable printable ID badges.",
     },
     {
       icon: FiLock,
-      title: "Security & Audit Logs",
-      description: "Full audit trail logging for every admin verification, employee profile update, and company branding adjustment.",
+      title: "Immutable Audit Trail Logging",
+      description:
+        "Every approval, rejection, and setting update is stored securely in an audit log for compliance.",
     },
     {
-      icon: FiBarChart2,
+      icon: FiAward,
       title: "Executive Reports & Analytics",
-      description: "Daily, weekly, monthly, and department attendance analytics with Excel, PDF, and print export formats.",
+      description:
+        "Interactive analytics graphs and CSV/Excel exports for department attendance rates and monthly summaries.",
     },
-  ];
-
-  const clients = [
-    "Apex Global Tech",
-    "Nexus Enterprises",
-    "Kinetix Systems",
-    "Vanguard Logistics",
-    "Horizon Healthcare",
   ];
 
   const testimonials = [
     {
-      quote: "GeoTrack HRMS transformed our multi-site workforce attendance. The live selfie verification and Excel approval console cut our monthly HR review time by 80%.",
-      author: "Marcus Vance",
-      role: "VP of People Operations",
-      company: "Kinetix Global",
+      quote:
+        "GeoTrack HRMS reduced our remote team proxy attendance to zero. The live selfie proof and GPS maps give us total transparency across 20+ field sites.",
+      author: "Sarah Jenkins",
+      role: "VP of Human Resources",
+      company: "Apex Tech Solutions",
     },
     {
-      quote: "The GPS geofencing warning and interactive map view give our management 100% confidence in field employee site verification.",
-      author: "Elena Rostova",
-      role: "Head of Operations",
-      company: "Vanguard Logistics",
+      quote:
+        "The automated geofence alerts and one-click Excel reports saved our HR operations team over 15 hours of manual verification every week.",
+      author: "Marcus Vance",
+      role: "Chief Operations Officer",
+      company: "Vanguard Logistics Inc.",
     },
   ];
 
   const faqs = [
     {
-      q: "Can employees mark themselves as 'Present' directly?",
-      a: "No. In accordance with enterprise HR guidelines, every employee submission enters 'Pending Approval'. Only authorized Admins can review the selfie & GPS location proof to grant 'Present' or 'Absent' status.",
+      q: "How does GPS Geofencing work during employee check-in?",
+      a: "When an employee clicks 'Mark Attendance', GeoTrack requests current browser location. It measures the exact distance in meters from your configured office or customer site location. If outside the allowed radius, it flags the request for Admin verification.",
     },
     {
-      q: "What happens if an employee is outside the permitted geofence radius?",
-      a: "The system displays a clear warning ('You are outside the permitted attendance area'). However, the employee is still allowed to submit their attendance as 'Outside Zone' for Admin review and approval.",
+      q: "Can employees upload pre-saved photos for selfie proof?",
+      a: "No, GeoTrack activates live camera capture directly within the app viewfinder to ensure real-time photo authenticity.",
     },
     {
-      q: "How does the dynamic white-label branding work?",
-      a: "Admins can update the Company Name, Logo, Theme Color, Office Address, and Geofence Radius in Company Settings. The entire HRMS updates instantly across all portals.",
-    },
-    {
-      q: "Is the Digital Employee ID Card printable?",
-      a: "Yes! Every employee has a Digital ID Card with a custom QR code, department badge, and one-click PDF print button.",
+      q: "Is GeoTrack mobile-friendly for field workers?",
+      a: "Yes! GeoTrack is built as a Progressive Web App (PWA) optimized for mobile smartphones, tablets, and desktop computers.",
     },
   ];
 
+  const clients = [
+    "Apex Global",
+    "Nexus Enterprises",
+    "Starlight Media",
+    "Vanguard Logistics",
+    "Zenith Healthcare",
+  ];
+
   return (
-    <div className="flex min-h-screen flex-col bg-slate-950 font-sans text-slate-100">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <Navbar />
 
       {/* Hero Section */}
-      <section className="relative overflow-hidden bg-gradient-to-b from-slate-900 via-slate-950 to-slate-950 pt-20 pb-28">
-        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-indigo-600/20 blur-3xl" />
-        <div className="absolute top-1/3 right-10 h-72 w-72 rounded-full bg-purple-600/20 blur-3xl" />
+      <section className="relative overflow-hidden bg-white dark:bg-slate-900 pt-20 pb-28 border-b border-slate-200 dark:border-slate-800">
+        <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 h-96 w-96 rounded-full bg-orange-500/10 blur-3xl pointer-events-none" />
+        <div className="absolute top-1/3 right-10 h-72 w-72 rounded-full bg-amber-500/10 blur-3xl pointer-events-none" />
 
         <div className="relative mx-auto max-w-7xl px-4 text-center sm:px-6 lg:px-8">
-          <div className="inline-flex items-center gap-2 rounded-full bg-indigo-500/10 px-4 py-1.5 text-xs font-semibold text-indigo-400 border border-indigo-500/20 mb-6">
-            <FiShield className="h-4 w-4" /> Next-Generation Workforce & Attendance Platform
+          <div className="inline-flex items-center gap-2 rounded-full bg-orange-50 dark:bg-orange-950/50 px-4 py-1.5 text-xs font-bold text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800 mb-6 shadow-sm font-mono">
+            <FiShield className="h-4 w-4" /> Enterprise Geofence & Attendance Platform
           </div>
 
-          <h1 className="text-4xl font-extrabold tracking-tight text-white sm:text-6xl lg:text-7xl">
+          <h1 className="text-4xl font-black tracking-tight text-slate-900 dark:text-white sm:text-6xl lg:text-7xl font-display">
             Enterprise Workforce Management with <br />
-            <span className="bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 bg-clip-text text-transparent">
               GPS Geofencing & Live Selfie Proof
             </span>
           </h1>
 
-          <p className="mx-auto mt-6 max-w-3xl text-lg text-slate-300 sm:text-xl leading-relaxed">
+          <p className="mx-auto mt-6 max-w-3xl text-base sm:text-lg text-slate-600 dark:text-slate-300 font-medium leading-relaxed">
             Eliminate proxy attendance and streamline HR operations. Empower your enterprise with real-time location validation, camera selfie proof, interactive map inspection, and automated audit logging.
           </p>
 
-          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
+          <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row font-sans">
             <Link
               to="/login"
-              className="inline-flex items-center gap-2 rounded-xl bg-gradient-to-r from-indigo-600 to-purple-600 px-7 py-3.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:scale-105"
+              className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-8 py-4 text-sm font-bold text-white shadow-lg shadow-orange-600/30 transition hover:bg-orange-700 hover:scale-105"
             >
               Employee Attendance Portal
               <FiArrowRight className="h-4 w-4" />
@@ -133,20 +136,20 @@ const LandingPage = () => {
 
             <Link
               to="/admin/login"
-              className="inline-flex items-center gap-2 rounded-xl bg-slate-900 border border-slate-700 px-6 py-3.5 text-sm font-semibold text-slate-200 backdrop-blur-md transition hover:bg-slate-800"
+              className="inline-flex items-center gap-2 rounded-2xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-7 py-4 text-sm font-bold text-slate-800 dark:text-slate-200 shadow-sm transition hover:bg-slate-100 dark:hover:bg-slate-700"
             >
               Admin Command Console
             </Link>
           </div>
 
           {/* Trusted Companies Bar */}
-          <div className="mt-16 border-t border-slate-800/80 pt-10">
-            <p className="text-xs font-semibold uppercase tracking-wider text-slate-500 mb-6">
-              Trusted by leading enterprises & multi-site operational teams
+          <div className="mt-16 border-t border-slate-200 dark:border-slate-800 pt-10 font-sans">
+            <p className="text-xs font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 mb-6 font-mono">
+              Trusted by leading enterprise & multi-site operational teams
             </p>
-            <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-bold text-slate-400">
+            <div className="flex flex-wrap items-center justify-center gap-8 text-sm font-extrabold text-slate-500 dark:text-slate-400 font-display">
               {clients.map((c, i) => (
-                <span key={i} className="hover:text-slate-200 transition">
+                <span key={i} className="hover:text-orange-600 transition">
                   {c}
                 </span>
               ))}
@@ -156,12 +159,12 @@ const LandingPage = () => {
       </section>
 
       {/* Key Enterprise Features Grid */}
-      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-900/40 border-y border-slate-800/80">
+      <section className="py-24 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-950 border-b border-slate-200 dark:border-slate-800 font-sans">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
-            <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Enterprise Core Capabilities</span>
-            <h2 className="mt-2 text-3xl font-bold text-white sm:text-4xl">Built for High-Growth Organizations</h2>
-            <p className="mt-3 text-slate-400 text-sm">
+            <span className="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 font-mono">Enterprise Core Capabilities</span>
+            <h2 className="mt-2 text-3xl font-black text-slate-900 dark:text-white sm:text-4xl font-display">Built for High-Growth Organizations</h2>
+            <p className="mt-3 text-slate-500 dark:text-slate-400 text-sm font-medium">
               Comprehensive HRMS modules engineered for security, precision, and ease of use.
             </p>
           </div>
@@ -170,13 +173,13 @@ const LandingPage = () => {
             {features.map((f, idx) => (
               <div
                 key={idx}
-                className="group rounded-2xl bg-slate-900 p-8 border border-slate-800/80 transition duration-300 hover:-translate-y-1 hover:border-slate-700 hover:shadow-2xl"
+                className="group rounded-3xl bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 transition duration-300 hover:-translate-y-1 hover:border-orange-300 dark:hover:border-orange-500 shadow-sm hover:shadow-md"
               >
-                <div className="mb-5 inline-flex rounded-xl bg-indigo-500/10 p-3.5 text-indigo-400 shadow-md">
+                <div className="mb-5 inline-flex rounded-2xl bg-orange-50 dark:bg-orange-950/50 p-3.5 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800 shadow-sm">
                   <f.icon className="h-6 w-6" />
                 </div>
-                <h3 className="text-xl font-bold text-white group-hover:text-indigo-400 transition">{f.title}</h3>
-                <p className="mt-3 text-sm text-slate-400 leading-relaxed">{f.description}</p>
+                <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-orange-600 dark:group-hover:text-orange-400 transition font-display">{f.title}</h3>
+                <p className="mt-3 text-sm text-slate-500 dark:text-slate-400 leading-relaxed font-medium">{f.description}</p>
               </div>
             ))}
           </div>
@@ -184,20 +187,20 @@ const LandingPage = () => {
       </section>
 
       {/* Testimonials */}
-      <section className="py-20 px-4 sm:px-6 lg:px-8">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-slate-900 border-b border-slate-200 dark:border-slate-800 font-sans">
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
-            <span className="text-xs font-bold uppercase tracking-wider text-purple-400">Client Reviews</span>
-            <h2 className="mt-2 text-3xl font-bold text-white">What HR Leaders Say</h2>
+            <span className="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 font-mono">Client Reviews</span>
+            <h2 className="mt-2 text-3xl font-black text-slate-900 dark:text-white font-display">What HR Leaders Say</h2>
           </div>
 
           <div className="mt-12 grid gap-8 md:grid-cols-2">
             {testimonials.map((t, idx) => (
-              <div key={idx} className="rounded-2xl bg-slate-900 p-8 border border-slate-800 space-y-4">
-                <p className="text-sm text-slate-300 italic leading-relaxed">"{t.quote}"</p>
-                <div className="pt-4 border-t border-slate-800">
-                  <div className="font-bold text-white text-sm">{t.author}</div>
-                  <div className="text-xs text-indigo-400">{t.role} &bull; {t.company}</div>
+              <div key={idx} className="rounded-3xl bg-slate-50 dark:bg-slate-950 p-8 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
+                <p className="text-sm text-slate-700 dark:text-slate-300 italic leading-relaxed font-medium">"{t.quote}"</p>
+                <div className="pt-4 border-t border-slate-200 dark:border-slate-800">
+                  <div className="font-extrabold text-slate-900 dark:text-white text-sm font-display">{t.author}</div>
+                  <div className="text-xs font-bold text-orange-600 dark:text-orange-400 font-mono mt-0.5">{t.role} &bull; {t.company}</div>
                 </div>
               </div>
             ))}
@@ -206,25 +209,25 @@ const LandingPage = () => {
       </section>
 
       {/* FAQ Accordion */}
-      <section className="bg-slate-900/60 py-20 px-4 sm:px-6 lg:px-8 border-t border-slate-800">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-slate-950 font-sans">
         <div className="mx-auto max-w-4xl">
           <div className="text-center">
-            <span className="text-xs font-bold uppercase tracking-wider text-emerald-400">Got Questions?</span>
-            <h2 className="mt-2 text-3xl font-bold text-white">Frequently Asked Questions</h2>
+            <span className="text-xs font-bold uppercase tracking-wider text-emerald-600 dark:text-emerald-400 font-mono">Got Questions?</span>
+            <h2 className="mt-2 text-3xl font-black text-slate-900 dark:text-white font-display">Frequently Asked Questions</h2>
           </div>
 
           <div className="mt-10 space-y-4">
             {faqs.map((faq, idx) => (
-              <div key={idx} className="rounded-2xl bg-slate-950 border border-slate-800 overflow-hidden">
+              <div key={idx} className="rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full flex items-center justify-between p-5 text-left text-sm font-bold text-white hover:bg-slate-900 transition"
+                  className="w-full flex items-center justify-between p-6 text-left text-sm font-extrabold text-slate-900 dark:text-white hover:bg-slate-50 dark:hover:bg-slate-800/40 transition font-display"
                 >
                   <span>{faq.q}</span>
-                  {openFaq === idx ? <FiChevronUp className="h-5 w-5 text-indigo-400" /> : <FiChevronDown className="h-5 w-5 text-slate-500" />}
+                  {openFaq === idx ? <FiChevronUp className="h-5 w-5 text-orange-600 dark:text-orange-400" /> : <FiChevronDown className="h-5 w-5 text-slate-400" />}
                 </button>
                 {openFaq === idx && (
-                  <div className="p-5 pt-0 text-xs text-slate-400 border-t border-slate-900 leading-relaxed">
+                  <div className="p-6 pt-0 text-xs text-slate-600 dark:text-slate-400 border-t border-slate-100 dark:border-slate-800 leading-relaxed font-medium">
                     {faq.a}
                   </div>
                 )}
@@ -235,17 +238,17 @@ const LandingPage = () => {
       </section>
 
       {/* Call to Action */}
-      <section className="bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-900 py-16 px-4 sm:px-6 lg:px-8">
+      <section className="bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 py-16 px-4 sm:px-6 lg:px-8 text-white font-sans shadow-xl">
         <div className="mx-auto max-w-5xl text-center">
-          <h2 className="text-3xl font-bold text-white">Ready to Upgrade Your Enterprise HR Operations?</h2>
-          <p className="mt-3 text-slate-300 text-sm">
+          <h2 className="text-3xl font-black text-white font-display tracking-tight">Ready to Upgrade Your Enterprise HR Operations?</h2>
+          <p className="mt-3 text-orange-100 text-sm font-medium">
             Experience real-time GPS geofence tracking, live camera selfie validation, and automated audit trails.
           </p>
-          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link to="/login" className="rounded-xl bg-white px-7 py-3 text-sm font-bold text-slate-900 hover:bg-slate-100 transition shadow-lg">
+          <div className="mt-8 flex flex-col items-center justify-center gap-4 sm:flex-row font-sans">
+            <Link to="/login" className="rounded-2xl bg-white px-8 py-3.5 text-xs font-extrabold text-orange-700 hover:bg-slate-50 transition shadow-lg tracking-wide">
               Employee Portal Login
             </Link>
-            <Link to="/admin/login" className="rounded-xl bg-indigo-600 px-7 py-3 text-sm font-bold text-white hover:bg-indigo-500 transition shadow-lg">
+            <Link to="/admin/login" className="rounded-2xl bg-slate-900 px-8 py-3.5 text-xs font-extrabold text-white hover:bg-slate-800 transition shadow-lg tracking-wide">
               Admin Portal Sign-In
             </Link>
           </div>

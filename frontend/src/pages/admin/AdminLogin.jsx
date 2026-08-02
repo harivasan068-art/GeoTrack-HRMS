@@ -37,68 +37,68 @@ const AdminLogin = () => {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-slate-900 via-slate-800 to-primary-900 px-4">
+    <div className="flex min-h-screen items-center justify-center bg-slate-50 dark:bg-slate-950 px-4 transition-colors duration-300 font-sans">
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-primary-600 text-white">
+          <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-3xl bg-orange-600 text-white shadow-xl shadow-orange-600/30">
             <FiShield className="h-8 w-8" />
           </div>
-          <h1 className="text-2xl font-bold text-white">Admin Login</h1>
-          <p className="mt-1 text-sm text-slate-400">Access the admin dashboard</p>
+          <h1 className="text-3xl font-extrabold text-slate-900 dark:text-white font-display">HR Admin Console</h1>
+          <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 font-medium">Access executive attendance controls & approval sheet</p>
         </div>
 
-        <div className="rounded-xl border border-slate-700 bg-slate-800 p-8 shadow-xl">
+        <div className="rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-300">
-                Email
+              <label className="mb-1.5 block text-xs font-bold text-slate-700 dark:text-slate-300">
+                Admin Email
               </label>
               <div className="relative">
-                <FiMail className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <FiMail className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   type="email"
                   name="email"
                   value={formData.email}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-2.5 pl-10 text-sm text-white placeholder-slate-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
-                  placeholder="admin@company.com"
+                  className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 pl-10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
+                  placeholder="admin@geotrack.com"
                   required
                 />
               </div>
             </div>
 
             <div>
-              <label className="mb-1.5 block text-sm font-medium text-slate-300">
-                Password
+              <label className="mb-1.5 block text-xs font-bold text-slate-700 dark:text-slate-300">
+                Admin Password
               </label>
               <div className="relative">
-                <FiLock className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-500" />
+                <FiLock className="absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-slate-400" />
                 <input
                   type={showPassword ? "text" : "password"}
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
-                  className="w-full rounded-lg border border-slate-600 bg-slate-700 px-4 py-2.5 pl-10 pr-10 text-sm text-white placeholder-slate-400 focus:border-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-500/20"
+                  className="w-full rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 px-4 py-2.5 pl-10 pr-10 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                   placeholder="Enter admin password"
                   required
                 />
                 <button
                   type="button"
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-500 hover:text-slate-300"
+                  className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 dark:hover:text-slate-300"
                 >
                   {showPassword ? <FiEyeOff className="h-4 w-4" /> : <FiEye className="h-4 w-4" />}
                 </button>
               </div>
             </div>
 
-            <button type="submit" disabled={loading} className="btn-primary w-full">
-              {loading ? <LoadingSpinner size="sm" /> : "Login as Admin"}
+            <button type="submit" disabled={loading} className="w-full rounded-2xl bg-orange-600 px-6 py-3 text-xs font-extrabold text-white shadow-md shadow-orange-600/20 hover:bg-orange-700 transition disabled:opacity-60 font-sans tracking-wide">
+              {loading ? <LoadingSpinner size="sm" /> : "Sign In to Admin Console"}
             </button>
           </form>
 
-          <p className="mt-6 text-center text-sm text-slate-400">
-            <Link to="/" className="font-semibold text-primary-400 hover:text-primary-300">
+          <p className="mt-6 text-center text-xs text-slate-500 dark:text-slate-400 font-medium">
+            <Link to="/" className="font-extrabold text-orange-600 dark:text-orange-400 hover:underline">
               Back to Home
             </Link>
           </p>

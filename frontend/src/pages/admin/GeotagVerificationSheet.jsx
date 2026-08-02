@@ -170,15 +170,15 @@ const GeotagVerificationSheet = () => {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <FiGrid className="text-indigo-600 dark:text-indigo-400" /> Attendance Requests Approval Console
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+            <FiGrid className="text-orange-600 dark:text-orange-400" /> Attendance Requests Approval Console
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-medium">
             Inspect live selfies, interactive maps, and GPS geofence status. Admins decide and grant <strong>Present</strong> or <strong>Absent</strong>.
           </p>
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 font-sans">
           <button
             onClick={fetchSheetData}
             className="inline-flex items-center gap-2 rounded-2xl bg-white dark:bg-slate-800 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700 shadow-sm"
@@ -195,7 +195,7 @@ const GeotagVerificationSheet = () => {
       </div>
 
       {/* Filter & Search Bar */}
-      <div className="flex flex-col gap-4 rounded-3xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between shadow-sm">
+      <div className="flex flex-col gap-4 rounded-3xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 sm:flex-row sm:items-center sm:justify-between shadow-sm font-sans">
         <div className="relative flex-1 max-w-md">
           <FiSearch className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 h-4 w-4" />
           <input
@@ -203,7 +203,7 @@ const GeotagVerificationSheet = () => {
             placeholder="Search by employee name, ID, or department..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
-            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
           />
         </div>
 
@@ -217,7 +217,7 @@ const GeotagVerificationSheet = () => {
               onClick={() => setStatusFilter(st)}
               className={`rounded-xl px-3 py-1.5 text-xs font-extrabold uppercase tracking-wider transition ${
                 statusFilter === st
-                  ? "bg-indigo-600 text-white shadow-sm"
+                  ? "bg-orange-600 text-white shadow-sm"
                   : "bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 hover:bg-slate-200 dark:hover:bg-slate-800"
               }`}
             >
@@ -273,8 +273,8 @@ const GeotagVerificationSheet = () => {
                           }}
                         />
                         <div>
-                          <div className="font-extrabold text-slate-900 dark:text-white">{item.full_name}</div>
-                          <div className="font-mono text-[11px] font-bold text-indigo-600 dark:text-indigo-400">{item.employee_id} &bull; {item.department}</div>
+                          <div className="font-extrabold text-slate-900 dark:text-white font-display">{item.full_name}</div>
+                          <div className="font-mono text-[11px] font-bold text-orange-600 dark:text-orange-400">{item.employee_id} &bull; {item.department}</div>
                         </div>
                       </div>
                     </td>
@@ -293,7 +293,7 @@ const GeotagVerificationSheet = () => {
                               setSelectedRequest(item);
                               setRemarksInput(item.remarks || "");
                             }}
-                            className="group flex items-center gap-2 rounded-xl bg-slate-50 dark:bg-slate-950 p-1 border border-slate-200 dark:border-slate-800 hover:border-indigo-500 transition"
+                            className="group flex items-center gap-2 rounded-xl bg-slate-50 dark:bg-slate-950 p-1 border border-slate-200 dark:border-slate-800 hover:border-orange-500 transition"
                           >
                             <img
                               src={getImageUrl(item.photo_url) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80"}
@@ -304,7 +304,7 @@ const GeotagVerificationSheet = () => {
                                 e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80";
                               }}
                             />
-                            <span className="text-[11px] font-bold text-indigo-600 dark:text-indigo-400 group-hover:underline flex items-center gap-1 pr-1">
+                            <span className="text-[11px] font-bold text-orange-600 dark:text-orange-400 group-hover:underline flex items-center gap-1 pr-1 font-sans">
                               <FiEye /> Inspect
                             </span>
                           </button>
@@ -405,8 +405,8 @@ const GeotagVerificationSheet = () => {
                 }}
               />
               <div>
-                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white">{selectedRequest.full_name}</h3>
-                <div className="text-xs text-indigo-600 dark:text-indigo-400 font-mono font-bold">
+                <h3 className="text-lg font-extrabold text-slate-900 dark:text-white font-display">{selectedRequest.full_name}</h3>
+                <div className="text-xs text-orange-600 dark:text-orange-400 font-mono font-bold">
                   ID: {selectedRequest.employee_id} &bull; {selectedRequest.designation} ({selectedRequest.department})
                 </div>
               </div>
@@ -416,12 +416,12 @@ const GeotagVerificationSheet = () => {
             <div className="grid gap-6 md:grid-cols-2">
               {/* Large Selfie */}
               <div>
-                <div className="flex items-center justify-between mb-2">
+                <div className="flex items-center justify-between mb-2 font-sans">
                   <span className="text-xs font-bold text-slate-500 dark:text-slate-400">Live Captured Selfie Proof:</span>
                   {selectedRequest.photo_url && (
                     <button
                       onClick={() => downloadPhoto(selectedRequest.photo_url, selectedRequest.full_name, selectedRequest.employee_id)}
-                      className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-3 py-1 text-xs font-bold text-white shadow hover:bg-indigo-700 transition"
+                      className="inline-flex items-center gap-1.5 rounded-xl bg-orange-600 px-3 py-1 text-xs font-bold text-white shadow hover:bg-orange-700 transition"
                       title="Download photo to device"
                     >
                       <FiDownload className="h-3.5 w-3.5" /> Save Photo
@@ -441,7 +441,7 @@ const GeotagVerificationSheet = () => {
                   {selectedRequest.photo_url && (
                     <button
                       onClick={() => downloadPhoto(selectedRequest.photo_url, selectedRequest.full_name, selectedRequest.employee_id)}
-                      className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-2xl bg-slate-900/90 backdrop-blur px-3 py-2 text-xs font-bold text-white border border-slate-700 shadow-xl hover:bg-indigo-600 transition"
+                      className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-2xl bg-slate-900/90 backdrop-blur px-3 py-2 text-xs font-bold text-white border border-slate-700 shadow-xl hover:bg-orange-600 transition font-sans"
                     >
                       <FiDownload className="h-4 w-4" /> Download Photo to Device
                     </button>
@@ -451,7 +451,7 @@ const GeotagVerificationSheet = () => {
 
               {/* Interactive Map Component */}
               <div>
-                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-2">GPS Location & Geofence Map:</span>
+                <span className="text-xs font-bold text-slate-500 dark:text-slate-400 block mb-2 font-sans">GPS Location & Geofence Map:</span>
                 <InteractiveMap
                   latitude={selectedRequest.latitude}
                   longitude={selectedRequest.longitude}
@@ -464,10 +464,10 @@ const GeotagVerificationSheet = () => {
             </div>
 
             {/* Device & Submission Details */}
-            <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 grid gap-3 sm:grid-cols-3 text-xs">
+            <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 grid gap-3 sm:grid-cols-3 text-xs font-sans">
               <div>
                 <span className="text-slate-500 dark:text-slate-400 font-bold">Submission Timestamp:</span>
-                <div className="font-bold text-slate-900 dark:text-white mt-0.5">{selectedRequest.check_in ? new Date(selectedRequest.check_in).toLocaleString() : "N/A"}</div>
+                <div className="font-bold font-mono text-slate-900 dark:text-white mt-0.5">{selectedRequest.check_in ? new Date(selectedRequest.check_in).toLocaleString() : "N/A"}</div>
               </div>
               <div>
                 <span className="text-slate-500 dark:text-slate-400 flex items-center gap-1 font-bold"><FiSmartphone /> Device / Client:</span>
@@ -475,19 +475,19 @@ const GeotagVerificationSheet = () => {
               </div>
               <div>
                 <span className="text-slate-500 dark:text-slate-400 font-bold">IP Address:</span>
-                <div className="font-mono font-bold text-indigo-600 dark:text-indigo-300 mt-0.5">{selectedRequest.ip_address || "N/A"}</div>
+                <div className="font-mono font-bold text-orange-600 dark:text-orange-400 mt-0.5">{selectedRequest.ip_address || "N/A"}</div>
               </div>
             </div>
 
             {/* Admin Remarks Input Box */}
-            <div>
+            <div className="font-sans">
               <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Admin Remarks / Approval Reason</label>
               <textarea
                 rows={2}
                 placeholder="Enter approval or rejection remarks for audit log..."
                 value={remarksInput}
                 onChange={(e) => setRemarksInput(e.target.value)}
-                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
               />
             </div>
 

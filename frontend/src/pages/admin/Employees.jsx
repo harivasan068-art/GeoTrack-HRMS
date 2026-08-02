@@ -78,17 +78,17 @@ const Employees = () => {
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <FiUsers className="text-indigo-600 dark:text-indigo-400" /> Employee Directory & Account Management
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+            <FiUsers className="text-orange-600 dark:text-orange-400" /> Employee Directory & Account Management
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-medium">
             Manage organization members, register new employees, view profile details, and delete accounts.
           </p>
         </div>
 
         <button
           onClick={() => setIsAddModalOpen(true)}
-          className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-5 py-2.5 text-xs font-bold text-white shadow-md transition hover:bg-indigo-700"
+          className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-orange-600/20 transition hover:bg-orange-700 font-sans"
         >
           <FiUserPlus className="h-4 w-4" /> Register Employee
         </button>
@@ -110,15 +110,15 @@ const Employees = () => {
       {/* Add Employee Modal */}
       {isAddModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 dark:bg-slate-950/80 p-4 backdrop-blur-sm overflow-y-auto">
-          <div className="relative max-w-lg w-full rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6 shadow-2xl my-8 text-slate-900 dark:text-slate-200">
+          <div className="relative max-w-lg w-full rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6 shadow-2xl my-8 text-slate-900 dark:text-slate-200 font-sans">
             <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
               <div className="flex items-center gap-3">
-                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+                <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
                   <FiUserPlus className="h-5 w-5" />
                 </div>
                 <div>
-                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white">Register New Employee</h3>
-                  <p className="text-xs text-slate-500 dark:text-slate-400">Create employee profile and auto-generate Employee ID</p>
+                  <h3 className="text-base font-extrabold text-slate-900 dark:text-white font-display">Register New Employee</h3>
+                  <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Create employee profile and auto-generate Employee ID</p>
                 </div>
               </div>
               <button
@@ -129,7 +129,7 @@ const Employees = () => {
               </button>
             </div>
 
-            <form onSubmit={handleCreateSubmit} className="space-y-4 text-xs">
+            <form onSubmit={handleCreateSubmit} className="space-y-4 text-xs font-sans">
               <div>
                 <label className="mb-1 block font-bold text-slate-700 dark:text-slate-300">Full Name</label>
                 <div className="relative">
@@ -139,7 +139,7 @@ const Employees = () => {
                     required
                     value={newEmp.full_name}
                     onChange={(e) => setNewEmp({ ...newEmp, full_name: e.target.value })}
-                    className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                    className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                     placeholder="John Architect"
                   />
                 </div>
@@ -154,7 +154,7 @@ const Employees = () => {
                     required
                     value={newEmp.email}
                     onChange={(e) => setNewEmp({ ...newEmp, email: e.target.value })}
-                    className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                    className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                     placeholder="john.architect@geotrack.com"
                   />
                 </div>
@@ -170,7 +170,7 @@ const Employees = () => {
                       required
                       value={newEmp.phone}
                       onChange={(e) => setNewEmp({ ...newEmp, phone: e.target.value })}
-                      className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                      className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                       placeholder="+1-555-0199"
                     />
                   </div>
@@ -185,7 +185,7 @@ const Employees = () => {
                       required
                       value={newEmp.password}
                       onChange={(e) => setNewEmp({ ...newEmp, password: e.target.value })}
-                      className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                      className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                       placeholder="password123"
                     />
                   </div>
@@ -200,7 +200,7 @@ const Employees = () => {
                     required
                     value={newEmp.department}
                     onChange={(e) => setNewEmp({ ...newEmp, department: e.target.value })}
-                    className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                    className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                     placeholder="Software Engineering"
                   />
                 </div>
@@ -212,7 +212,7 @@ const Employees = () => {
                     required
                     value={newEmp.designation}
                     onChange={(e) => setNewEmp({ ...newEmp, designation: e.target.value })}
-                    className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                    className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                     placeholder="Senior Developer"
                   />
                 </div>
@@ -229,7 +229,7 @@ const Employees = () => {
                 <button
                   type="submit"
                   disabled={createLoading}
-                  className="rounded-2xl bg-indigo-600 px-6 py-2.5 font-bold text-white shadow-md hover:bg-indigo-700 disabled:opacity-50 transition"
+                  className="rounded-2xl bg-orange-600 px-6 py-2.5 font-bold text-white shadow-md hover:bg-orange-700 disabled:opacity-50 transition"
                 >
                   {createLoading ? <LoadingSpinner size="sm" /> : "Create Employee Account"}
                 </button>

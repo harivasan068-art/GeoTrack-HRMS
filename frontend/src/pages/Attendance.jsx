@@ -248,13 +248,13 @@ const Attendance = () => {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8">
+    <div className="mx-auto max-w-4xl space-y-8 font-sans">
       {/* Page Header */}
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-          <FiCamera className="text-indigo-600 dark:text-indigo-400" /> Continuous Field Geotag Check-Ins
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+          <FiCamera className="text-orange-600 dark:text-orange-400" /> Continuous Field Geotag Check-Ins
         </h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400">
+        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 font-medium">
           Submit location check-ins continuously for customer requests throughout the day. All submissions are sent to Admin for verification.
         </p>
       </div>
@@ -262,10 +262,10 @@ const Attendance = () => {
       {/* Geotag Submission Form */}
       <form onSubmit={handleSubmitAttendance} className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-6 shadow-sm dark:shadow-2xl">
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <FiPlusCircle className="text-indigo-600 dark:text-indigo-400" /> Mark New Customer Location Check-In
+          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+            <FiPlusCircle className="text-orange-600 dark:text-orange-400" /> Mark New Customer Location Check-In
           </h2>
-          <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400 bg-indigo-50 dark:bg-indigo-950/50 px-3 py-1 rounded-full border border-indigo-200 dark:border-indigo-800">
+          <span className="text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 px-3 py-1 rounded-full border border-orange-200 dark:border-orange-800 font-mono">
             Continuous Site Visit Tracker
           </span>
         </div>
@@ -279,17 +279,17 @@ const Attendance = () => {
             value={locationName}
             onChange={(e) => setLocationName(e.target.value)}
             placeholder="e.g. Client Site Visit - Zenith Corp"
-            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/20 font-medium"
+            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 font-medium"
           />
         </div>
 
         {/* Geofence Warning Banner */}
         {!isInsideGeofence && (
-          <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/30 p-4 border border-amber-200 dark:border-amber-800 flex items-start gap-3">
+          <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/30 p-4 border border-amber-200 dark:border-amber-800 flex items-start gap-3 font-sans">
             <FiAlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
             <div className="text-xs">
               <div className="font-bold text-amber-800 dark:text-amber-300">You are outside the main office geofence ({geofenceDistance}m away).</div>
-              <div className="text-amber-700 dark:text-amber-200/80 mt-0.5">
+              <div className="text-amber-700 dark:text-amber-200/80 mt-0.5 font-medium">
                 Your customer site check-in will be flagged as <strong>'Outside Allowed Zone'</strong> for Admin review.
               </div>
             </div>
@@ -309,17 +309,17 @@ const Attendance = () => {
         )}
 
         {/* Live Camera Viewfinder & Selfie Capture */}
-        <div className="space-y-3">
+        <div className="space-y-3 font-sans">
           <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Capture Site Live Selfie</label>
 
           {cameraActive ? (
-            <div className="relative rounded-2xl overflow-hidden bg-black border-2 border-indigo-500 max-w-sm mx-auto shadow-lg">
+            <div className="relative rounded-2xl overflow-hidden bg-black border-2 border-orange-500 max-w-sm mx-auto shadow-lg">
               <video ref={videoRef} autoPlay playsInline className="h-64 w-full object-cover" />
               <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
                 <button
                   type="button"
                   onClick={capturePhoto}
-                  className="rounded-full bg-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-indigo-500 transition"
+                  className="rounded-full bg-orange-600 px-6 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-orange-700 transition"
                 >
                   Take Photo
                 </button>
@@ -334,60 +334,42 @@ const Attendance = () => {
             </div>
           ) : capturedImage ? (
             <div className="space-y-3 text-center">
-              <img src={capturedImage} alt="Captured Selfie" className="h-56 w-56 object-cover rounded-2xl mx-auto border-2 border-indigo-500 shadow-md" />
+              <img src={capturedImage} alt="Captured Selfie" className="h-56 w-56 object-cover rounded-2xl mx-auto border-2 border-orange-500 shadow-md" />
               <button
                 type="button"
                 onClick={startCamera}
-                className="inline-flex items-center gap-2 text-xs font-bold text-indigo-600 dark:text-indigo-400 hover:underline"
+                className="inline-flex items-center gap-2 rounded-2xl bg-slate-100 dark:bg-slate-800 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
               >
-                <FiRefreshCw /> Retake Live Selfie
+                <FiRefreshCw /> Retake Photo
               </button>
             </div>
           ) : (
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 rounded-2xl border-2 border-dashed border-slate-300 dark:border-slate-800 bg-slate-50 dark:bg-slate-950 p-6 text-center">
-              <button
-                type="button"
-                onClick={startCamera}
-                className="inline-flex items-center gap-2 rounded-xl bg-indigo-600 px-5 py-3 text-xs font-bold text-white shadow-md hover:bg-indigo-700 transition"
-              >
-                <FiCamera className="h-4 w-4" /> Open Camera & Capture Selfie
-              </button>
-
-              <span className="text-xs font-semibold text-slate-400">or</span>
-
-              <label className="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-white dark:bg-slate-800 border border-slate-300 dark:border-slate-700 px-5 py-3 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition shadow-sm">
-                Upload Photo File
-                <input type="file" accept="image/*" onChange={handleFileSelect} className="hidden" />
-              </label>
-            </div>
+            <button
+              type="button"
+              onClick={startCamera}
+              className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-5 py-3 text-xs font-bold text-white shadow-md shadow-orange-600/20 hover:bg-orange-700 transition"
+            >
+              <FiCamera className="h-4 w-4" /> Open Camera & Capture Photo
+            </button>
           )}
         </div>
 
-        <canvas ref={canvasRef} className="hidden" />
-
-        {/* Submit Attendance */}
+        {/* Submit Attendance Button */}
         <button
           type="submit"
-          disabled={submitting || !selectedFile}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3.5 text-sm font-bold text-white shadow-md hover:bg-indigo-700 transition disabled:opacity-40"
+          disabled={submitting}
+          className="w-full rounded-2xl bg-orange-600 py-3.5 text-xs font-extrabold text-white shadow-md shadow-orange-600/20 hover:bg-orange-700 transition disabled:opacity-60 font-sans tracking-wide"
         >
-          {submitting ? (
-            <>
-              <LoadingSpinner size="sm" /> Submitting Site Check-In...
-            </>
-          ) : (
-            <>
-              <FiSend /> Submit Site Check-In for Admin Verification
-            </>
-          )}
+          {submitting ? <LoadingSpinner size="sm" /> : "Submit Customer Site Check-In"}
         </button>
+        <canvas ref={canvasRef} className="hidden" />
       </form>
 
       {/* List of Today's Submitted Site Visits */}
       {todayRecords.length > 0 && (
-        <div className="space-y-4">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <FiClock className="text-indigo-600 dark:text-indigo-400" /> Today's Submitted Site Check-Ins ({todayRecords.length})
+        <div className="space-y-4 font-sans">
+          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+            <FiClock className="text-orange-600 dark:text-orange-400" /> Today's Submitted Site Check-Ins ({todayRecords.length})
           </h2>
 
           <div className="space-y-4">
@@ -395,7 +377,7 @@ const Attendance = () => {
               <div key={att.id} className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
                 <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
                   <div>
-                    <span className="text-xs font-bold text-indigo-600 dark:text-indigo-400">{att.location_name || "Customer Site"}</span>
+                    <span className="text-xs font-bold text-orange-600 dark:text-orange-400 font-display">{att.location_name || "Customer Site"}</span>
                     <div className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">Submitted at: {formatTime(att.check_in)}</div>
                   </div>
                   {getStatusBadge(att.status)}
@@ -403,14 +385,14 @@ const Attendance = () => {
 
                 <div className="grid gap-4 sm:grid-cols-2 text-xs">
                   <div>
-                    <span className="text-slate-500 dark:text-slate-400">GPS Address:</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-bold">GPS Address:</span>
                     <div className="font-bold text-slate-900 dark:text-slate-200 mt-0.5 flex items-center gap-1">
-                      <FiMapPin className="text-indigo-600 dark:text-indigo-400 shrink-0" /> {att.address || att.location_name}
+                      <FiMapPin className="text-orange-600 dark:text-orange-400 shrink-0" /> {att.address || att.location_name}
                     </div>
                   </div>
                   <div>
-                    <span className="text-slate-500 dark:text-slate-400">Coordinates:</span>
-                    <div className="font-mono text-indigo-600 dark:text-indigo-300 font-bold mt-0.5">
+                    <span className="text-slate-500 dark:text-slate-400 font-bold">Coordinates:</span>
+                    <div className="font-mono text-orange-600 dark:text-orange-400 font-bold mt-0.5">
                       {att.latitude?.toFixed(4)}, {att.longitude?.toFixed(4)}
                     </div>
                   </div>
@@ -430,7 +412,7 @@ const Attendance = () => {
                       />
                       <button
                         onClick={() => downloadPhoto(att.photo_url, att.date)}
-                        className="absolute bottom-1 right-1 rounded-lg bg-slate-900/90 p-1.5 text-xs text-white border border-slate-700 shadow hover:bg-indigo-600 transition"
+                        className="absolute bottom-1 right-1 rounded-lg bg-slate-900/90 p-1.5 text-xs text-white border border-slate-700 shadow hover:bg-orange-600 transition"
                         title="Download selfie photo"
                       >
                         <FiDownload className="h-3.5 w-3.5" />

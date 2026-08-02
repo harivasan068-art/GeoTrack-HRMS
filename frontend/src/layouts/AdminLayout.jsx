@@ -20,10 +20,10 @@ const AdminLayout = () => {
             <FiMenu className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-orange-600 text-white shadow-md shadow-orange-600/30">
               <FiShield className="h-4 w-4" />
             </div>
-            <span className="font-extrabold text-sm tracking-wide text-slate-900 dark:text-white">HR Admin Console</span>
+            <span className="font-extrabold text-sm tracking-wide text-slate-900 dark:text-white font-display">HR Admin Console</span>
           </div>
         </div>
 

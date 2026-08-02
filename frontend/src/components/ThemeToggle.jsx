@@ -9,7 +9,7 @@ const ThemeToggle = ({ className = "" }) => {
     <button
       onClick={toggleTheme}
       type="button"
-      className={`relative inline-flex items-center gap-2 rounded-xl border p-2 text-xs font-bold transition-all duration-300 ${
+      className={`relative inline-flex items-center gap-2 rounded-2xl border p-2 text-xs font-bold transition-all duration-300 font-sans ${
         isDark
           ? "border-slate-700 bg-slate-800 text-amber-300 hover:bg-slate-700"
           : "border-slate-200 bg-white text-slate-700 hover:bg-slate-100 shadow-sm"
@@ -24,7 +24,7 @@ const ThemeToggle = ({ className = "" }) => {
         </>
       ) : (
         <>
-          <FiMoon className="h-4 w-4 text-indigo-600" />
+          <FiMoon className="h-4 w-4 text-orange-600" />
           <span className="hidden sm:inline">Dark Mode</span>
         </>
       )}

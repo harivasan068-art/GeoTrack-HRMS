@@ -7,7 +7,7 @@ export const BrandingProvider = ({ children }) => {
   const [company, setCompany] = useState({
     company_name: "GeoTrack HRMS",
     company_logo: null,
-    theme_color: "#4f46e5",
+    theme_color: "#ea580c",
     phone: "+1-800-555-0199",
     email: "contact@geotrackhrms.com",
     address: "100 Tech Park Way, Suite 400, San Francisco, CA",

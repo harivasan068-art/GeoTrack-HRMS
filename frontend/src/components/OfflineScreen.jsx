@@ -36,20 +36,20 @@ const OfflineScreen = ({ children }) => {
           </div>
 
           <div className="space-y-2">
-            <h2 className="text-2xl font-extrabold text-white">Offline Mode</h2>
-            <p className="text-xs text-slate-400 leading-relaxed">
+            <h2 className="text-2xl font-extrabold text-white font-display">Offline Mode</h2>
+            <p className="text-xs text-slate-400 leading-relaxed font-medium">
               Your internet connection appears to be offline. Don't worry, your app shell is cached locally by GeoTrack PWA service worker.
             </p>
           </div>
 
-          <div className="rounded-xl bg-slate-950 p-4 border border-slate-800 text-xs text-slate-300">
+          <div className="rounded-2xl bg-slate-950 p-4 border border-slate-800 text-xs text-slate-300 font-medium">
             Please check your Wi-Fi or cellular mobile data connection.
           </div>
 
           <button
             onClick={handleRetry}
             disabled={retrying}
-            className="inline-flex w-full items-center justify-center gap-2 rounded-xl bg-indigo-600 px-6 py-3 text-xs font-bold text-white shadow-lg hover:bg-indigo-500 transition disabled:opacity-50"
+            className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-600 px-6 py-3.5 text-xs font-extrabold text-white shadow-lg hover:bg-orange-700 transition disabled:opacity-50 font-sans tracking-wide"
           >
             <FiRefreshCw className={`h-4 w-4 ${retrying ? "animate-spin" : ""}`} />
             {retrying ? "Reconnecting..." : "Retry Connection"}

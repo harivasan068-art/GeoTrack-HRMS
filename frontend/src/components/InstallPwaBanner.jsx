@@ -47,15 +47,15 @@ const InstallPwaBanner = () => {
   if (!showBanner) return null;
 
   return (
-    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-2xl bg-slate-900/95 p-4 border border-indigo-500/40 shadow-2xl backdrop-blur-xl animate-fade-in text-white">
+    <div className="fixed bottom-4 left-4 right-4 z-50 mx-auto max-w-md rounded-3xl bg-slate-900/95 p-5 border border-orange-500/40 shadow-2xl backdrop-blur-xl animate-fade-in text-white font-sans">
       <div className="flex items-start justify-between gap-3">
         <div className="flex items-center gap-3">
-          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl bg-indigo-600 shadow-md">
+          <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl bg-orange-600 shadow-md">
             <FiSmartphone className="h-6 w-6 text-white" />
           </div>
           <div>
-            <h4 className="text-sm font-bold text-white">Install GeoTrack HRMS App</h4>
-            <p className="text-xs text-slate-300 mt-0.5">
+            <h4 className="text-sm font-extrabold text-white font-display">Install GeoTrack HRMS App</h4>
+            <p className="text-xs text-slate-300 mt-0.5 font-medium">
               Install for instant access, offline mode & native performance.
             </p>
           </div>
@@ -70,16 +70,16 @@ const InstallPwaBanner = () => {
         </button>
       </div>
 
-      <div className="mt-3 flex items-center justify-end gap-2">
+      <div className="mt-3 flex items-center justify-end gap-2 font-sans">
         <button
           onClick={handleDismiss}
-          className="rounded-xl px-3 py-1.5 text-xs font-medium text-slate-400 hover:text-slate-200"
+          className="rounded-xl px-3 py-1.5 text-xs font-bold text-slate-400 hover:text-slate-200"
         >
           Not Now
         </button>
         <button
           onClick={handleInstallClick}
-          className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-600 px-4 py-1.5 text-xs font-bold text-white shadow-md shadow-indigo-600/30 hover:bg-indigo-500 transition"
+          className="inline-flex items-center gap-1.5 rounded-xl bg-orange-600 px-4 py-1.5 text-xs font-extrabold text-white shadow-md shadow-orange-600/30 hover:bg-orange-700 transition"
         >
           <FiDownload className="h-3.5 w-3.5" /> Install App
         </button>

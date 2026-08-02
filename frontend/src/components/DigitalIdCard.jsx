@@ -19,7 +19,7 @@ const DigitalIdCard = ({ employee }) => {
       <div className="print-area mx-auto max-w-sm overflow-hidden rounded-3xl bg-white dark:bg-slate-900 border-2 border-slate-200 dark:border-slate-700 shadow-xl text-slate-900 dark:text-slate-100">
         {/* Card Header Band */}
         <div
-          style={{ backgroundColor: company?.theme_color || "#4f46e5" }}
+          style={{ backgroundColor: company?.theme_color || "#ea580c" }}
           className="p-5 text-center text-white relative overflow-hidden"
         >
           <div className="flex items-center justify-center gap-2">
@@ -33,9 +33,9 @@ const DigitalIdCard = ({ employee }) => {
                 }}
               />
             )}
-            <span className="font-extrabold text-lg tracking-wide">{company?.company_name || "GeoTrack HRMS"}</span>
+            <span className="font-extrabold text-lg tracking-wide font-display">{company?.company_name || "GeoTrack HRMS"}</span>
           </div>
-          <div className="text-[10px] font-bold tracking-widest uppercase opacity-90 mt-0.5">
+          <div className="text-[10px] font-bold tracking-widest uppercase opacity-90 mt-0.5 font-mono">
             Official Employee Identity Card
           </div>
         </div>
@@ -57,15 +57,15 @@ const DigitalIdCard = ({ employee }) => {
 
           {/* Name & Designation */}
           <div>
-            <h2 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight">{employee.full_name}</h2>
-            <p className="text-xs font-bold text-indigo-600 dark:text-indigo-400 mt-0.5">{employee.designation}</p>
+            <h2 className="text-xl font-extrabold text-slate-900 dark:text-white tracking-tight font-display">{employee.full_name}</h2>
+            <p className="text-xs font-bold text-orange-600 dark:text-orange-400 mt-0.5">{employee.designation}</p>
           </div>
 
           {/* Details Table */}
           <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 text-left text-xs space-y-2">
             <div className="flex justify-between">
               <span className="text-slate-500 dark:text-slate-400 font-bold">Employee ID:</span>
-              <span className="font-mono font-bold text-indigo-600 dark:text-indigo-300">{employee.employee_id}</span>
+              <span className="font-mono font-bold text-orange-600 dark:text-orange-400">{employee.employee_id}</span>
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500 dark:text-slate-400 font-bold">Department:</span>
@@ -77,7 +77,7 @@ const DigitalIdCard = ({ employee }) => {
             </div>
             <div className="flex justify-between">
               <span className="text-slate-500 dark:text-slate-400 font-bold">Status:</span>
-              <span className="font-extrabold text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+              <span className="font-extrabold text-emerald-600 dark:text-emerald-400 flex items-center gap-1 font-mono">
                 <FiShield /> Verified Active
               </span>
             </div>
@@ -86,8 +86,8 @@ const DigitalIdCard = ({ employee }) => {
           {/* QR Code & Footer */}
           <div className="flex items-center justify-between pt-2 border-t border-slate-200 dark:border-slate-800 text-left">
             <div>
-              <div className="text-[10px] text-slate-500 dark:text-slate-400 font-bold">Authorized Signature</div>
-              <div className="font-serif italic text-xs text-indigo-600 dark:text-indigo-300 mt-1 font-bold">HR Command Console</div>
+              <div className="text-[10px] text-slate-500 dark:text-slate-400 font-bold uppercase tracking-wider">Authorized Signature</div>
+              <div className="font-serif italic text-xs text-orange-600 dark:text-orange-400 mt-1 font-bold">HR Command Console</div>
             </div>
             <img src={qrUrl} alt="QR Code" className="h-14 w-14 rounded-xl bg-white p-1 border border-slate-200 shadow-sm" />
           </div>
@@ -98,9 +98,9 @@ const DigitalIdCard = ({ employee }) => {
       <div className="text-center no-print">
         <button
           onClick={handlePrint}
-          className="inline-flex items-center gap-2 rounded-2xl bg-white dark:bg-slate-800 px-5 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700 shadow-sm"
+          className="inline-flex items-center gap-2 rounded-2xl bg-white dark:bg-slate-800 px-5 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700 shadow-sm font-sans"
         >
-          <FiPrinter className="h-4 w-4 text-indigo-600 dark:text-indigo-400" /> Print / Save PDF ID Card
+          <FiPrinter className="h-4 w-4 text-orange-600 dark:text-orange-400" /> Print / Save PDF ID Card
         </button>
       </div>
     </div>

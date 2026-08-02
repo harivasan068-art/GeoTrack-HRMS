@@ -96,17 +96,17 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 dark:bg-slate-950/80 p-4 backdrop-blur-sm overflow-y-auto">
-      <div className="relative max-w-lg w-full rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6 shadow-2xl my-8 text-slate-900 dark:text-slate-200 font-sans">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 dark:bg-slate-950/80 p-4 backdrop-blur-sm overflow-y-auto font-sans">
+      <div className="relative max-w-lg w-full rounded-3xl bg-white dark:bg-slate-900 p-6 sm:p-8 border border-slate-200 dark:border-slate-800 space-y-6 shadow-2xl my-8 text-slate-900 dark:text-slate-200">
         {/* Header */}
         <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+            <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
               <FiShield className="h-6 w-6" />
             </div>
             <div>
-              <h2 className="text-lg font-extrabold text-slate-900 dark:text-white">Edit Admin Details</h2>
-              <p className="text-xs text-slate-500 dark:text-slate-400">Update administrative credentials & profile info</p>
+              <h2 className="text-lg font-extrabold text-slate-900 dark:text-white font-display">Edit Admin Details</h2>
+              <p className="text-xs text-slate-500 dark:text-slate-400 font-medium">Update administrative credentials & profile info</p>
             </div>
           </div>
           <button
@@ -119,7 +119,7 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
 
         {/* Photo Uploader */}
         <div className="flex items-center gap-4 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800">
-          <div className="relative h-16 w-16 overflow-hidden rounded-2xl border-2 border-indigo-500 shrink-0 shadow-sm">
+          <div className="relative h-16 w-16 overflow-hidden rounded-2xl border-2 border-orange-500 shrink-0 shadow-sm">
             <img
               src={getImageUrl(user?.photo) || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80"}
               alt="Admin Avatar"
@@ -133,7 +133,7 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
 
           <div className="space-y-1.5 flex-1">
             <div className="text-xs font-bold text-slate-900 dark:text-white">Admin Profile Avatar</div>
-            <label className="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-bold text-indigo-600 dark:text-indigo-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 transition shadow-sm">
+            <label className="cursor-pointer inline-flex items-center gap-2 rounded-xl bg-white dark:bg-slate-800 px-3 py-1.5 text-xs font-bold text-orange-600 dark:text-orange-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-100 transition shadow-sm">
               {uploadingPhoto ? <LoadingSpinner size="sm" /> : <><FiCamera /> Change Photo</>}
               <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
             </label>
@@ -141,7 +141,7 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
         </div>
 
         {/* Form Fields */}
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4 font-sans">
           <div>
             <label className="mb-1 block text-xs font-bold text-slate-700 dark:text-slate-300">Admin Full Name</label>
             <div className="relative">
@@ -152,7 +152,7 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
                 value={formData.full_name}
                 onChange={handleChange}
                 required
-                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                 placeholder="Sarah Jenkins"
               />
             </div>
@@ -168,7 +168,7 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
                 value={formData.email}
                 onChange={handleChange}
                 required
-                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                 placeholder="admin@geotrack.com"
               />
             </div>
@@ -184,7 +184,7 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
                   name="phone"
                   value={formData.phone}
                   onChange={handleChange}
-                  className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                  className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                   placeholder="+1-555-0100"
                 />
               </div>
@@ -197,7 +197,7 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
                 name="department"
                 value={formData.department}
                 onChange={handleChange}
-                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                 placeholder="Executive Management"
               />
             </div>
@@ -214,7 +214,7 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
                 name="password"
                 value={formData.password}
                 onChange={handleChange}
-                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-10 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 pl-10 pr-10 py-2.5 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                 placeholder="Enter new admin password"
               />
               <button
@@ -227,7 +227,7 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-slate-200 dark:border-slate-800 font-sans">
             <button
               type="button"
               onClick={onClose}
@@ -238,7 +238,7 @@ const AdminProfileModal = ({ isOpen, onClose }) => {
             <button
               type="submit"
               disabled={loading}
-              className="rounded-2xl bg-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-indigo-700 disabled:opacity-50 transition"
+              className="rounded-2xl bg-orange-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-orange-700 disabled:opacity-50 transition"
             >
               {loading ? <LoadingSpinner size="sm" /> : "Save Admin Details"}
             </button>

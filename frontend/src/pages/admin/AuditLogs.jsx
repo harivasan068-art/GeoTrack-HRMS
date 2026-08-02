@@ -25,20 +25,20 @@ const AuditLogs = () => {
   }, []);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-6 font-sans">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-            <FiLock className="text-indigo-600 dark:text-indigo-400" /> Enterprise Audit Trail Logs
+          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+            <FiLock className="text-orange-600 dark:text-orange-400" /> Enterprise Audit Trail Logs
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-medium">
             Immutable tracking of all admin approvals, attendance rejections, employee updates, and company settings changes.
           </p>
         </div>
 
         <button
           onClick={fetchLogs}
-          className="inline-flex items-center gap-2 rounded-2xl bg-white dark:bg-slate-800 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700 shadow-sm"
+          className="inline-flex items-center gap-2 rounded-2xl bg-white dark:bg-slate-800 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700 shadow-sm font-sans"
         >
           <FiRefreshCw className="h-3.5 w-3.5" /> Refresh Audit Trail
         </button>
@@ -74,10 +74,10 @@ const AuditLogs = () => {
                 logs.map((log, idx) => (
                   <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
                     <td className="px-4 py-3 font-mono text-slate-400 dark:text-slate-500">{idx + 1}</td>
-                    <td className="px-4 py-3 font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-                      <FiShield className="text-indigo-600 dark:text-indigo-400 shrink-0" /> {log.action}
+                    <td className="px-4 py-3 font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+                      <FiShield className="text-orange-600 dark:text-orange-400 shrink-0" /> {log.action}
                     </td>
-                    <td className="px-4 py-3 font-mono font-bold text-indigo-600 dark:text-indigo-300">{log.employee_id || "System N/A"}</td>
+                    <td className="px-4 py-3 font-mono font-bold text-orange-600 dark:text-orange-400">{log.employee_id || "System N/A"}</td>
                     <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-200">{log.admin_name}</td>
                     <td className="px-4 py-3 text-slate-500 dark:text-slate-400 max-w-xs truncate">{log.remarks || "--"}</td>
                     <td className="px-4 py-3 text-right font-mono text-slate-500 dark:text-slate-400">

@@ -14,7 +14,7 @@ const CompanySettings = () => {
   const [formData, setFormData] = useState({
     company_name: company?.company_name || "GeoTrack HRMS",
     company_logo: company?.company_logo || "",
-    theme_color: company?.theme_color || "#4f46e5",
+    theme_color: company?.theme_color || "#ea580c",
     phone: company?.phone || "+1-800-555-0199",
     email: company?.email || "contact@geotrackhrms.com",
     address: company?.address || "100 Tech Park Way, Suite 400, San Francisco, CA",
@@ -29,7 +29,7 @@ const CompanySettings = () => {
       setFormData({
         company_name: company.company_name,
         company_logo: company.company_logo || "",
-        theme_color: company.theme_color || "#4f46e5",
+        theme_color: company.theme_color || "#ea580c",
         phone: company.phone || "+1-800-555-0199",
         email: company.email || "contact@geotrackhrms.com",
         address: company.address || "100 Tech Park Way, Suite 400, San Francisco, CA",
@@ -95,17 +95,17 @@ const CompanySettings = () => {
       {/* Header */}
       <div>
         <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-          <FiSettings className="text-indigo-600 dark:text-indigo-400" /> White-Label Company Branding & Geofencing
+          <FiSettings className="text-orange-600 dark:text-orange-400" /> White-Label Company Branding & Geofencing
         </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-medium">
           Changing Company Name, Logo, Theme Color, or Office Geofence Radius will automatically update the entire HRMS.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="rounded-3xl bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 space-y-8 shadow-sm">
+      <form onSubmit={handleSubmit} className="rounded-3xl bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 space-y-8 shadow-sm font-sans">
         {/* Branding Section */}
         <div className="space-y-4">
-          <h2 className="text-sm font-extrabold text-indigo-600 dark:text-indigo-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2">
+          <h2 className="text-sm font-extrabold text-orange-600 dark:text-orange-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2 font-display">
             1. Company Identity & Branding
           </h2>
 
@@ -117,7 +117,7 @@ const CompanySettings = () => {
                 required
                 value={formData.company_name}
                 onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none font-medium"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
               />
             </div>
 
@@ -155,7 +155,7 @@ const CompanySettings = () => {
                   />
                 ) : (
                   <div
-                    style={{ backgroundColor: formData.theme_color || "#4f46e5" }}
+                    style={{ backgroundColor: formData.theme_color || "#ea580c" }}
                     className="h-full w-full flex items-center justify-center text-white font-bold"
                   >
                     <FiMapPin className="h-6 w-6" />
@@ -163,7 +163,7 @@ const CompanySettings = () => {
                 )}
               </div>
 
-              <div className="flex-1 space-y-2 w-full">
+              <div className="flex-1 space-y-2 w-full font-sans">
                 <input
                   type="text"
                   placeholder="https://example.com/logo.png or data:image/..."
@@ -172,12 +172,12 @@ const CompanySettings = () => {
                     setLogoPreviewError(false);
                     setFormData({ ...formData, company_logo: e.target.value });
                   }}
-                  className="w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-indigo-500 focus:outline-none font-medium"
+                  className="w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
                 />
 
                 <div className="flex flex-wrap items-center gap-2">
                   {/* Local Image File Upload Button */}
-                  <label className="inline-flex items-center gap-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800 px-3 py-1.5 text-[11px] font-bold text-indigo-700 dark:text-indigo-300 hover:bg-indigo-600 hover:text-white transition cursor-pointer">
+                  <label className="inline-flex items-center gap-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/50 border border-orange-200 dark:border-orange-800 px-3 py-1.5 text-[11px] font-bold text-orange-700 dark:text-orange-300 hover:bg-orange-600 hover:text-white transition cursor-pointer font-sans">
                     <FiUpload className="h-3.5 w-3.5" /> Upload Image File
                     <input
                       type="file"
@@ -258,7 +258,7 @@ const CompanySettings = () => {
 
         {/* Contact Info Section */}
         <div className="space-y-4">
-          <h2 className="text-sm font-extrabold text-purple-600 dark:text-purple-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2">
+          <h2 className="text-sm font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2 font-display">
             2. Contact & Headquarters Address
           </h2>
 
@@ -270,7 +270,7 @@ const CompanySettings = () => {
                 required
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none font-medium"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
               />
             </div>
 
@@ -281,7 +281,7 @@ const CompanySettings = () => {
                 required
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none font-medium"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
               />
             </div>
           </div>
@@ -293,14 +293,14 @@ const CompanySettings = () => {
               required
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none font-medium"
+              className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
             />
           </div>
         </div>
 
         {/* Geofencing Parameters Section */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2">
+        <div className="space-y-4 font-sans">
+          <h2 className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2 font-display">
             3. Office Geofence Radius Parameters
           </h2>
 
@@ -313,7 +313,7 @@ const CompanySettings = () => {
                 required
                 value={formData.office_latitude}
                 onChange={(e) => setFormData({ ...formData, office_latitude: parseFloat(e.target.value) })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-indigo-500 focus:outline-none"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-orange-500 focus:outline-none"
               />
             </div>
 
@@ -325,7 +325,7 @@ const CompanySettings = () => {
                 required
                 value={formData.office_longitude}
                 onChange={(e) => setFormData({ ...formData, office_longitude: parseFloat(e.target.value) })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-indigo-500 focus:outline-none"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-orange-500 focus:outline-none"
               />
             </div>
 
@@ -336,7 +336,7 @@ const CompanySettings = () => {
                 required
                 value={formData.geofence_radius_meters}
                 onChange={(e) => setFormData({ ...formData, geofence_radius_meters: parseFloat(e.target.value) })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-indigo-500 focus:outline-none"
+                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-orange-500 focus:outline-none"
               />
             </div>
           </div>
@@ -346,7 +346,7 @@ const CompanySettings = () => {
         <button
           type="submit"
           disabled={saving}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-indigo-600 px-6 py-3.5 text-xs font-bold text-white shadow-md hover:bg-indigo-700 transition"
+          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-600 px-6 py-3.5 text-xs font-bold text-white shadow-md hover:bg-orange-700 transition font-sans"
         >
           {saving ? <LoadingSpinner size="sm" /> : <><FiSave /> Save White-Label Settings & Geofence</>}
         </button>

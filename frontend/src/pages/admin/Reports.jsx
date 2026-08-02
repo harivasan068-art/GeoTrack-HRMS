@@ -41,12 +41,12 @@ const Reports = () => {
   };
 
   return (
-    <div className="mx-auto max-w-6xl space-y-6">
+    <div className="mx-auto max-w-6xl space-y-6 font-sans">
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-          <FiBarChart2 className="text-indigo-600 dark:text-indigo-400" /> Attendance Reports & Analytics
+        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+          <FiBarChart2 className="text-orange-600 dark:text-orange-400" /> Attendance Reports & Analytics
         </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400">Analyze organization-wide attendance trends, department stats, and rates</p>
+        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-medium">Analyze organization-wide attendance trends, department stats, and rates</p>
       </div>
 
       {summary && (
@@ -58,7 +58,7 @@ const Reports = () => {
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Weekly Present</p>
-                <p className="text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5">
+                <p className="text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5 font-display">
                   {summary.weekly_present}
                 </p>
               </div>
@@ -67,12 +67,12 @@ const Reports = () => {
 
           <div className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
             <div className="flex items-center gap-4">
-              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-50 dark:bg-indigo-950/50 text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-800">
+              <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800">
                 <FiBarChart2 className="h-6 w-6" />
               </div>
               <div>
                 <p className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Monthly Present</p>
-                <p className="text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5">
+                <p className="text-3xl font-extrabold text-slate-900 dark:text-white mt-0.5 font-display">
                   {summary.monthly_present}
                 </p>
               </div>
@@ -90,7 +90,7 @@ const Reports = () => {
             type="date"
             value={filters.start_date}
             onChange={(e) => setFilters({ ...filters, start_date: e.target.value })}
-            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
           />
         </div>
         <div className="flex-1 min-w-[200px]">
@@ -101,10 +101,10 @@ const Reports = () => {
             type="date"
             value={filters.end_date}
             onChange={(e) => setFilters({ ...filters, end_date: e.target.value })}
-            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-indigo-500 focus:outline-none"
+            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
           />
         </div>
-        <button type="submit" className="inline-flex items-center gap-2 rounded-2xl bg-indigo-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-indigo-700 transition">
+        <button type="submit" className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-6 py-2.5 text-xs font-bold text-white shadow-md hover:bg-orange-700 transition">
           <FiFilter /> Generate Report
         </button>
       </form>
@@ -119,19 +119,19 @@ const Reports = () => {
 
           {summary?.department_stats && (
             <div className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4">
-              <h3 className="text-base font-extrabold text-slate-900 dark:text-white">
+              <h3 className="text-base font-extrabold text-slate-900 dark:text-white font-display">
                 Department Stats (Today)
               </h3>
               <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
                 {Object.entries(summary.department_stats).map(([dept, stats]) => (
                   <div key={dept} className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800">
-                    <p className="font-extrabold text-xs text-slate-900 dark:text-white">{dept}</p>
+                    <p className="font-extrabold text-xs text-slate-900 dark:text-white font-display">{dept}</p>
                     <p className="mt-1 text-xs text-slate-500 dark:text-slate-400 font-medium">
                       {stats.present} / {stats.total} present
                     </p>
                     <div className="mt-2.5 h-2 overflow-hidden rounded-full bg-slate-200 dark:bg-slate-800">
                       <div
-                        className="h-full rounded-full bg-indigo-600"
+                        className="h-full rounded-full bg-orange-600"
                         style={{
                           width: `${stats.total ? (stats.present / stats.total) * 100 : 0}%`,
                         }}
@@ -160,8 +160,8 @@ const Reports = () => {
                   {reports.map((report) => (
                     <tr key={report.employee_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
                       <td className="px-6 py-4">
-                        <p className="font-extrabold text-slate-900 dark:text-white">{report.full_name}</p>
-                        <p className="font-mono text-indigo-600 dark:text-indigo-400 font-bold">{report.employee_id}</p>
+                        <p className="font-extrabold text-slate-900 dark:text-white font-display">{report.full_name}</p>
+                        <p className="font-mono text-orange-600 dark:text-orange-400 font-bold">{report.employee_id}</p>
                       </td>
                       <td className="px-6 py-4 text-slate-600 dark:text-slate-300">{report.department}</td>
                       <td className="px-6 py-4 text-slate-600 dark:text-slate-300 font-bold">{report.total_days}</td>
@@ -171,7 +171,7 @@ const Reports = () => {
                       <td className="px-6 py-4 font-bold text-rose-600 dark:text-rose-400">
                         {report.absent_days}
                       </td>
-                      <td className="px-6 py-4 font-extrabold text-indigo-600 dark:text-indigo-400">
+                      <td className="px-6 py-4 font-extrabold text-orange-600 dark:text-orange-400 font-mono">
                         {report.total_days
                           ? Math.round((report.present_days / report.total_days) * 100)
                           : 0}

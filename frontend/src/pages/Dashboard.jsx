@@ -136,7 +136,7 @@ const Dashboard = () => {
       )}
 
       {/* Hero Welcome Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-indigo-600 via-indigo-700 to-purple-700 p-6 sm:p-8 text-white shadow-xl shadow-indigo-600/10">
+      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-orange-600 via-amber-600 to-orange-700 p-6 sm:p-8 text-white shadow-xl shadow-orange-600/10">
         <div className="absolute top-0 right-0 h-64 w-64 rounded-full bg-white/10 blur-3xl pointer-events-none" />
 
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6 relative z-10">
@@ -157,13 +157,13 @@ const Dashboard = () => {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="text-xs font-bold text-indigo-100 uppercase tracking-wider">{getGreeting()} 👋</span>
-                <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-extrabold text-white backdrop-blur-md">
+                <span className="text-xs font-bold text-orange-100 uppercase tracking-wider">{getGreeting()} 👋</span>
+                <span className="rounded-full bg-white/20 px-2.5 py-0.5 text-[10px] font-extrabold text-white backdrop-blur-md font-mono">
                   {user?.department || "Operations"}
                 </span>
               </div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-0.5">{user?.full_name}</h1>
-              <p className="text-xs text-indigo-100 font-mono mt-1 flex items-center gap-2">
+              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight mt-0.5 font-display">{user?.full_name}</h1>
+              <p className="text-xs text-orange-100 font-mono mt-1 flex items-center gap-2">
                 <span>ID: <strong className="text-white">{user?.employee_id}</strong></span>
                 <span>&bull;</span>
                 <span>{user?.designation}</span>
@@ -173,132 +173,132 @@ const Dashboard = () => {
 
           <Link
             to="/attendance"
-            className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-white px-6 py-4 text-xs font-black text-indigo-700 shadow-xl hover:bg-slate-50 hover:scale-[1.02] transition shrink-0 w-full sm:w-auto text-center tracking-wide"
+            className="inline-flex items-center justify-center gap-2.5 rounded-2xl bg-white px-6 py-4 text-xs font-black text-orange-700 shadow-xl hover:bg-slate-50 hover:scale-[1.02] transition shrink-0 w-full sm:w-auto text-center tracking-wide font-sans"
           >
-            <FiCamera className="h-4 w-4 text-indigo-600" /> Mark Live Attendance
+            <FiCamera className="h-4 w-4 text-orange-600" /> Mark Live Attendance
           </Link>
         </div>
       </div>
 
-      {/* Metrics Cards Grid - Light Theme */}
-      <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4">
+      {/* Metrics Cards Grid - Light Corporate Theme */}
+      <div className="grid gap-4 sm:gap-6 grid-cols-2 lg:grid-cols-4 font-sans">
         {/* Card 1: Today Check-In */}
-        <div className="group rounded-2xl bg-white p-5 border border-slate-200/80 hover:border-emerald-300 transition-all duration-300 shadow-sm hover:shadow-md space-y-3">
+        <div className="group rounded-3xl bg-white dark:bg-slate-900 p-5 border border-slate-200/80 dark:border-slate-800 hover:border-emerald-300 transition-all duration-300 shadow-sm hover:shadow-md space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Today's Check-In</span>
-            <div className="h-9 w-9 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center group-hover:scale-110 transition">
+            <span className="text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Today's Check-In</span>
+            <div className="h-9 w-9 rounded-xl bg-emerald-50 dark:bg-emerald-950/50 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-800 flex items-center justify-center group-hover:scale-110 transition">
               <FiClock className="h-4 w-4" />
             </div>
           </div>
           <div>
-            <div className="text-2xl font-black text-emerald-600 tracking-tight">{formatTime(attendance?.check_in)}</div>
-            <p className="text-[11px] text-slate-500 truncate mt-1">{attendance?.location_name || "No check-in today"}</p>
+            <div className="text-2xl font-black text-emerald-600 dark:text-emerald-400 tracking-tight font-mono">{formatTime(attendance?.check_in)}</div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-1 font-medium">{attendance?.location_name || "No check-in today"}</p>
           </div>
         </div>
 
         {/* Card 2: Current Status */}
-        <div className="group rounded-2xl bg-white p-5 border border-slate-200/80 hover:border-indigo-300 transition-all duration-300 shadow-sm hover:shadow-md space-y-3">
+        <div className="group rounded-3xl bg-white dark:bg-slate-900 p-5 border border-slate-200/80 dark:border-slate-800 hover:border-orange-300 transition-all duration-300 shadow-sm hover:shadow-md space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Approval Status</span>
-            <div className="h-9 w-9 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100 flex items-center justify-center group-hover:scale-110 transition">
+            <span className="text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Approval Status</span>
+            <div className="h-9 w-9 rounded-xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-800 flex items-center justify-center group-hover:scale-110 transition">
               <FiShield className="h-4 w-4" />
             </div>
           </div>
           <div>
-            <div className="text-lg sm:text-xl font-black text-slate-900 truncate tracking-tight">
+            <div className="text-lg sm:text-xl font-black text-slate-900 dark:text-white truncate tracking-tight font-display">
               {attendance?.status || "Not Submitted"}
             </div>
-            <p className="text-[11px] text-slate-500 truncate mt-1">
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-1 font-medium">
               {attendance?.status === "Present" ? "Verified Present" : "Awaiting HR Review"}
             </p>
           </div>
         </div>
 
         {/* Card 3: Working Duration */}
-        <div className="group rounded-2xl bg-white p-5 border border-slate-200/80 hover:border-purple-300 transition-all duration-300 shadow-sm hover:shadow-md space-y-3">
+        <div className="group rounded-3xl bg-white dark:bg-slate-900 p-5 border border-slate-200/80 dark:border-slate-800 hover:border-amber-300 transition-all duration-300 shadow-sm hover:shadow-md space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Working Hours</span>
-            <div className="h-9 w-9 rounded-xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center group-hover:scale-110 transition">
+            <span className="text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Working Hours</span>
+            <div className="h-9 w-9 rounded-xl bg-amber-50 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 border border-amber-100 dark:border-amber-800 flex items-center justify-center group-hover:scale-110 transition">
               <FiZap className="h-4 w-4" />
             </div>
           </div>
           <div>
-            <div className="text-2xl font-black text-purple-600 tracking-tight">{getWorkingHours()}</div>
-            <p className="text-[11px] text-slate-500 truncate mt-1">Live duration timer today</p>
+            <div className="text-2xl font-black text-amber-600 dark:text-amber-400 tracking-tight font-mono">{getWorkingHours()}</div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-1 font-medium">Live duration timer today</p>
           </div>
         </div>
 
         {/* Card 4: Monthly Approved Days */}
-        <div className="group rounded-2xl bg-white p-5 border border-slate-200/80 hover:border-amber-300 transition-all duration-300 shadow-sm hover:shadow-md space-y-3">
+        <div className="group rounded-3xl bg-white dark:bg-slate-900 p-5 border border-slate-200/80 dark:border-slate-800 hover:border-orange-300 transition-all duration-300 shadow-sm hover:shadow-md space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-extrabold text-slate-500 uppercase tracking-wider">Monthly Approved</span>
-            <div className="h-9 w-9 rounded-xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center group-hover:scale-110 transition">
+            <span className="text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider">Monthly Approved</span>
+            <div className="h-9 w-9 rounded-xl bg-orange-50 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 border border-orange-100 dark:border-orange-800 flex items-center justify-center group-hover:scale-110 transition">
               <FiAward className="h-4 w-4" />
             </div>
           </div>
           <div>
-            <div className="text-2xl font-black text-amber-600 tracking-tight">{presentDays} Days</div>
-            <p className="text-[11px] text-slate-500 truncate mt-1">Verified attendance logs</p>
+            <div className="text-2xl font-black text-orange-600 dark:text-orange-400 tracking-tight font-display">{presentDays} Days</div>
+            <p className="text-[11px] text-slate-500 dark:text-slate-400 truncate mt-1 font-medium">Verified attendance logs</p>
           </div>
         </div>
       </div>
 
       {/* Quick Action Hub & Recent Activity Grid */}
-      <div className="grid gap-6 md:grid-cols-3">
+      <div className="grid gap-6 md:grid-cols-3 font-sans">
         {/* Action Hub */}
-        <div className="rounded-3xl bg-white p-6 border border-slate-200 space-y-4 shadow-sm">
-          <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-            <FiZap className="text-indigo-600" /> Action Hub
+        <div className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
+          <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2 font-display">
+            <FiZap className="text-orange-600 dark:text-orange-400" /> Action Hub
           </h3>
           <div className="space-y-3">
             <Link
               to="/attendance"
-              className="group flex items-center justify-between rounded-2xl bg-slate-50 p-4 border border-slate-200/80 hover:border-indigo-300 hover:bg-indigo-50/40 transition-all duration-300 text-xs font-bold text-slate-900 shadow-sm"
+              className="group flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200/80 dark:border-slate-800 hover:border-orange-300 hover:bg-orange-50/40 transition-all duration-300 text-xs font-bold text-slate-900 dark:text-white shadow-sm"
             >
               <span className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-xl bg-indigo-100 text-indigo-600 flex items-center justify-center group-hover:scale-110 transition">
+                <div className="h-8 w-8 rounded-xl bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center group-hover:scale-110 transition">
                   <FiCamera />
                 </div>
                 Geotag Photo Check-In
               </span>
-              <FiArrowRight className="text-slate-400 group-hover:text-indigo-600 group-hover:translate-x-1 transition" />
+              <FiArrowRight className="text-slate-400 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:translate-x-1 transition" />
             </Link>
 
             <Link
               to="/profile"
-              className="group flex items-center justify-between rounded-2xl bg-slate-50 p-4 border border-slate-200/80 hover:border-purple-300 hover:bg-purple-50/40 transition-all duration-300 text-xs font-bold text-slate-900 shadow-sm"
+              className="group flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200/80 dark:border-slate-800 hover:border-orange-300 hover:bg-orange-50/40 transition-all duration-300 text-xs font-bold text-slate-900 dark:text-white shadow-sm"
             >
               <span className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-xl bg-purple-100 text-purple-600 flex items-center justify-center group-hover:scale-110 transition">
+                <div className="h-8 w-8 rounded-xl bg-orange-100 dark:bg-orange-950/50 text-orange-600 dark:text-orange-400 flex items-center justify-center group-hover:scale-110 transition">
                   <FiCreditCard />
                 </div>
                 View Digital ID Card
               </span>
-              <FiArrowRight className="text-slate-400 group-hover:text-purple-600 group-hover:translate-x-1 transition" />
+              <FiArrowRight className="text-slate-400 group-hover:text-orange-600 dark:group-hover:text-orange-400 group-hover:translate-x-1 transition" />
             </Link>
 
             <Link
               to="/attendance/history"
-              className="group flex items-center justify-between rounded-2xl bg-slate-50 p-4 border border-slate-200/80 hover:border-amber-300 hover:bg-amber-50/40 transition-all duration-300 text-xs font-bold text-slate-900 shadow-sm"
+              className="group flex items-center justify-between rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200/80 dark:border-slate-800 hover:border-amber-300 hover:bg-amber-50/40 transition-all duration-300 text-xs font-bold text-slate-900 dark:text-white shadow-sm"
             >
               <span className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-xl bg-amber-100 text-amber-600 flex items-center justify-center group-hover:scale-110 transition">
+                <div className="h-8 w-8 rounded-xl bg-amber-100 dark:bg-amber-950/50 text-amber-600 dark:text-amber-400 flex items-center justify-center group-hover:scale-110 transition">
                   <FiCalendar />
                 </div>
                 Attendance History
               </span>
-              <FiArrowRight className="text-slate-400 group-hover:text-amber-600 group-hover:translate-x-1 transition" />
+              <FiArrowRight className="text-slate-400 group-hover:text-amber-600 dark:group-hover:text-amber-400 group-hover:translate-x-1 transition" />
             </Link>
           </div>
         </div>
 
         {/* Recent Activity Table */}
-        <div className="md:col-span-2 rounded-3xl bg-white p-6 border border-slate-200 space-y-4 shadow-sm">
+        <div className="md:col-span-2 rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
           <div className="flex items-center justify-between">
-            <h3 className="text-xs font-extrabold text-slate-900 uppercase tracking-wider flex items-center gap-2">
-              <FiCalendar className="text-purple-600" /> Recent Attendance Activity
+            <h3 className="text-xs font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2 font-display">
+              <FiCalendar className="text-orange-600 dark:text-orange-400" /> Recent Attendance Activity
             </h3>
-            <Link to="/attendance/history" className="text-xs text-indigo-600 hover:text-indigo-700 font-bold hover:underline flex items-center gap-1">
+            <Link to="/attendance/history" className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-700 font-bold hover:underline flex items-center gap-1">
               View All Logs &rarr;
             </Link>
           </div>

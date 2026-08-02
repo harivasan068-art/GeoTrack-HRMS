@@ -13,26 +13,26 @@ const Services = () => {
   ];
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-950 font-sans text-slate-100">
+    <div className="flex min-h-screen flex-col bg-slate-50 dark:bg-slate-950 font-sans text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <Navbar />
 
       <section className="py-20 px-4 sm:px-6 lg:px-8 max-w-7xl mx-auto space-y-12">
         <div className="text-center space-y-3">
-          <span className="text-xs font-bold uppercase tracking-wider text-indigo-400">Core HRMS Product Modules</span>
-          <h1 className="text-4xl font-extrabold text-white sm:text-5xl">Enterprise Platform Services</h1>
-          <p className="text-slate-400 max-w-2xl mx-auto text-sm">
+          <span className="text-xs font-bold uppercase tracking-wider text-orange-600 dark:text-orange-400 font-mono">Core HRMS Product Modules</span>
+          <h1 className="text-4xl font-black text-slate-900 dark:text-white sm:text-5xl font-display">Enterprise Platform Services</h1>
+          <p className="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto text-sm font-medium">
             Everything your organization needs for automated, tamper-proof workforce attendance management.
           </p>
         </div>
 
-        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
+        <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3 font-sans">
           {modules.map((m, i) => (
-            <div key={i} className="rounded-2xl bg-slate-900 p-8 border border-slate-800 space-y-3">
-              <div className="inline-flex rounded-xl bg-indigo-500/10 p-3 text-indigo-400">
+            <div key={i} className="rounded-3xl bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 space-y-3 shadow-sm hover:shadow-md transition">
+              <div className="inline-flex rounded-2xl bg-orange-50 dark:bg-orange-950/50 p-3.5 text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800 shadow-sm">
                 <m.icon className="h-6 w-6" />
               </div>
-              <h3 className="text-lg font-bold text-white">{m.title}</h3>
-              <p className="text-xs text-slate-400 leading-relaxed">{m.desc}</p>
+              <h3 className="text-lg font-bold text-slate-900 dark:text-white font-display">{m.title}</h3>
+              <p className="text-xs text-slate-500 dark:text-slate-400 leading-relaxed font-medium">{m.desc}</p>
             </div>
           ))}
         </div>

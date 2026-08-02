@@ -37,22 +37,22 @@ const MainLayout = () => {
             <FiMenu className="h-5 w-5" />
           </button>
           <div className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-indigo-600 text-white shadow-md shadow-indigo-600/30">
+            <div className="flex h-8 w-8 items-center justify-center rounded-xl bg-orange-600 text-white shadow-md shadow-orange-600/30">
               <FiMapPin className="h-4 w-4" />
             </div>
-            <span className="font-extrabold text-sm tracking-wide text-slate-900 dark:text-white">GeoTrack</span>
+            <span className="font-extrabold text-sm tracking-wide text-slate-900 dark:text-white font-display">GeoTrack</span>
           </div>
         </div>
 
         {/* Location Status Badge & Theme Toggle */}
         <div className="flex items-center gap-2">
           {location ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shadow-sm">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-50 dark:bg-emerald-950/40 px-3 py-1 text-[11px] font-bold text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-800 shadow-sm font-mono">
               <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
               GPS Active
             </span>
           ) : geoLoading ? (
-            <span className="inline-flex items-center gap-1.5 rounded-full bg-indigo-50 dark:bg-indigo-950/40 px-3 py-1 text-[11px] font-semibold text-indigo-700 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+            <span className="inline-flex items-center gap-1.5 rounded-full bg-orange-50 dark:bg-orange-950/40 px-3 py-1 text-[11px] font-semibold text-orange-700 dark:text-orange-300 border border-orange-200 dark:border-orange-800">
               <FiRefreshCw className="h-3 w-3 animate-spin" />
               GPS Loading
             </span>
@@ -87,9 +87,9 @@ const MainLayout = () => {
             key={to}
             to={to}
             className={({ isActive }) =>
-              `flex flex-col items-center gap-1 px-3 py-1 text-[11px] font-semibold transition ${
+              `flex flex-col items-center gap-1 px-3 py-1 text-[11px] font-bold transition ${
                 isActive
-                  ? "text-indigo-600 dark:text-indigo-400 scale-105"
+                  ? "text-orange-600 dark:text-orange-400 scale-105"
                   : "text-slate-500 dark:text-slate-400 hover:text-slate-900 dark:hover:text-white"
               }`
             }
