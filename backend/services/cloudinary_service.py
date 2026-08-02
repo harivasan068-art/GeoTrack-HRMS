@@ -170,18 +170,14 @@ async def upload_image(
             quality="auto",
             fetch_format="auto",
         )
+        if not response or not response.get("secure_url"):
+            raise Exception("Cloudinary returned empty response")
         return {
             "secure_url": response.get("secure_url"),
             "public_id": response.get("public_id"),
         }
     except Exception as e:
-        cloud_name = CLOUDINARY_CLOUD_NAME or "geotrack_hrms"
-        fallback_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/v1720000000/{public_id}{ext}"
-        return {
-            "secure_url": fallback_url,
-            "public_id": public_id,
-            "warning": f"Cloudinary SDK fallback: {str(e)}",
-        }
+        raise Exception(f"Cloudinary upload failed: {str(e)}")
 
 
 async def upload_video(
@@ -225,43 +221,14 @@ async def upload_video(
             overwrite=True,
             resource_type="video",
         )
+        if not response or not response.get("secure_url"):
+            raise Exception("Cloudinary returned empty response")
         return {
             "secure_url": response.get("secure_url"),
             "public_id": response.get("public_id"),
         }
     except Exception as e:
-        cloud_name = CLOUDINARY_CLOUD_NAME or "geotrack_hrms"
-        fallback_url = f"https://res.cloudinary.com/{cloud_name}/video/upload/v1720000000/{public_id}{ext}"
-        return {
-            "secure_url": fallback_url,
-            "public_id": public_id,
-            "warning": f"Cloudinary SDK fallback: {str(e)}",
-        }
-
-    ext = (os.path.splitext(filename)[1].lower() if filename else ".mp4") or ".mp4"
-    unique_id = uuid.uuid4().hex[:12]
-    public_id = f"{folder}/{unique_id}"
-
-    try:
-        response = cloudinary.uploader.upload(
-            content,
-            public_id=public_id,
-            folder=None,
-            overwrite=True,
-            resource_type="video",
-        )
-        return {
-            "secure_url": response.get("secure_url"),
-            "public_id": response.get("public_id"),
-        }
-    except Exception as e:
-        cloud_name = CLOUDINARY_CLOUD_NAME or "geotrack_hrms"
-        fallback_url = f"https://res.cloudinary.com/{cloud_name}/video/upload/v1720000000/{public_id}{ext}"
-        return {
-            "secure_url": fallback_url,
-            "public_id": public_id,
-            "warning": f"Cloudinary SDK fallback: {str(e)}",
-        }
+        raise Exception(f"Cloudinary video upload failed: {str(e)}")
 
 
 def delete_image(public_id: str | None) -> bool:

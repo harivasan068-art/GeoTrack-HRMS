@@ -100,8 +100,12 @@ async def submit_geotag_photo(
         try:
             res = await upload_video(work_video, folder="geotrack_hrms/work_videos")
             work_video_url = res.get("secure_url")
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Failed to upload video: {str(e)}")
+        except Exception:
+            content = await work_video.read()
+            if content:
+                mime_type = work_video.content_type or "video/mp4"
+                b64 = base64.b64encode(content).decode("utf-8")
+                work_video_url = f"data:{mime_type};base64,{b64}"
 
     user_agent = request.headers.get("user-agent", "Unknown Device")
     client_ip = request.client.host if request.client else "0.0.0.0"
@@ -256,8 +260,12 @@ async def check_out_full(
         try:
             res = await upload_video(checkout_work_video, folder="geotrack_hrms/checkout_videos")
             attendance.checkout_work_video_url = res.get("secure_url")
-        except Exception as e:
-            raise HTTPException(status_code=400, detail=f"Failed to upload checkout video: {str(e)}")
+        except Exception:
+            content = await checkout_work_video.read()
+            if content:
+                mime_type = checkout_work_video.content_type or "video/mp4"
+                b64 = base64.b64encode(content).decode("utf-8")
+                attendance.checkout_work_video_url = f"data:{mime_type};base64,{b64}"
 
     # Automatic Working Hours calculation from earliest check-in
     start_dt = first_record.check_in_time or first_record.check_in
