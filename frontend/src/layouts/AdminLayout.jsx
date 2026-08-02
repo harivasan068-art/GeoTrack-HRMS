@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 import { FiMenu, FiShield } from "react-icons/fi";
 import AdminSidebar from "../components/AdminSidebar";
 import ThemeToggle from "../components/ThemeToggle";
+import ErrorBoundary from "../components/ErrorBoundary";
 
 const AdminLayout = () => {
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -36,7 +37,9 @@ const AdminLayout = () => {
       {/* Admin Content View */}
       <main className="flex-1 overflow-y-auto">
         <div className="mx-auto max-w-7xl px-3 py-4 sm:px-6 sm:py-6 lg:p-8">
-          <Outlet />
+          <ErrorBoundary>
+            <Outlet />
+          </ErrorBoundary>
         </div>
       </main>
     </div>

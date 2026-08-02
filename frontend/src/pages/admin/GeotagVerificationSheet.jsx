@@ -375,7 +375,7 @@ const GeotagVerificationSheet = () => {
 
               <div className="grid gap-4 sm:grid-cols-2">
                 {/* 1. Morning Selfie */}
-                {selectedRequest.photo_url && (
+                {selectedRequest.photo_url && typeof selectedRequest.photo_url === "string" && (
                   <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold font-sans">
                       <span>Morning Live Selfie</span>
@@ -386,7 +386,7 @@ const GeotagVerificationSheet = () => {
                 )}
 
                 {/* 2. Work Photo */}
-                {selectedRequest.work_photo_url && (
+                {selectedRequest.work_photo_url && typeof selectedRequest.work_photo_url === "string" && (
                   <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold font-sans">
                       <span>Morning Work Photo</span>
@@ -396,19 +396,19 @@ const GeotagVerificationSheet = () => {
                   </div>
                 )}
 
-                {/* 3. Work Video */}
-                {selectedRequest.work_video_url && (
-                  <div className="col-span-2 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
+                {/* 3. Checkout Selfie */}
+                {selectedRequest.checkout_selfie_url && typeof selectedRequest.checkout_selfie_url === "string" && (
+                  <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold font-sans">
-                      <span className="flex items-center gap-1.5"><FiFilm className="text-orange-600" /> Morning Work Completion Video</span>
-                      <button onClick={() => downloadMedia(selectedRequest.work_video_url, selectedRequest.full_name, "Work_Video")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save Video</button>
+                      <span>Evening Checkout Selfie</span>
+                      <button onClick={() => downloadMedia(selectedRequest.checkout_selfie_url, selectedRequest.full_name, "Checkout_Selfie")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save</button>
                     </div>
-                    <VideoPlayer src={selectedRequest.work_video_url} className="max-w-lg mx-auto" />
+                    <img src={getImageUrl(selectedRequest.checkout_selfie_url)} alt="Checkout Selfie" className="h-44 w-full object-cover rounded-xl border border-slate-200 dark:border-slate-800" />
                   </div>
                 )}
 
                 {/* 4. Checkout Work Photo */}
-                {selectedRequest.checkout_work_photo_url && (
+                {selectedRequest.checkout_work_photo_url && typeof selectedRequest.checkout_work_photo_url === "string" && (
                   <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold font-sans">
                       <span>Evening Checkout Photo</span>
@@ -418,8 +418,19 @@ const GeotagVerificationSheet = () => {
                   </div>
                 )}
 
-                {/* 5. Checkout Work Video */}
-                {selectedRequest.checkout_work_video_url && (
+                {/* 5. Work Video */}
+                {selectedRequest.work_video_url && typeof selectedRequest.work_video_url === "string" && (
+                  <div className="col-span-2 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
+                    <div className="flex justify-between items-center text-xs font-bold font-sans">
+                      <span className="flex items-center gap-1.5"><FiFilm className="text-orange-600" /> Morning Work Completion Video</span>
+                      <button onClick={() => downloadMedia(selectedRequest.work_video_url, selectedRequest.full_name, "Work_Video")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save Video</button>
+                    </div>
+                    <VideoPlayer src={selectedRequest.work_video_url} className="max-w-lg mx-auto" />
+                  </div>
+                )}
+
+                {/* 6. Checkout Work Video */}
+                {selectedRequest.checkout_work_video_url && typeof selectedRequest.checkout_work_video_url === "string" && (
                   <div className="col-span-2 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-2">
                     <div className="flex justify-between items-center text-xs font-bold font-sans">
                       <span className="flex items-center gap-1.5"><FiFilm className="text-orange-600" /> Evening Checkout Video</span>

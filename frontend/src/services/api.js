@@ -7,7 +7,7 @@ if (!API_BASE_URL) {
 }
 
 export const getImageUrl = (url) => {
-  if (!url) return null;
+  if (!url || typeof url !== "string") return null;
   if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:") || url.startsWith("blob:")) {
     return url;
   }
