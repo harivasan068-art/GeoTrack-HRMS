@@ -12,8 +12,10 @@ import {
   FiShield,
   FiUserCheck,
   FiUsers,
+  FiTrash2,
   FiXCircle,
 } from "react-icons/fi";
+import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import AdminProfileModal from "../../components/AdminProfileModal";
 import { adminService } from "../../services/attendanceService";
@@ -23,22 +25,50 @@ import { getImageUrl } from "../../services/api";
 const AdminDashboard = () => {
   const { user } = useAuth();
   const [data, setData] = useState(null);
+  const [employeeList, setEmployeeList] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isEditProfileOpen, setIsEditProfileOpen] = useState(false);
+  const [deleteLoadingId, setDeleteLoadingId] = useState(null);
+
+  const fetchDashboard = async () => {
+    try {
+      const [result, emps] = await Promise.all([
+        adminService.getDashboard(),
+        adminService.getEmployees(),
+      ]);
+      setData(result);
+      setEmployeeList(Array.isArray(emps) ? emps : []);
+    } catch {
+      setData(null);
+      setEmployeeList([]);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        const result = await adminService.getDashboard();
-        setData(result);
-      } catch {
-        setData(null);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchDashboard();
   }, []);
+
+  const handleDeleteEmployee = async (empId, empName) => {
+    if (
+      !window.confirm(
+        `Are you sure you want to delete employee '${empName}' (${empId})? This action will remove all their attendance logs and cannot be undone.`
+      )
+    )
+      return;
+
+    setDeleteLoadingId(empId);
+    try {
+      await adminService.deleteEmployee(empId);
+      toast.success(`Deleted employee '${empName}' (${empId})`);
+      fetchDashboard();
+    } catch (error) {
+      toast.error(error.response?.data?.detail || "Failed to delete employee");
+    } finally {
+      setDeleteLoadingId(null);
+    }
+  };
 
   const formatTime = (dateStr) => {
     if (!dateStr) return "--";
@@ -244,6 +274,79 @@ const AdminDashboard = () => {
                     </td>
                   </tr>
                 ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </div>
+
+      {/* Registered Employees & Delete Management Card */}
+      <div className="rounded-2xl bg-slate-900 p-6 border border-slate-800 space-y-4 shadow-xl">
+        <div className="flex items-center justify-between">
+          <div>
+            <h2 className="text-lg font-bold text-white flex items-center gap-2">
+              <FiUsers className="text-indigo-400" /> Registered Employees & Quick Delete Actions
+            </h2>
+            <p className="text-xs text-slate-400">View employees, inspect roles, or remove employee accounts</p>
+          </div>
+          <Link to="/admin/employees" className="text-xs text-indigo-400 hover:underline font-bold">
+            Manage All in Employee Directory ({employeeList.length}) &rarr;
+          </Link>
+        </div>
+
+        {!employeeList.length ? (
+          <p className="text-sm text-slate-500 py-6 text-center">No employee records found</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="w-full text-left text-xs text-slate-300">
+              <thead className="border-b border-slate-800 text-slate-400 uppercase font-semibold">
+                <tr>
+                  <th className="pb-3">Employee Details</th>
+                  <th className="pb-3">ID</th>
+                  <th className="pb-3">Department & Role</th>
+                  <th className="pb-3">Email</th>
+                  <th className="pb-3 text-center">Delete Action</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-slate-800/60">
+                {employeeList.slice(0, 5).map((emp) => {
+                  const isAdmin = emp.designation?.toLowerCase() === "admin";
+                  return (
+                    <tr key={emp.id || emp.employee_id} className="hover:bg-slate-800/30 transition">
+                      <td className="py-3">
+                        <div className="flex items-center gap-2.5">
+                          <img
+                            src={getImageUrl(emp.photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
+                            alt={emp.full_name}
+                            className="h-8 w-8 rounded-lg object-cover border border-slate-700"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
+                            }}
+                          />
+                          <span className="font-bold text-white">{emp.full_name}</span>
+                        </div>
+                      </td>
+                      <td className="py-3 font-mono text-indigo-400 font-bold">{emp.employee_id}</td>
+                      <td className="py-3 text-slate-300">{emp.department} &bull; {emp.designation}</td>
+                      <td className="py-3 text-slate-400">{emp.email}</td>
+                      <td className="py-3 text-center">
+                        {!isAdmin ? (
+                          <button
+                            disabled={deleteLoadingId === emp.employee_id}
+                            onClick={() => handleDeleteEmployee(emp.employee_id, emp.full_name)}
+                            className="inline-flex items-center gap-1 rounded-lg bg-rose-500/10 px-3 py-1.5 text-xs font-bold text-rose-400 border border-rose-500/30 hover:bg-rose-600 hover:text-white transition disabled:opacity-30"
+                            title="Delete this employee account"
+                          >
+                            <FiTrash2 className="h-3.5 w-3.5" /> Delete
+                          </button>
+                        ) : (
+                          <span className="text-[10px] text-slate-500 italic">Protected Admin</span>
+                        )}
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
