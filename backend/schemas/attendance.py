@@ -50,6 +50,9 @@ class AdminVerificationRequest(BaseModel):
     remarks: str | None = None
 
 
+from schemas.work_proof import WorkProofResponse
+
+
 class AttendanceResponse(BaseModel):
     id: int
     employee_id: str
@@ -72,6 +75,7 @@ class AttendanceResponse(BaseModel):
     approved_at: datetime | None
     verified_at: datetime | None
     date: date
+    work_proofs: list[WorkProofResponse] = []
 
     model_config = {"from_attributes": True}
 
@@ -101,6 +105,7 @@ class GeotagAttendanceSheetItem(BaseModel):
     approved_by: str | None
     approved_at: datetime | None
     date: date
+    work_proofs: list[WorkProofResponse] = []
 
 
 class AttendanceReportItem(BaseModel):

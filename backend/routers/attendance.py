@@ -12,8 +12,9 @@ from database.database import get_db
 from models.attendance import Attendance
 from models.company import CompanySettings
 from models.employee import Employee
+from models.work_proof import WorkProof
 from schemas.attendance import AttendanceResponse, CheckInRequest, CheckOutRequest
-from services.cloudinary_service import upload_image
+from services.cloudinary_service import upload_image, upload_video
 
 router = APIRouter()
 
@@ -50,22 +51,22 @@ async def submit_geotag_photo(
     location_name: str = Form("On-Site Customer Location"),
     address: str = Form(None),
     campaign_name: str = Form(None),
-    photo: UploadFile = File(...),
+    description: str = Form(None),
+    photo: UploadFile = File(None),
+    work_images: list[UploadFile] = File(None),
+    work_videos: list[UploadFile] = File(None),
     current_user: Employee = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     today = date.today()
 
-    # STEP 1: Does FastAPI receive UploadFile?
-    print(f"[STEP 1] Received UploadFile: photo.filename = {photo.filename if photo else None}")
-
-    # STEP 2 & 3: Upload file to Cloudinary & verify secure_url exists
-    photo_bytes = await photo.read() if photo else b""
-    upload_res = upload_image(photo_bytes, filename=photo.filename if photo else "selfie.jpg", folder="geotrack_hrms/selfies")
-    print(f"[STEP 2] Cloudinary upload response: {upload_res}")
-
-    secure_url = upload_res.get("secure_url")
-    print(f"[STEP 3] Uploaded secure_url: {secure_url}")
+    # STEP 1: Process live selfie
+    secure_url = None
+    if photo:
+        photo_bytes = await photo.read()
+        if photo_bytes:
+            upload_res = upload_image(photo_bytes, filename=photo.filename, folder="geotrack_hrms/selfies")
+            secure_url = upload_res.get("secure_url")
 
     if not secure_url:
         secure_url = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80"
@@ -80,7 +81,7 @@ async def submit_geotag_photo(
 
     now_local = datetime.now()
 
-    # Every geotag submission creates a NEW site visit check-in record for customer location requests!
+    # Create Attendance Record
     attendance = Attendance(
         employee_id=current_user.employee_id,
         check_in=now_local,
@@ -98,17 +99,50 @@ async def submit_geotag_photo(
         date=today,
     )
 
-    # STEP 4: Immediately before db.commit()
-    print(f"[STEP 4] Immediately before db.commit(): attendance.photo_url = {attendance.photo_url}")
-
     db.add(attendance)
     db.commit()
     db.refresh(attendance)
 
-    # STEP 5: Immediately after db.commit()
-    re_read = db.query(Attendance).filter(Attendance.id == attendance.id).first()
-    print(f"[STEP 5] After db.commit() query: re_read.photo_url = {re_read.photo_url if re_read else None}")
+    # Process work proof images submitted in the same request
+    if work_images:
+        for img_file in work_images:
+            if not img_file or not img_file.filename:
+                continue
+            img_bytes = await img_file.read()
+            if img_bytes:
+                img_res = upload_image(img_bytes, filename=img_file.filename, folder="geotrack_hrms/work_proofs/images")
+                if img_res and img_res.get("secure_url"):
+                    wp = WorkProof(
+                        attendance_id=attendance.id,
+                        employee_id=current_user.employee_id,
+                        media_type="image",
+                        file_url=img_res["secure_url"],
+                        description=description,
+                        uploaded_at=now_local,
+                    )
+                    db.add(wp)
 
+    # Process work proof videos submitted in the same request
+    if work_videos:
+        for vid_file in work_videos:
+            if not vid_file or not vid_file.filename:
+                continue
+            vid_bytes = await vid_file.read()
+            if vid_bytes:
+                vid_res = upload_video(vid_bytes, filename=vid_file.filename, folder="geotrack_hrms/work_proofs/videos")
+                if vid_res and vid_res.get("secure_url"):
+                    wp = WorkProof(
+                        attendance_id=attendance.id,
+                        employee_id=current_user.employee_id,
+                        media_type="video",
+                        file_url=vid_res["secure_url"],
+                        description=description,
+                        uploaded_at=now_local,
+                    )
+                    db.add(wp)
+
+    db.commit()
+    db.refresh(attendance)
     return attendance
 
 

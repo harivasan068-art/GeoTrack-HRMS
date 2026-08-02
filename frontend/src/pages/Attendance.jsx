@@ -36,6 +36,11 @@ const Attendance = () => {
   const [isInsideGeofence, setIsInsideGeofence] = useState(true);
   const [geofenceDistance, setGeofenceDistance] = useState(0);
 
+  // Work Proof Module States
+  const [workImages, setWorkImages] = useState([]);
+  const [workVideos, setWorkVideos] = useState([]);
+  const [workDescription, setWorkDescription] = useState("");
+
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const { getLocation, loading: geoLoading } = useGeolocation();
@@ -203,13 +208,31 @@ const Attendance = () => {
       formData.append("longitude", loc.longitude);
       formData.append("location_name", locationName || "Customer Site Location");
       formData.append("address", address || "Verified Location");
+      if (workDescription.trim()) {
+        formData.append("description", workDescription.trim());
+      }
+
+      if (workImages && workImages.length > 0) {
+        Array.from(workImages).forEach((img) => {
+          formData.append("work_images", img);
+        });
+      }
+
+      if (workVideos && workVideos.length > 0) {
+        Array.from(workVideos).forEach((vid) => {
+          formData.append("work_videos", vid);
+        });
+      }
 
       const result = await attendanceService.submitGeotagPhoto(formData);
-      toast.success("Site check-in submitted! Status: Pending Admin Approval");
+      toast.success("Site check-in & work proofs submitted successfully!");
 
       // Reset form states for next site visit
       setCapturedImage(null);
       setSelectedFile(null);
+      setWorkImages([]);
+      setWorkVideos([]);
+      setWorkDescription("");
       fetchToday();
     } catch (error) {
       toast.error(error.response?.data?.detail || "Submission failed");
@@ -355,6 +378,61 @@ const Attendance = () => {
           )}
         </div>
 
+        {/* Work Proofs Embedded Upload Controls */}
+        <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-3 font-sans">
+          <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-white">
+            <FiPlusCircle className="text-orange-600 dark:text-orange-400 h-4 w-4" /> Work Completion Proofs (Optional)
+          </div>
+
+          <div className="grid gap-3 sm:grid-cols-2">
+            <div>
+              <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">
+                Upload Poster / Site Photos (Max 10MB each)
+              </label>
+              <input
+                type="file"
+                multiple
+                accept="image/jpeg,image/png,image/webp"
+                onChange={(e) => setWorkImages(e.target.files)}
+                className="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-100 file:text-orange-700 dark:file:bg-orange-950 dark:file:text-orange-400 hover:file:bg-orange-200 cursor-pointer"
+              />
+              {workImages && workImages.length > 0 && (
+                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
+                  ✓ {workImages.length} image(s) selected
+                </span>
+              )}
+            </div>
+
+            <div>
+              <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">
+                Upload Work Videos (Max 100MB each)
+              </label>
+              <input
+                type="file"
+                multiple
+                accept="video/mp4,video/quicktime,video/webm"
+                onChange={(e) => setWorkVideos(e.target.files)}
+                className="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-100 file:text-orange-700 dark:file:bg-orange-950 dark:file:text-orange-400 hover:file:bg-orange-200 cursor-pointer"
+              />
+              {workVideos && workVideos.length > 0 && (
+                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
+                  ✓ {workVideos.length} video(s) selected
+                </span>
+              )}
+            </div>
+          </div>
+
+          <div>
+            <input
+              type="text"
+              placeholder="Work proof description / notes (e.g. Poster site 1, completed branding installation)"
+              value={workDescription}
+              onChange={(e) => setWorkDescription(e.target.value)}
+              className="w-full rounded-xl bg-white dark:bg-slate-900 px-3.5 py-2 text-xs border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-orange-500"
+            />
+          </div>
+        </div>
+
         {/* Submit Attendance Button */}
         <button
           type="submit"
@@ -429,7 +507,7 @@ const Attendance = () => {
                 )}
 
                 {/* Work Proof Module */}
-                <WorkProofSection attendanceId={att.id} />
+                <WorkProofSection attendanceId={att.id} isReadOnly={true} />
               </div>
             ))}
           </div>

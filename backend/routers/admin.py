@@ -162,6 +162,7 @@ def get_attendance_sheet(
                 approved_by=att.approved_by,
                 approved_at=att.approved_at,
                 date=att.date,
+                work_proofs=att.work_proofs,
             )
         )
 

@@ -185,6 +185,30 @@ class TestGeoTrackAPI(unittest.TestCase):
         del_resp = self.client.delete(f"/api/work-proof/{proof_id}", headers=headers)
         self.assertEqual(del_resp.status_code, 200)
 
+    def test_12_single_request_checkin_with_work_proofs(self):
+        login_resp = self.client.post(
+            "/api/auth/login",
+            json={"email": "alex.wong@geotrack.com", "password": "password123"},
+        )
+        token = login_resp.json()["access_token"]
+        headers = {"Authorization": f"Bearer {token}"}
+
+        files = [
+            ("photo", ("selfie.jpg", b"\xff\xd8\xff\xe0selfie_bytes", "image/jpeg")),
+            ("work_images", ("poster1.jpg", b"\xff\xd8\xff\xe0poster_bytes", "image/jpeg")),
+        ]
+        data = {
+            "latitude": 13.0861,
+            "longitude": 80.0182,
+            "location_name": "Field Site Visit",
+            "description": "Completed site poster branding installation",
+        }
+        geotag_resp = self.client.post("/api/attendance/geotag-upload", data=data, files=files, headers=headers)
+        self.assertEqual(geotag_resp.status_code, 201)
+        res_data = geotag_resp.json()
+        self.assertIsNotNone(res_data.get("photo_url"))
+        self.assertGreaterEqual(len(res_data.get("work_proofs", [])), 1)
+
 
 if __name__ == "__main__":
     unittest.main()
