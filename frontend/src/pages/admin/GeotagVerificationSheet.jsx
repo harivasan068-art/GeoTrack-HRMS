@@ -17,7 +17,7 @@ import {
 import InteractiveMap from "../../components/InteractiveMap";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import { adminService } from "../../services/attendanceService";
-import { API_BASE_URL } from "../../services/api";
+import { API_BASE_URL, getImageUrl } from "../../services/api";
 
 const GeotagVerificationSheet = () => {
   const [sheetData, setSheetData] = useState([]);
@@ -227,9 +227,13 @@ const GeotagVerificationSheet = () => {
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <img
-                          src={item.employee_photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
+                          src={getImageUrl(item.employee_photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
                           alt={item.full_name}
                           className="h-9 w-9 rounded-xl object-cover border border-slate-700"
+                          onError={(e) => {
+                            e.target.onerror = null;
+                            e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
+                          }}
                         />
                         <div>
                           <div className="font-bold text-white">{item.full_name}</div>
@@ -254,9 +258,13 @@ const GeotagVerificationSheet = () => {
                           className="group flex items-center gap-2 rounded-lg bg-slate-950 p-1 border border-slate-800 hover:border-indigo-500 transition"
                         >
                           <img
-                            src={item.photo_url.startsWith("http") ? item.photo_url : `${API_BASE_URL}${item.photo_url}`}
+                            src={getImageUrl(item.photo_url) || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80"}
                             alt="Selfie"
                             className="h-10 w-12 object-cover rounded"
+                            onError={(e) => {
+                              e.target.onerror = null;
+                              e.target.src = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80";
+                            }}
                           />
                           <span className="text-[11px] text-indigo-400 group-hover:underline flex items-center gap-1 pr-2">
                             <FiEye /> Inspect
@@ -342,9 +350,13 @@ const GeotagVerificationSheet = () => {
 
             <div className="flex items-center gap-3 border-b border-slate-800 pb-3">
               <img
-                src={selectedRequest.employee_photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
+                src={getImageUrl(selectedRequest.employee_photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
                 alt={selectedRequest.full_name}
                 className="h-12 w-12 object-cover rounded-xl border border-slate-700"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
+                }}
               />
               <div>
                 <h3 className="text-lg font-bold text-white">{selectedRequest.full_name}</h3>
@@ -360,9 +372,13 @@ const GeotagVerificationSheet = () => {
               <div>
                 <span className="text-xs font-bold text-slate-400 block mb-2">Live Captured Selfie Proof:</span>
                 <img
-                  src={selectedRequest.photo_url?.startsWith("http") ? selectedRequest.photo_url : `${API_BASE_URL}${selectedRequest.photo_url}`}
+                  src={getImageUrl(selectedRequest.photo_url) || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80"}
                   alt="Large Selfie Proof"
                   className="h-64 w-full object-cover rounded-2xl border border-slate-800 shadow-md"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80";
+                  }}
                 />
               </div>
 

@@ -16,7 +16,7 @@ import LoadingSpinner from "../components/LoadingSpinner";
 import { useBranding } from "../context/BrandingContext";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { attendanceService } from "../services/attendanceService";
-import { API_BASE_URL } from "../services/api";
+import { API_BASE_URL, getImageUrl } from "../services/api";
 
 const Attendance = () => {
   const { company } = useBranding();
@@ -381,9 +381,13 @@ const Attendance = () => {
                 {att.photo_url && (
                   <div className="pt-3 border-t border-slate-800 flex items-center gap-4">
                     <img
-                      src={att.photo_url.startsWith("http") ? att.photo_url : `${API_BASE_URL}${att.photo_url}`}
+                      src={getImageUrl(att.photo_url) || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80"}
                       alt="Selfie Proof"
                       className="h-24 w-24 object-cover rounded-xl border border-slate-700 shadow-md"
+                      onError={(e) => {
+                        e.target.onerror = null;
+                        e.target.src = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80";
+                      }}
                     />
                     {att.remarks && (
                       <div className="text-xs bg-slate-950 p-3 rounded-xl border border-slate-800 flex-1">

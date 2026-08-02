@@ -6,6 +6,16 @@ if (!API_BASE_URL) {
   throw new Error("VITE_API_URL is not configured");
 }
 
+export const getImageUrl = (url) => {
+  if (!url) return null;
+  if (url.startsWith("http://") || url.startsWith("https://") || url.startsWith("data:") || url.startsWith("blob:")) {
+    return url;
+  }
+  const rootUrl = API_BASE_URL ? API_BASE_URL.replace(/\/api\/?$/, "") : "";
+  const cleanPath = url.startsWith("/") ? url : `/${url}`;
+  return `${rootUrl}${cleanPath}`;
+};
+
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {

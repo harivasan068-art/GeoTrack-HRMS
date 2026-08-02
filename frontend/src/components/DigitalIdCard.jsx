@@ -37,9 +37,13 @@ const DigitalIdCard = ({ employee }) => {
           {/* Profile Photo */}
           <div className="relative mx-auto h-28 w-28 overflow-hidden rounded-2xl border-4 border-slate-700 shadow-lg bg-slate-800">
             <img
-              src={employee.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
+              src={getImageUrl(employee.photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
               alt={employee.full_name}
               className="h-full w-full object-cover"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
+              }}
             />
           </div>
 

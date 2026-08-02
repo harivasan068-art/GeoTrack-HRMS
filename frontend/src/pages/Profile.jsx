@@ -5,7 +5,7 @@ import DigitalIdCard from "../components/DigitalIdCard";
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useAuth } from "../hooks/useAuth";
 import { authService } from "../services/authService";
-import { API_BASE_URL } from "../services/api";
+import { API_BASE_URL, getImageUrl } from "../services/api";
 
 const Profile = () => {
   const { user, updateUser } = useAuth();
@@ -136,15 +136,13 @@ const Profile = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-6">
               <img
-                src={
-                  user?.photo?.startsWith("http")
-                    ? user.photo
-                    : user?.photo
-                    ? `${API_BASE_URL}${user.photo}`
-                    : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"
-                }
+                src={getImageUrl(user?.photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
                 alt={user?.full_name}
                 className="h-24 w-24 object-cover rounded-2xl border-2 border-indigo-500 shadow-md"
+                onError={(e) => {
+                  e.target.onerror = null;
+                  e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
+                }}
               />
               <div>
                 <h2 className="text-2xl font-extrabold text-white">{user?.full_name}</h2>
@@ -195,15 +193,13 @@ const Profile = () => {
           {/* Profile Photo Uploader */}
           <div className="flex flex-col sm:flex-row items-center gap-6 p-4 rounded-xl bg-slate-950 border border-slate-800">
             <img
-              src={
-                photoPreview?.startsWith("http")
-                  ? photoPreview
-                  : photoPreview
-                  ? `${API_BASE_URL}${photoPreview}`
-                  : "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"
-              }
+              src={getImageUrl(photoPreview) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
               alt="Profile Preview"
               className="h-24 w-24 object-cover rounded-2xl border-2 border-indigo-500 shadow-md"
+              onError={(e) => {
+                e.target.onerror = null;
+                e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
+              }}
             />
 
             <div className="space-y-2 text-center sm:text-left">

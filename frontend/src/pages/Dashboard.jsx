@@ -79,9 +79,13 @@ const Dashboard = () => {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 rounded-2xl bg-gradient-to-r from-indigo-900 via-slate-900 to-purple-900 p-6 border border-slate-800 shadow-xl">
         <div className="flex items-center gap-4">
           <img
-            src={user?.photo || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
+            src={getImageUrl(user?.photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
             alt={user?.full_name}
             className="h-16 w-16 object-cover rounded-2xl border-2 border-indigo-500 shadow-md"
+            onError={(e) => {
+              e.target.onerror = null;
+              e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
+            }}
           />
           <div>
             <h1 className="text-2xl font-extrabold text-white">Welcome back, {user?.full_name}</h1>
