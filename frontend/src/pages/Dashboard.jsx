@@ -16,6 +16,7 @@ import {
 import LoadingSpinner from "../components/LoadingSpinner";
 import { useAuth } from "../hooks/useAuth";
 import { attendanceService } from "../services/attendanceService";
+import { getImageUrl } from "../services/api";
 
 const Dashboard = () => {
   const { user } = useAuth();
@@ -30,7 +31,7 @@ const Dashboard = () => {
           attendanceService.getTodayAttendance(),
           attendanceService.getHistory(),
         ]);
-        setAttendance(todayData);
+        setAttendance(Array.isArray(todayData) ? (todayData.length > 0 ? todayData[0] : null) : todayData);
         setHistory(histData || []);
       } catch (e) {
         console.warn(e);

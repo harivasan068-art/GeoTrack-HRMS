@@ -1,5 +1,6 @@
 import { FiPrinter, FiShield } from "react-icons/fi";
 import { useBranding } from "../context/BrandingContext";
+import { getImageUrl } from "../services/api";
 
 const DigitalIdCard = ({ employee }) => {
   const { company } = useBranding();
