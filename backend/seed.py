@@ -49,6 +49,18 @@ def populate_seed_data(db):
             photo="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80",
         )
 
+        admin_hafsa = Employee(
+            employee_id="EMP000",
+            full_name="Hafsa Admin",
+            email="hafadigital75@gmail.com",
+            phone="+1-555-0750",
+            department="Executive Management",
+            designation="Admin",
+            password=hash_password("Hafsa2006"),
+            joining_date=date(2023, 1, 1),
+            status="Active",
+        )
+
         emp1 = Employee(
             employee_id="EMP002",
             full_name="John Doe",
@@ -88,7 +100,7 @@ def populate_seed_data(db):
             photo="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=300&auto=format&fit=crop&q=80",
         )
 
-        db.add_all([admin, emp1, emp2, emp3])
+        db.add_all([admin, admin_hafsa, emp1, emp2, emp3])
         db.commit()
 
         if db.query(AuditLog).count() == 0:
