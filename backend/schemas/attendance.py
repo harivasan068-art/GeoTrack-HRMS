@@ -53,25 +53,38 @@ class AdminVerificationRequest(BaseModel):
 class AttendanceResponse(BaseModel):
     id: int
     employee_id: str
-    check_in: datetime | None
-    check_out: datetime | None
-    latitude: float | None
-    longitude: float | None
-    location_name: str | None
-    address: str | None
-    campaign_name: str | None
-    photo_url: str | None
+    check_in: datetime | None = None
+    check_out: datetime | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    location_name: str | None = None
+    address: str | None = None
+    campaign_name: str | None = None
+    photo_url: str | None = None
     status: str
     is_inside_geofence: bool
-    browser: str | None
-    device: str | None
-    ip_address: str | None
-    admin_notes: str | None
-    remarks: str | None
-    approved_by: str | None
-    approved_at: datetime | None
-    verified_at: datetime | None
+    browser: str | None = None
+    device: str | None = None
+    ip_address: str | None = None
+    admin_notes: str | None = None
+    remarks: str | None = None
+    approved_by: str | None = None
+    approved_at: datetime | None = None
+    verified_at: datetime | None = None
     date: date
+
+    # --- NEW WORK PROOF & CHECKOUT EXTENSION FIELDS ---
+    check_in_time: datetime | None = None
+    check_out_time: datetime | None = None
+    working_hours: str | None = None
+    checkout_latitude: float | None = None
+    checkout_longitude: float | None = None
+    checkout_location_name: str | None = None
+    checkout_selfie_url: str | None = None
+    checkout_work_photo_url: str | None = None
+    checkout_work_video_url: str | None = None
+    work_photo_url: str | None = None
+    work_video_url: str | None = None
 
     model_config = {"from_attributes": True}
 
@@ -83,24 +96,37 @@ class GeotagAttendanceSheetItem(BaseModel):
     department: str
     designation: str
     employee_photo: str | None = None
-    check_in: datetime | None
-    check_out: datetime | None
-    latitude: float | None
-    longitude: float | None
-    location_name: str | None
-    address: str | None
-    campaign_name: str | None
-    photo_url: str | None
+    check_in: datetime | None = None
+    check_out: datetime | None = None
+    latitude: float | None = None
+    longitude: float | None = None
+    location_name: str | None = None
+    address: str | None = None
+    campaign_name: str | None = None
+    photo_url: str | None = None
     status: str
     is_inside_geofence: bool
-    browser: str | None
-    device: str | None
-    ip_address: str | None
-    admin_notes: str | None
-    remarks: str | None
-    approved_by: str | None
-    approved_at: datetime | None
+    browser: str | None = None
+    device: str | None = None
+    ip_address: str | None = None
+    admin_notes: str | None = None
+    remarks: str | None = None
+    approved_by: str | None = None
+    approved_at: datetime | None = None
     date: date
+
+    # --- NEW WORK PROOF & CHECKOUT EXTENSION FIELDS ---
+    check_in_time: datetime | None = None
+    check_out_time: datetime | None = None
+    working_hours: str | None = None
+    checkout_latitude: float | None = None
+    checkout_longitude: float | None = None
+    checkout_location_name: str | None = None
+    checkout_selfie_url: str | None = None
+    checkout_work_photo_url: str | None = None
+    checkout_work_video_url: str | None = None
+    work_photo_url: str | None = None
+    work_video_url: str | None = None
 
 
 class AttendanceReportItem(BaseModel):

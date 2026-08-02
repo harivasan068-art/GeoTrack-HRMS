@@ -18,6 +18,13 @@ export const attendanceService = {
     return response.data;
   },
 
+  checkOutFull: async (formData) => {
+    const response = await api.post("/api/attendance/check-out-full", formData, {
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    return response.data;
+  },
+
   getTodayAttendance: async () => {
     const response = await api.get("/api/attendance/today");
     return response.data;
@@ -52,6 +59,11 @@ export const adminService = {
 
   getEmployees: async () => {
     const response = await api.get("/api/admin/employees");
+    return response.data;
+  },
+
+  getEmployeeAttendance: async (employeeId) => {
+    const response = await api.get(`/api/admin/employees/${employeeId}/attendance`);
     return response.data;
   },
 

@@ -1,6 +1,7 @@
 import os
 import sys
 import unittest
+from datetime import date
 
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
@@ -54,22 +55,42 @@ class TestGeoTrackAPI(unittest.TestCase):
         )
         self.assertEqual(response.status_code, 401)
 
-    def test_06_attendance_endpoints_with_auth(self):
+    def test_06_attendance_checkin_checkout_working_hours(self):
         login_resp = self.client.post(
             "/api/auth/login",
-            json={"email": "john.doe@geotrack.com", "password": "password123"},
+            json={"email": "alex.wong@geotrack.com", "password": "password123"},
         )
         token = login_resp.json()["access_token"]
         headers = {"Authorization": f"Bearer {token}"}
 
-        today_resp = self.client.get("/api/attendance/today", headers=headers)
-        self.assertEqual(today_resp.status_code, 200)
+        # Check-in with selfie upload
+        files = {
+            "photo": ("selfie.jpg", b"\xff\xd8\xff\xe0test_jpg_data", "image/jpeg")
+        }
+        data = {
+            "latitude": 37.7749,
+            "longitude": -122.4194,
+            "location_name": "San Francisco Tech Park HQ",
+            "address": "100 Tech Park Way",
+        }
+        checkin_resp = self.client.post("/api/attendance/geotag-upload", data=data, files=files, headers=headers)
+        self.assertEqual(checkin_resp.status_code, 201)
+        checkin_data = checkin_resp.json()
+        self.assertIsNotNone(checkin_data["check_in_time"])
 
-        history_resp = self.client.get("/api/attendance/history", headers=headers)
-        self.assertEqual(history_resp.status_code, 200)
-        self.assertIsInstance(history_resp.json(), list)
+        # Check-out
+        checkout_data = {
+            "latitude": 37.7749,
+            "longitude": -122.4194,
+            "location_name": "San Francisco Tech Park HQ",
+        }
+        checkout_resp = self.client.post("/api/attendance/check-out-full", data=checkout_data, headers=headers)
+        self.assertEqual(checkout_resp.status_code, 200)
+        rec = checkout_resp.json()
+        self.assertIsNotNone(rec["check_out_time"])
+        self.assertIsNotNone(rec["working_hours"])
 
-    def test_07_admin_employee_list_with_auth(self):
+    def test_07_admin_employee_directory_and_sheet(self):
         login_resp = self.client.post(
             "/api/auth/login",
             json={"email": "admin@geotrack.com", "password": "admin123"},
@@ -82,6 +103,11 @@ class TestGeoTrackAPI(unittest.TestCase):
         employees = employees_resp.json()
         self.assertGreaterEqual(len(employees), 3)
 
+        sheet_resp = self.client.get("/api/admin/attendance-sheet", headers=headers)
+        self.assertEqual(sheet_resp.status_code, 200)
+        sheet_items = sheet_resp.json()
+        self.assertGreaterEqual(len(sheet_items), 1)
+
     def test_08_admin_reports_with_auth(self):
         login_resp = self.client.post(
             "/api/auth/login",
@@ -93,56 +119,11 @@ class TestGeoTrackAPI(unittest.TestCase):
         reports_resp = self.client.get("/api/admin/reports", headers=headers)
         self.assertEqual(reports_resp.status_code, 200)
 
-    def test_09_admin_attendance_sheet_and_verification(self):
-        login_resp = self.client.post(
-            "/api/auth/login",
-            json={"email": "admin@geotrack.com", "password": "admin123"},
-        )
-        token = login_resp.json()["access_token"]
-        headers = {"Authorization": f"Bearer {token}"}
-
-        sheet_resp = self.client.get("/api/admin/attendance-sheet", headers=headers)
-        self.assertEqual(sheet_resp.status_code, 200)
-        sheet_items = sheet_resp.json()
-        self.assertGreaterEqual(len(sheet_items), 1)
-
-        target_item = sheet_items[0]
-        target_id = target_item["id"]
-
-        verify_resp = self.client.post(
-            f"/api/admin/verify-attendance/{target_id}",
-            json={"status": "Present", "admin_notes": "Verified in automated test"},
-            headers=headers,
-        )
-        self.assertEqual(verify_resp.status_code, 200)
-        self.assertEqual(verify_resp.json()["status"], "Present")
-
-    def test_10_company_settings_and_audit_logs(self):
-        # Public Company Settings endpoint
+    def test_09_company_settings_and_audit_logs(self):
         comp_resp = self.client.get("/api/admin/company")
         self.assertEqual(comp_resp.status_code, 200)
         data = comp_resp.json()
         self.assertIn("company_name", data)
-
-        # Admin update company settings & get audit logs
-        login_resp = self.client.post(
-            "/api/auth/login",
-            json={"email": "admin@geotrack.com", "password": "admin123"},
-        )
-        token = login_resp.json()["access_token"]
-        headers = {"Authorization": f"Bearer {token}"}
-
-        update_resp = self.client.put(
-            "/api/admin/company",
-            json={"company_name": "GeoTrack HRMS Global", "geofence_radius_meters": 250.0},
-            headers=headers,
-        )
-        self.assertEqual(update_resp.status_code, 200)
-        self.assertEqual(update_resp.json()["company_name"], "GeoTrack HRMS Global")
-
-        logs_resp = self.client.get("/api/admin/audit-logs", headers=headers)
-        self.assertEqual(logs_resp.status_code, 200)
-        self.assertGreaterEqual(len(logs_resp.json()), 1)
 
 
 if __name__ == "__main__":

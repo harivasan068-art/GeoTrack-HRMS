@@ -32,4 +32,17 @@ class Attendance(Base):
     date = Column(Date, default=date.today, nullable=False, index=True)
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
+    # --- NEW WORK PROOF & CHECKOUT EXTENSION FIELDS ---
+    check_in_time = Column(DateTime, nullable=True)
+    check_out_time = Column(DateTime, nullable=True)
+    working_hours = Column(String(100), nullable=True)
+    checkout_latitude = Column(Float, nullable=True)
+    checkout_longitude = Column(Float, nullable=True)
+    checkout_location_name = Column(String(255), nullable=True)
+    checkout_selfie_url = Column(Text, nullable=True)
+    checkout_work_photo_url = Column(Text, nullable=True)
+    checkout_work_video_url = Column(Text, nullable=True)
+    work_photo_url = Column(Text, nullable=True)
+    work_video_url = Column(Text, nullable=True)
+
     employee = relationship("Employee", backref="attendance_records")

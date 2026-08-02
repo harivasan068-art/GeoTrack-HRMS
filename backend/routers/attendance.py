@@ -13,6 +13,7 @@ from models.attendance import Attendance
 from models.company import CompanySettings
 from models.employee import Employee
 from schemas.attendance import AttendanceResponse, CheckInRequest, CheckOutRequest
+from services.cloudinary_service import upload_image, upload_video
 
 router = APIRouter()
 
@@ -41,62 +42,99 @@ def get_geofence_status(db: Session, lat: float, lon: float) -> bool:
     return distance <= settings.geofence_radius_meters
 
 
+def calculate_working_hours_string(start_dt: datetime | None, end_dt: datetime | None) -> str:
+    if not start_dt or not end_dt:
+        return "N/A"
+    diff = end_dt - start_dt
+    total_seconds = max(int(diff.total_seconds()), 0)
+    hours = total_seconds // 3600
+    minutes = (total_seconds % 3600) // 60
+    return f"{hours} Hours {minutes} Minutes"
+
+
 @router.post("/geotag-upload", response_model=AttendanceResponse, status_code=status.HTTP_201_CREATED)
 async def submit_geotag_photo(
     request: Request,
     latitude: float = Form(...),
     longitude: float = Form(...),
-    location_name: str = Form("On-Site Customer Location"),
+    location_name: str = Form("On-Site Location"),
     address: str = Form(None),
     campaign_name: str = Form(None),
     photo: UploadFile = File(...),
+    work_photo: UploadFile = File(None),
+    work_video: UploadFile = File(None),
     current_user: Employee = Depends(get_current_user),
     db: Session = Depends(get_db),
 ):
     today = date.today()
 
-    # Save uploaded selfie as Base64 Data URL for serverless resilience
-    content = await photo.read()
-    if content:
-        mime_type = photo.content_type or "image/jpeg"
-        base64_str = base64.b64encode(content).decode("utf-8")
-        photo_url = f"data:{mime_type};base64,{base64_str}"
+    # Rule: Employee can Check In only ONCE per day!
+    existing = (
+        db.query(Attendance)
+        .filter(Attendance.employee_id == current_user.employee_id, Attendance.date == today)
+        .first()
+    )
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You have already checked in for today. Multiple check-ins per day are not permitted.",
+        )
 
+    # 1. Selfie Upload
+    selfie_url = None
+    if photo:
         try:
-            os.makedirs("uploads", exist_ok=True)
-            file_ext = os.path.splitext(photo.filename)[1] or ".jpg"
-            unique_filename = f"selfie_{current_user.employee_id}_{uuid.uuid4().hex[:8]}{file_ext}"
-            file_path = os.path.join("uploads", unique_filename)
-            with open(file_path, "wb") as buffer:
-                buffer.write(content)
+            res = upload_image(photo, folder="geotrack_hrms/selfies")
+            selfie_url = res.get("secure_url")
         except Exception:
-            pass
-    else:
-        photo_url = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=600&auto=format&fit=crop&q=80"
+            content = photo.file.read() if hasattr(photo, "file") else await photo.read()
+            mime_type = photo.content_type or "image/jpeg"
+            b64 = base64.b64encode(content).decode("utf-8")
+            selfie_url = f"data:{mime_type};base64,{b64}"
 
-    # Extract metadata
+    # 2. Work Photo Upload (Optional)
+    work_photo_url = None
+    if work_photo:
+        try:
+            res = upload_image(work_photo, folder="geotrack_hrms/work_photos")
+            work_photo_url = res.get("secure_url")
+        except Exception as e:
+            content = await work_photo.read()
+            if content:
+                mime_type = work_photo.content_type or "image/jpeg"
+                b64 = base64.b64encode(content).decode("utf-8")
+                work_photo_url = f"data:{mime_type};base64,{b64}"
+
+    # 3. Work Video Upload (Optional)
+    work_video_url = None
+    if work_video:
+        try:
+            res = upload_video(work_video, folder="geotrack_hrms/work_videos")
+            work_video_url = res.get("secure_url")
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Failed to upload video: {str(e)}")
+
     user_agent = request.headers.get("user-agent", "Unknown Device")
     client_ip = request.client.host if request.client else "0.0.0.0"
-
-    # Geofence check
     is_inside = get_geofence_status(db, latitude, longitude)
     status_label = "Pending Approval" if is_inside else "Pending Approval (Outside Zone)"
-
     now_local = datetime.now()
 
-    # Every geotag submission creates a NEW site visit check-in record for customer location requests!
     attendance = Attendance(
         employee_id=current_user.employee_id,
         check_in=now_local,
+        check_in_time=now_local,
         latitude=latitude,
         longitude=longitude,
         location_name=location_name,
         address=address or location_name,
         campaign_name=campaign_name,
-        photo_url=photo_url,
+        photo_url=selfie_url,
+        work_photo_url=work_photo_url,
+        work_video_url=work_video_url,
         is_inside_geofence=is_inside,
         browser=user_agent[:150],
-        device="Mobile/Web Browser",
+        device="Mobile/Web Client",
         ip_address=client_ip,
         status=status_label,
         date=today,
@@ -116,17 +154,27 @@ def check_in(
     db: Session = Depends(get_db),
 ):
     today = date.today()
+    existing = (
+        db.query(Attendance)
+        .filter(Attendance.employee_id == current_user.employee_id, Attendance.date == today)
+        .first()
+    )
+    if existing:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You have already checked in for today. Multiple check-ins per day are not permitted.",
+        )
+
     is_inside = get_geofence_status(db, check_in_data.latitude, check_in_data.longitude)
     status_label = "Pending Approval" if is_inside else "Pending Approval (Outside Zone)"
-
     user_agent = request.headers.get("user-agent", "Unknown Device")
     client_ip = request.client.host if request.client else "0.0.0.0"
-
     now_local = datetime.now()
 
     attendance = Attendance(
         employee_id=current_user.employee_id,
         check_in=now_local,
+        check_in_time=now_local,
         latitude=check_in_data.latitude,
         longitude=check_in_data.longitude,
         location_name=check_in_data.location_name,
@@ -141,6 +189,88 @@ def check_in(
     )
 
     db.add(attendance)
+    db.commit()
+    db.refresh(attendance)
+    return attendance
+
+
+@router.post("/check-out-full", response_model=AttendanceResponse)
+async def check_out_full(
+    request: Request,
+    latitude: float = Form(...),
+    longitude: float = Form(...),
+    location_name: str = Form("Check-Out Location"),
+    checkout_selfie: UploadFile = File(None),
+    checkout_work_photo: UploadFile = File(None),
+    checkout_work_video: UploadFile = File(None),
+    current_user: Employee = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    today = date.today()
+    attendance = (
+        db.query(Attendance)
+        .filter(
+            Attendance.employee_id == current_user.employee_id,
+            Attendance.date == today,
+        )
+        .order_by(Attendance.check_in.desc())
+        .first()
+    )
+
+    if not attendance or not attendance.check_in:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Cannot Check Out without Check In.",
+        )
+
+    if attendance.check_out or attendance.check_out_time:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="You have already checked out for today.",
+        )
+
+    now_local = datetime.now()
+    attendance.check_out = now_local
+    attendance.check_out_time = now_local
+    attendance.checkout_latitude = latitude
+    attendance.checkout_longitude = longitude
+    attendance.checkout_location_name = location_name
+
+    # Optional Checkout Selfie
+    if checkout_selfie:
+        try:
+            res = upload_image(checkout_selfie, folder="geotrack_hrms/checkout_selfies")
+            attendance.checkout_selfie_url = res.get("secure_url")
+        except Exception:
+            content = await checkout_selfie.read()
+            mime_type = checkout_selfie.content_type or "image/jpeg"
+            b64 = base64.b64encode(content).decode("utf-8")
+            attendance.checkout_selfie_url = f"data:{mime_type};base64,{b64}"
+
+    # Optional Checkout Work Photo
+    if checkout_work_photo:
+        try:
+            res = upload_image(checkout_work_photo, folder="geotrack_hrms/checkout_photos")
+            attendance.checkout_work_photo_url = res.get("secure_url")
+        except Exception:
+            content = await checkout_work_photo.read()
+            if content:
+                mime_type = checkout_work_photo.content_type or "image/jpeg"
+                b64 = base64.b64encode(content).decode("utf-8")
+                attendance.checkout_work_photo_url = f"data:{mime_type};base64,{b64}"
+
+    # Optional Checkout Work Video
+    if checkout_work_video:
+        try:
+            res = upload_video(checkout_work_video, folder="geotrack_hrms/checkout_videos")
+            attendance.checkout_work_video_url = res.get("secure_url")
+        except Exception as e:
+            raise HTTPException(status_code=400, detail=f"Failed to upload checkout video: {str(e)}")
+
+    # Automatic Working Hours calculation
+    start_dt = attendance.check_in_time or attendance.check_in
+    attendance.working_hours = calculate_working_hours_string(start_dt, now_local)
+
     db.commit()
     db.refresh(attendance)
     return attendance
@@ -166,14 +296,19 @@ def check_out(
     if not attendance or not attendance.check_in:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="You must check in before checking out",
+            detail="Cannot Check Out without Check In.",
         )
 
-    attendance.check_out = datetime.now()
-    attendance.latitude = check_out_data.latitude
-    attendance.longitude = check_out_data.longitude
-    attendance.location_name = check_out_data.location_name
+    now_local = datetime.now()
+    attendance.check_out = now_local
+    attendance.check_out_time = now_local
+    attendance.checkout_latitude = check_out_data.latitude
+    attendance.checkout_longitude = check_out_data.longitude
+    attendance.checkout_location_name = check_out_data.location_name
     attendance.address = check_out_data.address or check_out_data.location_name
+
+    start_dt = attendance.check_in_time or attendance.check_in
+    attendance.working_hours = calculate_working_hours_string(start_dt, now_local)
 
     db.commit()
     db.refresh(attendance)

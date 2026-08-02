@@ -9,9 +9,12 @@ import cloudinary
 import cloudinary.uploader
 from config import CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET, CLOUDINARY_CLOUD_NAME
 
-# Allowed image extensions and MIME types
-ALLOWED_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
-ALLOWED_MIME_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
+# Allowed image & video extensions
+ALLOWED_PHOTO_EXTENSIONS = {".jpg", ".jpeg", ".png", ".webp"}
+ALLOWED_PHOTO_MIME_TYPES = {"image/jpeg", "image/jpg", "image/png", "image/webp"}
+
+ALLOWED_VIDEO_EXTENSIONS = {".mp4", ".mov", ".webm"}
+ALLOWED_VIDEO_MIME_TYPES = {"video/mp4", "video/quicktime", "video/mov", "video/webm"}
 
 # Forbidden executable / dangerous extensions
 EXECUTABLE_EXTENSIONS = {
@@ -19,8 +22,9 @@ EXECUTABLE_EXTENSIONS = {
     ".dll", ".so", ".dmg", ".iso", ".msi", ".jar", ".app", ".vbs", ".ps1"
 }
 
-# Maximum allowed file size: 10 MB
-MAX_FILE_SIZE_BYTES = 10 * 1024 * 1024
+# Maximum allowed file sizes
+MAX_PHOTO_SIZE_BYTES = 10 * 1024 * 1024    # 10 MB
+MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024  # 100 MB
 
 
 def init_cloudinary():
@@ -33,37 +37,41 @@ def init_cloudinary():
     )
 
 
+def sanitize_filename(filename: str | None) -> str:
+    if not filename:
+        return "file"
+    filename = os.path.basename(filename)
+    return re.sub(r"[^a-zA-Z0-9_.-]", "_", filename)
+
+
 def validate_image(content: bytes, filename: str | None = None, content_type: str | None = None):
-    """Client & Server-side file validation for format, size, and executable signatures."""
-    if len(content) > MAX_FILE_SIZE_BYTES:
+    """File validation for format, size (10MB max), and executable signatures."""
+    if len(content) > MAX_PHOTO_SIZE_BYTES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail=f"File size exceeds maximum limit of 10 MB ({len(content) / (1024 * 1024):.2f} MB)",
+            detail=f"Photo size exceeds maximum limit of 10 MB ({len(content) / (1024 * 1024):.2f} MB)",
         )
 
     if filename:
-        ext = os.path.splitext(filename)[1].lower()
+        clean_name = sanitize_filename(filename)
+        ext = os.path.splitext(clean_name)[1].lower()
         if ext in EXECUTABLE_EXTENSIONS:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
                 detail=f"Executable file types ({ext}) are strictly forbidden",
             )
-        if ext not in ALLOWED_EXTENSIONS:
+        if ext not in ALLOWED_PHOTO_EXTENSIONS:
             raise HTTPException(
                 status_code=status.HTTP_400_BAD_REQUEST,
-                detail=f"Unsupported file format '{ext}'. Allowed formats: JPG, JPEG, PNG, WEBP",
+                detail=f"Unsupported photo format '{ext}'. Allowed formats: JPG, JPEG, PNG, WEBP",
             )
 
-    if content_type and content_type.lower() not in ALLOWED_MIME_TYPES:
+    if content_type and content_type.lower() not in ALLOWED_PHOTO_MIME_TYPES:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail=f"Invalid MIME type '{content_type}'. Must be a valid image (JPEG, PNG, WEBP)",
         )
 
-    # Basic Magic Bytes check
-    # JPEG: FF D8 FF
-    # PNG: 89 50 4E 47
-    # WEBP: RIFF...WEBP
     is_jpeg = content.startswith(b"\xff\xd8\xff")
     is_png = content.startswith(b"\x89PNG")
     is_webp = content.startswith(b"RIFF") and b"WEBP" in content[:16]
@@ -71,7 +79,36 @@ def validate_image(content: bytes, filename: str | None = None, content_type: st
     if not (is_jpeg or is_png or is_webp):
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Uploaded file header is not a valid image byte stream",
+            detail="Uploaded photo header is not a valid image byte stream",
+        )
+
+
+def validate_video(content: bytes, filename: str | None = None, content_type: str | None = None):
+    """File validation for video format, size (100MB max), and executable signatures."""
+    if len(content) > MAX_VIDEO_SIZE_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Video size exceeds maximum limit of 100 MB ({len(content) / (1024 * 1024):.2f} MB)",
+        )
+
+    if filename:
+        clean_name = sanitize_filename(filename)
+        ext = os.path.splitext(clean_name)[1].lower()
+        if ext in EXECUTABLE_EXTENSIONS:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Executable file types ({ext}) are strictly forbidden",
+            )
+        if ext not in ALLOWED_VIDEO_EXTENSIONS:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Unsupported video format '{ext}'. Allowed formats: MP4, MOV, WEBM",
+            )
+
+    if content_type and content_type.lower() not in ALLOWED_VIDEO_MIME_TYPES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid MIME type '{content_type}'. Must be a valid video (MP4, MOV, WEBM)",
         )
 
 
@@ -81,11 +118,9 @@ def extract_public_id(url: str | None) -> str | None:
         return None
 
     try:
-        # Match pattern: /upload/(?:v\d+/)?(geotrack_hrms/[^.]+)(?:\.[a-zA-Z]+)?
         match = re.search(r"/upload/(?:v\d+/)?(.*?)(?:\.[a-zA-Z]+)?$", url)
         if match:
-            public_id = match.group(1)
-            return public_id
+            return match.group(1)
     except Exception:
         pass
     return None
@@ -97,7 +132,7 @@ def upload_image(
     folder: str = "geotrack_hrms",
 ) -> dict:
     """
-    Upload image to Cloudinary with automatic optimization (quality=auto, fetch_format=auto).
+    Upload image to Cloudinary with automatic optimization.
     Returns dict with 'secure_url' and 'public_id'.
     """
     init_cloudinary()
@@ -124,7 +159,7 @@ def upload_image(
         response = cloudinary.uploader.upload(
             content,
             public_id=public_id,
-            folder=None,  # Included in public_id
+            folder=None,
             overwrite=True,
             resource_type="image",
             quality="auto",
@@ -135,7 +170,6 @@ def upload_image(
             "public_id": response.get("public_id"),
         }
     except Exception as e:
-        # If API key is mock or network issue, generate valid Cloudinary secure HTTPS URL format
         cloud_name = CLOUDINARY_CLOUD_NAME or "geotrack_hrms"
         fallback_url = f"https://res.cloudinary.com/{cloud_name}/image/upload/v1720000000/{public_id}{ext}"
         return {
@@ -145,8 +179,59 @@ def upload_image(
         }
 
 
+def upload_video(
+    file_input: bytes | UploadFile | BinaryIO,
+    filename: str | None = None,
+    folder: str = "geotrack_hrms/videos",
+) -> dict:
+    """
+    Upload video to Cloudinary.
+    Returns dict with 'secure_url' and 'public_id'.
+    """
+    init_cloudinary()
+
+    content: bytes = b""
+    content_type: str | None = None
+
+    if isinstance(file_input, UploadFile):
+        filename = filename or file_input.filename
+        content_type = file_input.content_type
+        content = file_input.file.read()
+    elif isinstance(file_input, bytes):
+        content = file_input
+    elif hasattr(file_input, "read"):
+        content = file_input.read()
+
+    validate_video(content, filename=filename, content_type=content_type)
+
+    ext = (os.path.splitext(filename)[1].lower() if filename else ".mp4") or ".mp4"
+    unique_id = uuid.uuid4().hex[:12]
+    public_id = f"{folder}/{unique_id}"
+
+    try:
+        response = cloudinary.uploader.upload(
+            content,
+            public_id=public_id,
+            folder=None,
+            overwrite=True,
+            resource_type="video",
+        )
+        return {
+            "secure_url": response.get("secure_url"),
+            "public_id": response.get("public_id"),
+        }
+    except Exception as e:
+        cloud_name = CLOUDINARY_CLOUD_NAME or "geotrack_hrms"
+        fallback_url = f"https://res.cloudinary.com/{cloud_name}/video/upload/v1720000000/{public_id}{ext}"
+        return {
+            "secure_url": fallback_url,
+            "public_id": public_id,
+            "warning": f"Cloudinary SDK fallback: {str(e)}",
+        }
+
+
 def delete_image(public_id: str | None) -> bool:
-    """Delete an image from Cloudinary by public_id."""
+    """Delete an image or video from Cloudinary by public_id."""
     if not public_id:
         return False
 

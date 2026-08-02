@@ -121,6 +121,8 @@ def get_attendance_sheet(
     db: Session = Depends(get_db),
     status_filter: str | None = Query(None),
     attendance_date: date | None = Query(None),
+    search_query: str | None = Query(None),
+    department_filter: str | None = Query(None),
 ):
     query = db.query(Attendance, Employee).join(
         Employee, Attendance.employee_id == Employee.employee_id
@@ -131,6 +133,15 @@ def get_attendance_sheet(
 
     if attendance_date:
         query = query.filter(Attendance.date == attendance_date)
+
+    if department_filter and department_filter.lower() != "all":
+        query = query.filter(Employee.department.ilike(f"%{department_filter}%"))
+
+    if search_query and search_query.strip():
+        sq = f"%{search_query.strip()}%"
+        query = query.filter(
+            (Employee.full_name.ilike(sq)) | (Employee.employee_id.ilike(sq))
+        )
 
     records = query.order_by(Attendance.date.desc(), Attendance.check_in.desc()).all()
 
@@ -162,6 +173,17 @@ def get_attendance_sheet(
                 approved_by=att.approved_by,
                 approved_at=att.approved_at,
                 date=att.date,
+                check_in_time=att.check_in_time or att.check_in,
+                check_out_time=att.check_out_time or att.check_out,
+                working_hours=att.working_hours,
+                checkout_latitude=att.checkout_latitude,
+                checkout_longitude=att.checkout_longitude,
+                checkout_location_name=att.checkout_location_name,
+                checkout_selfie_url=att.checkout_selfie_url,
+                checkout_work_photo_url=att.checkout_work_photo_url,
+                checkout_work_video_url=att.checkout_work_video_url,
+                work_photo_url=att.work_photo_url,
+                work_video_url=att.work_video_url,
             )
         )
 
@@ -429,3 +451,19 @@ def get_attendance_reports(
         )
 
     return reports
+
+
+@router.get("/employees/{employee_id}/attendance", response_model=list[AttendanceResponse])
+def get_employee_attendance_admin(
+    employee_id: str,
+    current_admin: Employee = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    records = (
+        db.query(Attendance)
+        .filter(Attendance.employee_id == employee_id)
+        .order_by(Attendance.date.desc(), Attendance.check_in.desc())
+        .all()
+    )
+    return records
+
