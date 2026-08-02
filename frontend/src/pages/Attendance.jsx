@@ -14,6 +14,7 @@ import {
 } from "react-icons/fi";
 import InteractiveMap from "../components/InteractiveMap";
 import LoadingSpinner from "../components/LoadingSpinner";
+import WorkProofSection from "../components/WorkProofSection";
 import { useBranding } from "../context/BrandingContext";
 import { useGeolocation } from "../hooks/useGeolocation";
 import { attendanceService } from "../services/attendanceService";
@@ -426,6 +427,9 @@ const Attendance = () => {
                     )}
                   </div>
                 )}
+
+                {/* Work Proof Module */}
+                <WorkProofSection attendanceId={att.id} />
               </div>
             ))}
           </div>

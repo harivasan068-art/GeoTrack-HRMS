@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { FiCalendar, FiClock, FiMapPin, FiFilter } from "react-icons/fi";
 import LoadingSpinner from "../components/LoadingSpinner";
+import WorkProofSection from "../components/WorkProofSection";
 import { attendanceService } from "../services/attendanceService";
 
 const AttendanceHistory = () => {
@@ -137,6 +138,9 @@ const AttendanceHistory = () => {
                   {record.check_out ? "Complete" : record.check_in ? "Partial" : "Absent"}
                 </span>
               </div>
+
+              {/* Work Proof Module */}
+              <WorkProofSection attendanceId={record.id} isReadOnly={true} />
             </div>
           ))}
         </div>

@@ -33,3 +33,4 @@ class Attendance(Base):
     created_at = Column(DateTime, default=datetime.utcnow, nullable=False)
 
     employee = relationship("Employee", backref="attendance_records")
+    work_proofs = relationship("WorkProof", backref="attendance", cascade="all, delete-orphan")

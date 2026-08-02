@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from database.database import Base, engine
-from routers import admin, attendance, auth, employees
+from routers import admin, attendance, auth, employees, work_proof
 
 os.makedirs("uploads", exist_ok=True)
 
@@ -52,6 +52,7 @@ app.include_router(auth.router, prefix="/api/auth", tags=["Authentication"])
 app.include_router(employees.router, prefix="/api/employees", tags=["Employees"])
 app.include_router(attendance.router, prefix="/api/attendance", tags=["Attendance"])
 app.include_router(admin.router, prefix="/api/admin", tags=["Admin"])
+app.include_router(work_proof.router, prefix="/api/work-proof", tags=["Work Proof"])
 
 
 @app.get("/")

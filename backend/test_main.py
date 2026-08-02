@@ -151,6 +151,40 @@ class TestGeoTrackAPI(unittest.TestCase):
         self.assertEqual(logs_resp.status_code, 200)
         self.assertGreaterEqual(len(logs_resp.json()), 1)
 
+    def test_11_work_proof_upload_get_delete(self):
+        login_resp = self.client.post(
+            "/api/auth/login",
+            json={"email": "john.doe@geotrack.com", "password": "password123"},
+        )
+        token = login_resp.json()["access_token"]
+        headers = {"Authorization": f"Bearer {token}"}
+
+        # Checkin to create attendance
+        files = {"photo": ("selfie.jpg", b"\xff\xd8\xff\xe0test_image_bytes", "image/jpeg")}
+        data = {"latitude": 37.7749, "longitude": -122.4194, "location_name": "San Francisco Tech Park HQ"}
+        geotag_resp = self.client.post("/api/attendance/geotag-upload", data=data, files=files, headers=headers)
+        self.assertEqual(geotag_resp.status_code, 201)
+        att_id = geotag_resp.json()["id"]
+
+        # Upload work proof image
+        proof_files = {"file": ("poster.jpg", b"\xff\xd8\xff\xe0work_proof_bytes", "image/jpeg")}
+        proof_data = {"attendance_id": att_id, "description": "Site poster proof"}
+        upload_resp = self.client.post("/api/work-proof/upload", data=proof_data, files=proof_files, headers=headers)
+        self.assertEqual(upload_resp.status_code, 201)
+        proof = upload_resp.json()
+        self.assertEqual(proof["media_type"], "image")
+        proof_id = proof["id"]
+
+        # GET work proofs
+        get_resp = self.client.get(f"/api/work-proof/{att_id}", headers=headers)
+        self.assertEqual(get_resp.status_code, 200)
+        proofs = get_resp.json()
+        self.assertGreaterEqual(len(proofs), 1)
+
+        # DELETE work proof
+        del_resp = self.client.delete(f"/api/work-proof/{proof_id}", headers=headers)
+        self.assertEqual(del_resp.status_code, 200)
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -16,6 +16,7 @@ import {
 } from "react-icons/fi";
 import InteractiveMap from "../../components/InteractiveMap";
 import LoadingSpinner from "../../components/LoadingSpinner";
+import WorkProofSection from "../../components/WorkProofSection";
 import { adminService } from "../../services/attendanceService";
 import { API_BASE_URL, getImageUrl } from "../../services/api";
 
@@ -462,6 +463,9 @@ const GeotagVerificationSheet = () => {
                 />
               </div>
             </div>
+
+            {/* Work Proofs Section for Admin Gallery Inspection */}
+            <WorkProofSection attendanceId={selectedRequest.id} isReadOnly={true} />
 
             {/* Device & Submission Details */}
             <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 grid gap-3 sm:grid-cols-3 text-xs font-sans">

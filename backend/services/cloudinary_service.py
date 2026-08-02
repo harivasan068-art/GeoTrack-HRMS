@@ -156,8 +156,107 @@ def upload_image(
     }
 
 
+# Allowed video extensions and MIME types
+ALLOWED_VIDEO_EXTENSIONS = {".mp4", ".mov", ".webm"}
+ALLOWED_VIDEO_MIME_TYPES = {"video/mp4", "video/quicktime", "video/mov", "video/webm"}
+
+# Maximum allowed video file size: 100 MB
+MAX_VIDEO_SIZE_BYTES = 100 * 1024 * 1024
+
+
+def validate_video(content: bytes, filename: str | None = None, content_type: str | None = None):
+    """File validation for video format, size (100MB max), and executable signatures."""
+    if len(content) > MAX_VIDEO_SIZE_BYTES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Video file size exceeds maximum limit of 100 MB ({len(content) / (1024 * 1024):.2f} MB)",
+        )
+
+    if filename:
+        ext = os.path.splitext(filename)[1].lower()
+        if ext in EXECUTABLE_EXTENSIONS:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Executable file types ({ext}) are strictly forbidden",
+            )
+        if ext not in ALLOWED_VIDEO_EXTENSIONS:
+            raise HTTPException(
+                status_code=status.HTTP_400_BAD_REQUEST,
+                detail=f"Unsupported video format '{ext}'. Allowed formats: MP4, MOV, WEBM",
+            )
+
+    if content_type and content_type.lower() not in ALLOWED_VIDEO_MIME_TYPES:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail=f"Invalid MIME type '{content_type}'. Must be a valid video (MP4, MOV, WEBM)",
+        )
+
+
+def upload_video(
+    file_input: bytes | UploadFile | BinaryIO,
+    filename: str | None = None,
+    folder: str = "geotrack_hrms/videos",
+) -> dict:
+    """
+    Upload video to Cloudinary.
+    Returns dict with 'secure_url' and 'public_id'.
+    """
+    init_cloudinary()
+
+    content: bytes = b""
+    content_type: str | None = None
+
+    if isinstance(file_input, UploadFile):
+        filename = filename or file_input.filename
+        content_type = file_input.content_type
+        try:
+            file_input.file.seek(0)
+        except Exception:
+            pass
+        content = file_input.file.read()
+    elif isinstance(file_input, bytes):
+        content = file_input
+    elif hasattr(file_input, "read"):
+        content = file_input.read()
+
+    validate_video(content, filename=filename, content_type=content_type)
+
+    ext = (os.path.splitext(filename)[1].lower() if filename else ".mp4") or ".mp4"
+    unique_id = uuid.uuid4().hex[:12]
+    public_id = f"{folder}/{unique_id}"
+
+    try:
+        response = cloudinary.uploader.upload(
+            content,
+            public_id=public_id,
+            folder=None,
+            overwrite=True,
+            resource_type="video",
+        )
+        if response and response.get("secure_url"):
+            return {
+                "secure_url": response.get("secure_url"),
+                "public_id": response.get("public_id"),
+            }
+    except Exception as e:
+        print(f"[CLOUDINARY VIDEO UPLOAD NOTICE] Cloudinary video upload exception: {e}")
+
+    # Fallback to Base64 Data URL for resilience
+    import base64
+    mime = content_type or "video/mp4"
+    if not mime.startswith("video/"):
+        mime = "video/mp4"
+    b64 = base64.b64encode(content).decode("utf-8")
+    data_url = f"data:{mime};base64,{b64}"
+    return {
+        "secure_url": data_url,
+        "public_id": public_id,
+        "warning": "Data URL video fallback",
+    }
+
+
 def delete_image(public_id: str | None) -> bool:
-    """Delete an image from Cloudinary by public_id."""
+    """Delete an image or video from Cloudinary by public_id."""
     if not public_id:
         return False
 
@@ -167,3 +266,4 @@ def delete_image(public_id: str | None) -> bool:
         return res.get("result") == "ok"
     except Exception:
         return False
+
