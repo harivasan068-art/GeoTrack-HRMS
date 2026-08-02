@@ -44,6 +44,19 @@ def register_employee(employee_data: EmployeeCreate, db: Session = Depends(get_d
     return new_employee
 
 
+@router.api_route("/seed", methods=["GET", "POST"])
+def seed_endpoint():
+    try:
+        from seed import auto_seed_if_needed
+        auto_seed_if_needed()
+        return {
+            "status": "success",
+            "message": "Database seeded successfully with admin credentials (admin@geotrack.com / admin123)",
+        }
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
+
+
 @router.post("/login", response_model=TokenResponse)
 def login(credentials: LoginRequest, db: Session = Depends(get_db)):
     employee = db.query(Employee).filter(Employee.email == credentials.email).first()

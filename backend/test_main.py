@@ -11,6 +11,8 @@ from main import app
 class TestGeoTrackAPI(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
+        from seed import auto_seed_if_needed
+        auto_seed_if_needed()
         cls.client = TestClient(app)
 
     def test_01_root_endpoint(self):

@@ -12,6 +12,11 @@ os.makedirs("uploads", exist_ok=True)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
+    try:
+        from seed import auto_seed_if_needed
+        auto_seed_if_needed()
+    except Exception as e:
+        print(f"Auto-seed warning on startup: {e}")
     yield
 
 
