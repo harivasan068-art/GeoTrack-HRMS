@@ -13,6 +13,17 @@ os.makedirs("uploads", exist_ok=True)
 async def lifespan(app: FastAPI):
     Base.metadata.create_all(bind=engine)
     try:
+        with engine.connect() as conn:
+            from sqlalchemy import text
+            try:
+                conn.execute(text("ALTER TABLE company_settings ALTER COLUMN company_logo TYPE TEXT;"))
+                conn.commit()
+            except Exception:
+                pass
+    except Exception:
+        pass
+
+    try:
         from seed import auto_seed_if_needed
         auto_seed_if_needed()
     except Exception as e:

@@ -56,6 +56,36 @@ def update_company_settings(
         db.add(settings)
 
     update_data = payload.model_dump(exclude_unset=True)
+
+    # Convert Base64 logo Data URL into static image file to keep DB payload minimal
+    if "company_logo" in update_data and update_data["company_logo"]:
+        logo_str = update_data["company_logo"]
+        if logo_str.startswith("data:image/"):
+            try:
+                import base64
+                import os
+                import uuid
+
+                header, encoded = logo_str.split(",", 1)
+                mime = header.split(";")[0].split(":")[1]
+                ext = ".png"
+                if "jpeg" in mime or "jpg" in mime:
+                    ext = ".jpg"
+                elif "svg" in mime:
+                    ext = ".svg"
+                elif "gif" in mime:
+                    ext = ".gif"
+
+                os.makedirs("uploads", exist_ok=True)
+                filename = f"company_logo_{uuid.uuid4().hex[:8]}{ext}"
+                file_path = os.path.join("uploads", filename)
+                with open(file_path, "wb") as f:
+                    f.write(base64.b64decode(encoded))
+
+                update_data["company_logo"] = f"/uploads/{filename}"
+            except Exception as e:
+                print(f"Error saving base64 logo image file: {e}")
+
     for field, value in update_data.items():
         if value is not None:
             setattr(settings, field, value)
