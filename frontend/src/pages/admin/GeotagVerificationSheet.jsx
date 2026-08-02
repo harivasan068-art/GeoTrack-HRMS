@@ -357,7 +357,7 @@ const GeotagVerificationSheet = () => {
                     }}
                     className="w-full inline-flex items-center justify-center gap-1.5 rounded-2xl bg-orange-50 dark:bg-orange-950/50 px-4 py-2.5 text-xs font-bold text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800 hover:bg-orange-600 hover:text-white transition min-h-[44px]"
                   >
-                    <FiEye className="h-4 w-4" /> Inspect Media ({mediaCount})
+                    <FiEye className="h-4 w-4" /> View Selfie
                   </button>
 
                   <div className="grid grid-cols-2 gap-2 w-full">
@@ -442,7 +442,7 @@ const GeotagVerificationSheet = () => {
                         onClick={() => { setSelectedRequest(item); setRemarksInput(item.remarks || ""); }}
                         className="inline-flex items-center gap-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/50 px-3.5 py-2 text-xs font-bold text-orange-600 dark:text-orange-400 border border-orange-200 dark:border-orange-800 hover:bg-orange-600 hover:text-white transition min-h-[44px]"
                       >
-                        <FiEye className="h-4 w-4" /> Inspect Media ({getMediaListForCount(item).length})
+                        <FiEye className="h-4 w-4" /> View Selfie
                       </button>
                     </td>
 
