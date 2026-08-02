@@ -100,4 +100,10 @@ export const adminService = {
     const response = await api.get("/api/admin/reports", { params });
     return response.data;
   },
+
+  getReportsSummary: async () => {
+    const response = await api.get("/api/admin/reports/summary");
+    return response.data;
+  },
 };
+

@@ -454,6 +454,34 @@ def get_attendance_reports(
     return reports
 
 
+@router.get("/reports/summary")
+def get_reports_summary(
+    current_admin: Employee = Depends(get_current_admin),
+    db: Session = Depends(get_db),
+):
+    today = date.today()
+    week_ago = today - timedelta(days=7)
+    month_ago = today - timedelta(days=30)
+
+    weekly_present = (
+        db.query(Attendance)
+        .filter(Attendance.date >= week_ago, Attendance.status == "Present")
+        .count()
+    )
+
+    monthly_present = (
+        db.query(Attendance)
+        .filter(Attendance.date >= month_ago, Attendance.status == "Present")
+        .count()
+    )
+
+    return {
+        "weekly_present": weekly_present,
+        "monthly_present": monthly_present,
+    }
+
+
+
 @router.get("/employees/{employee_id}/attendance", response_model=list[AttendanceResponse])
 def get_employee_attendance_admin(
     employee_id: str,

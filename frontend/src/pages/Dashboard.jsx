@@ -303,9 +303,9 @@ const Dashboard = () => {
             </Link>
           </div>
 
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/50">
-            <table className="w-full text-left text-xs text-slate-700 min-w-[340px]">
-              <thead className="border-b border-slate-200 bg-slate-100 text-[11px] uppercase font-bold text-slate-600">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
+            <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300 min-w-[340px]">
+              <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 text-[11px] uppercase font-bold text-slate-600 dark:text-slate-400">
                 <tr>
                   <th className="p-3.5">Date</th>
                   <th className="p-3.5">Check-In Time</th>
@@ -313,19 +313,19 @@ const Dashboard = () => {
                   <th className="p-3.5 text-center">Status</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 font-medium bg-white">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-medium bg-white dark:bg-slate-900">
                 {history.slice(0, 5).map((row) => (
-                  <tr key={row.id} className="hover:bg-slate-50 transition">
-                    <td className="p-3.5 font-bold text-slate-900">{row.date}</td>
-                    <td className="p-3.5 text-emerald-600 font-mono font-bold">{formatTime(row.check_in)}</td>
-                    <td className="p-3.5 text-slate-600 max-w-xs truncate">{row.location_name || "Office Site"}</td>
+                  <tr key={row.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                    <td className="p-3.5 font-bold text-slate-900 dark:text-white">{row.date}</td>
+                    <td className="p-3.5 text-emerald-600 dark:text-emerald-400 font-mono font-bold">{formatTime(row.check_in)}</td>
+                    <td className="p-3.5 text-slate-600 dark:text-slate-300 max-w-xs truncate">{row.location_name || "Office Site"}</td>
                     <td className="p-3.5 text-center">
                       <span className={`inline-block rounded-full px-3 py-1 text-[10px] font-extrabold ${
                         row.status === "Present"
-                          ? "bg-emerald-100 text-emerald-800 border border-emerald-200"
+                          ? "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
                           : row.status === "Absent"
-                          ? "bg-rose-100 text-rose-800 border border-rose-200"
-                          : "bg-amber-100 text-amber-800 border border-amber-200"
+                          ? "bg-rose-100 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800"
+                          : "bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
                       }`}>
                         {row.status}
                       </span>

@@ -310,9 +310,9 @@ const AdminDashboard = () => {
         {!employeeList.length ? (
           <p className="text-xs text-slate-500 py-8 text-center">No employee records found</p>
         ) : (
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/50">
-            <table className="w-full text-left text-xs text-slate-700">
-              <thead className="border-b border-slate-200 bg-slate-100 text-slate-600 uppercase font-bold text-[11px]">
+          <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
+            <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+              <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 uppercase font-bold text-[11px]">
                 <tr>
                   <th className="p-3.5">Employee</th>
                   <th className="p-3.5">ID</th>
@@ -321,34 +321,34 @@ const AdminDashboard = () => {
                   <th className="p-3.5 text-center">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-200 font-medium bg-white">
+              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-medium bg-white dark:bg-slate-900">
                 {employeeList.slice(0, 5).map((emp) => {
                   const isAdmin = emp.designation?.toLowerCase() === "admin";
                   return (
-                    <tr key={emp.id || emp.employee_id} className="hover:bg-slate-50 transition">
+                    <tr key={emp.id || emp.employee_id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
                       <td className="p-3.5">
                         <div className="flex items-center gap-3">
                           <img
                             src={getImageUrl(emp.photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
                             alt={emp.full_name}
-                            className="h-9 w-9 rounded-xl object-cover border border-slate-200 shrink-0"
+                            className="h-9 w-9 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
                             onError={(e) => {
                               e.target.onerror = null;
                               e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
                             }}
                           />
-                          <span className="font-bold text-slate-900">{emp.full_name}</span>
+                          <span className="font-bold text-slate-900 dark:text-white">{emp.full_name}</span>
                         </div>
                       </td>
                       <td className="p-3.5 font-mono text-orange-600 dark:text-orange-400 font-bold">{emp.employee_id}</td>
-                      <td className="p-3.5 text-slate-700">{emp.department} &bull; {emp.designation}</td>
-                      <td className="p-3.5 text-slate-500 font-mono">{emp.email}</td>
+                      <td className="p-3.5 text-slate-700 dark:text-slate-300">{emp.department} &bull; {emp.designation}</td>
+                      <td className="p-3.5 text-slate-500 dark:text-slate-400 font-mono">{emp.email}</td>
                       <td className="p-3.5 text-center">
                         {!isAdmin ? (
                           <button
                             disabled={deleteLoadingId === emp.employee_id}
                             onClick={() => handleDeleteEmployee(emp.employee_id, emp.full_name)}
-                            className="inline-flex items-center gap-1 rounded-xl bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700 border border-rose-200 hover:bg-rose-600 hover:text-white transition disabled:opacity-30"
+                            className="inline-flex items-center gap-1 rounded-xl bg-rose-50 dark:bg-rose-950/40 px-3 py-1.5 text-xs font-bold text-rose-700 dark:text-rose-400 border border-rose-200 dark:border-rose-800 hover:bg-rose-600 hover:text-white transition disabled:opacity-30 min-h-[44px]"
                             title="Delete this employee account"
                           >
                             <FiTrash2 className="h-3.5 w-3.5" /> Delete
