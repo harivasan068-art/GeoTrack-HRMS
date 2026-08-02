@@ -60,7 +60,8 @@ async def submit_geotag_photo(
     location_name: str = Form("On-Site Location"),
     address: str = Form(None),
     campaign_name: str = Form(None),
-    photo: UploadFile = File(...),
+    photo: UploadFile = File(None),
+    selfie: UploadFile = File(None),
     work_photo: UploadFile = File(None),
     work_video: UploadFile = File(None),
     current_user: Employee = Depends(get_current_user),
@@ -68,9 +69,10 @@ async def submit_geotag_photo(
 ):
     today = date.today()
 
-    # Note: Employees are permitted to submit continuous location & work proof updates throughout the day after initial check-in.
+    selfie_file = photo or selfie
+
     # 1. Selfie Upload
-    selfie_url = await process_media_upload(photo, folder="geotrack_hrms/selfies", resource_type="image")
+    selfie_url = await process_media_upload(selfie_file, folder="geotrack_hrms/selfies", resource_type="image")
 
     # 2. Work Photo Upload (Optional)
     work_photo_url = await process_media_upload(work_photo, folder="geotrack_hrms/work_photos", resource_type="image")
@@ -93,6 +95,7 @@ async def submit_geotag_photo(
 
     if existing_record:
         if selfie_url:
+            existing_record.selfie_url = selfie_url
             existing_record.photo_url = selfie_url
         if work_photo_url:
             existing_record.work_photo_url = work_photo_url
@@ -108,12 +111,10 @@ async def submit_geotag_photo(
         existing_record.status = status_label
 
         print(f"[DEBUG STEP 2] Assigned to existing Attendance Model (ID: {existing_record.id}):")
-        print(f"  attendance.selfie_url (photo_url) = {existing_record.photo_url}")
+        print(f"  attendance.selfie_url  = {existing_record.selfie_url}")
+        print(f"  attendance.photo_url   = {existing_record.photo_url}")
         print(f"  attendance.work_photo_url        = {existing_record.work_photo_url}")
         print(f"  attendance.work_video_url        = {existing_record.work_video_url}")
-        print(f"  attendance.checkout_selfie_url    = {existing_record.checkout_selfie_url}")
-        print(f"  attendance.checkout_work_photo   = {existing_record.checkout_work_photo_url}")
-        print(f"  attendance.checkout_work_video   = {existing_record.checkout_work_video_url}")
 
         db.commit()
         db.refresh(existing_record)
@@ -121,12 +122,10 @@ async def submit_geotag_photo(
         # Read SAME record back from database to verify persistence
         re_read = db.query(Attendance).filter(Attendance.id == existing_record.id).first()
         print(f"[DEBUG STEP 3] Re-read Record (ID: {re_read.id}) from DB after db.commit():")
-        print(f"  re_read.selfie_url (photo_url)   = {re_read.photo_url}")
-        print(f"  re_read.work_photo_url          = {re_read.work_photo_url}")
-        print(f"  re_read.work_video_url          = {re_read.work_video_url}")
-        print(f"  re_read.checkout_selfie_url      = {re_read.checkout_selfie_url}")
-        print(f"  re_read.checkout_work_photo_url  = {re_read.checkout_work_photo_url}")
-        print(f"  re_read.checkout_work_video_url  = {re_read.checkout_work_video_url}")
+        print(f"  re_read.selfie_url     = {re_read.selfie_url}")
+        print(f"  re_read.photo_url      = {re_read.photo_url}")
+        print(f"  re_read.work_photo_url = {re_read.work_photo_url}")
+        print(f"  re_read.work_video_url = {re_read.work_video_url}")
 
         return existing_record
 
@@ -139,6 +138,7 @@ async def submit_geotag_photo(
         location_name=location_name,
         address=address or location_name,
         campaign_name=campaign_name,
+        selfie_url=selfie_url,
         photo_url=selfie_url,
         work_photo_url=work_photo_url,
         work_video_url=work_video_url,
@@ -151,12 +151,10 @@ async def submit_geotag_photo(
     )
 
     print(f"[DEBUG STEP 2] Assigned to new Attendance Model:")
-    print(f"  attendance.selfie_url (photo_url) = {attendance.photo_url}")
+    print(f"  attendance.selfie_url  = {attendance.selfie_url}")
+    print(f"  attendance.photo_url   = {attendance.photo_url}")
     print(f"  attendance.work_photo_url        = {attendance.work_photo_url}")
     print(f"  attendance.work_video_url        = {attendance.work_video_url}")
-    print(f"  attendance.checkout_selfie_url    = {attendance.checkout_selfie_url}")
-    print(f"  attendance.checkout_work_photo   = {attendance.checkout_work_photo_url}")
-    print(f"  attendance.checkout_work_video   = {attendance.checkout_work_video_url}")
 
     db.add(attendance)
     db.commit()
@@ -165,12 +163,10 @@ async def submit_geotag_photo(
     # Read SAME record back from database to verify persistence
     re_read = db.query(Attendance).filter(Attendance.id == attendance.id).first()
     print(f"[DEBUG STEP 3] Re-read Record (ID: {re_read.id}) from DB after db.commit():")
-    print(f"  re_read.selfie_url (photo_url)   = {re_read.photo_url}")
-    print(f"  re_read.work_photo_url          = {re_read.work_photo_url}")
-    print(f"  re_read.work_video_url          = {re_read.work_video_url}")
-    print(f"  re_read.checkout_selfie_url      = {re_read.checkout_selfie_url}")
-    print(f"  re_read.checkout_work_photo_url  = {re_read.checkout_work_photo_url}")
-    print(f"  re_read.checkout_work_video_url  = {re_read.checkout_work_video_url}")
+    print(f"  re_read.selfie_url     = {re_read.selfie_url}")
+    print(f"  re_read.photo_url      = {re_read.photo_url}")
+    print(f"  re_read.work_photo_url = {re_read.work_photo_url}")
+    print(f"  re_read.work_video_url = {re_read.work_video_url}")
 
     return attendance
 

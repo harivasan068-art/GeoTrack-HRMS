@@ -19,6 +19,7 @@ class Attendance(Base):
     address = Column(String(500), nullable=True)
     campaign_name = Column(String(255), nullable=True)
     photo_url = Column(Text, nullable=True)
+    selfie_url = Column(Text, nullable=True)
     status = Column(String(50), default="Pending Approval", nullable=False, index=True)
     is_inside_geofence = Column(Boolean, default=True, nullable=False)
     browser = Column(String(150), nullable=True)
@@ -47,7 +48,4 @@ class Attendance(Base):
 
     employee = relationship("Employee", backref="attendance_records")
 
-    @property
-    def selfie_url(self) -> str | None:
-        return self.photo_url
 

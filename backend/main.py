@@ -23,6 +23,7 @@ async def lifespan(app: FastAPI):
 
             # Auto-migrate missing columns to attendance table (PostgreSQL & SQLite)
             new_columns = [
+                ("selfie_url", "TEXT"),
                 ("check_in_time", "TIMESTAMP"),
                 ("check_out_time", "TIMESTAMP"),
                 ("working_hours", "VARCHAR(100)"),
