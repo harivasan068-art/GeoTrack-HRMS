@@ -77,8 +77,12 @@ const InteractiveMap = ({
       <div className="flex items-start gap-2 rounded-2xl bg-slate-50 dark:bg-slate-950 p-3.5 border border-slate-200 dark:border-slate-800 text-xs font-sans">
         <FiMapPin className="h-4 w-4 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5" />
         <div>
-          <span className="font-extrabold text-slate-900 dark:text-white font-display">{locationName || "Check-In Location"}: </span>
-          <span className="text-slate-600 dark:text-slate-300 font-medium">{address || "Address details verified via GPS reverse geocoding."}</span>
+          <span className="font-extrabold text-slate-900 dark:text-white font-display">
+            {typeof locationName === "string" ? locationName : String(locationName || "Check-In Location")}:{" "}
+          </span>
+          <span className="text-slate-600 dark:text-slate-300 font-medium">
+            {typeof address === "string" ? address : String(address || "Address details verified via GPS reverse geocoding.")}
+          </span>
         </div>
       </div>
     </div>

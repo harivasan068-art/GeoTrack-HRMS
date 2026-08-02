@@ -20,6 +20,7 @@ import {
 import InteractiveMap from "../../components/InteractiveMap";
 import LoadingSpinner from "../../components/LoadingSpinner";
 import VideoPlayer from "../../components/VideoPlayer";
+import ErrorBoundary from "../../components/ErrorBoundary";
 import { adminService } from "../../services/attendanceService";
 import { getImageUrl } from "../../services/api";
 
@@ -425,7 +426,9 @@ const GeotagVerificationSheet = () => {
                       <span className="flex items-center gap-1.5"><FiFilm className="text-orange-600" /> Morning Work Completion Video</span>
                       <button onClick={() => downloadMedia(selectedRequest.work_video_url, selectedRequest.full_name, "Work_Video")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save Video</button>
                     </div>
-                    <VideoPlayer src={selectedRequest.work_video_url} className="max-w-lg mx-auto" />
+                    <ErrorBoundary>
+                      <VideoPlayer src={selectedRequest.work_video_url} className="max-w-lg mx-auto" />
+                    </ErrorBoundary>
                   </div>
                 )}
 
@@ -436,7 +439,9 @@ const GeotagVerificationSheet = () => {
                       <span className="flex items-center gap-1.5"><FiFilm className="text-orange-600" /> Evening Checkout Video</span>
                       <button onClick={() => downloadMedia(selectedRequest.checkout_work_video_url, selectedRequest.full_name, "Checkout_Video")} className="text-orange-600 hover:underline flex items-center gap-1"><FiDownload /> Save Video</button>
                     </div>
-                    <VideoPlayer src={selectedRequest.checkout_work_video_url} className="max-w-lg mx-auto" />
+                    <ErrorBoundary>
+                      <VideoPlayer src={selectedRequest.checkout_work_video_url} className="max-w-lg mx-auto" />
+                    </ErrorBoundary>
                   </div>
                 )}
               </div>
@@ -445,14 +450,16 @@ const GeotagVerificationSheet = () => {
             {/* Interactive Map */}
             <div>
               <span className="text-xs font-bold text-slate-500 block mb-2 font-sans">Check-In GPS Geofence Map:</span>
-              <InteractiveMap
-                latitude={selectedRequest.latitude}
-                longitude={selectedRequest.longitude}
-                address={selectedRequest.address || selectedRequest.location_name}
-                locationName={selectedRequest.location_name}
-                isInsideGeofence={selectedRequest.is_inside_geofence}
-                height="h-52"
-              />
+              <ErrorBoundary>
+                <InteractiveMap
+                  latitude={selectedRequest.latitude}
+                  longitude={selectedRequest.longitude}
+                  address={selectedRequest.address || selectedRequest.location_name}
+                  locationName={selectedRequest.location_name}
+                  isInsideGeofence={selectedRequest.is_inside_geofence}
+                  height="h-52"
+                />
+              </ErrorBoundary>
             </div>
 
             {/* Remarks Input Box */}

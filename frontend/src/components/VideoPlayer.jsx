@@ -7,9 +7,10 @@ const VideoPlayer = ({ src, className = "" }) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [currentTime, setCurrentTime] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  if (!src) {
+  if (!src || typeof src !== "string") {
     return (
       <div className={`flex flex-col items-center justify-center rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 text-slate-400 font-sans ${className}`}>
         <FiFilm className="h-8 w-8 mb-2 opacity-50 text-orange-500" />
@@ -21,57 +22,87 @@ const VideoPlayer = ({ src, className = "" }) => {
   const mediaUrl = getImageUrl(src);
 
   const togglePlay = () => {
-    if (videoRef.current) {
-      if (isPlaying) {
-        videoRef.current.pause();
-      } else {
-        videoRef.current.play();
+    try {
+      if (videoRef.current) {
+        if (isPlaying) {
+          videoRef.current.pause();
+        } else {
+          const promise = videoRef.current.play();
+          if (promise !== undefined) {
+            promise.catch((err) => console.warn("Video playback prevented:", err));
+          }
+        }
+        setIsPlaying(!isPlaying);
       }
-      setIsPlaying(!isPlaying);
+    } catch (err) {
+      console.warn("Play error:", err);
     }
   };
 
   const toggleMute = () => {
-    if (videoRef.current) {
-      videoRef.current.muted = !isMuted;
-      setIsMuted(!isMuted);
+    try {
+      if (videoRef.current) {
+        videoRef.current.muted = !isMuted;
+        setIsMuted(!isMuted);
+      }
+    } catch (err) {
+      console.warn("Mute error:", err);
     }
   };
 
   const handleTimeUpdate = () => {
-    if (videoRef.current) {
-      const current = videoRef.current.currentTime;
-      const total = videoRef.current.duration || 1;
-      setProgress((current / total) * 100);
+    try {
+      if (videoRef.current) {
+        const current = videoRef.current.currentTime || 0;
+        const total = videoRef.current.duration || 1;
+        setCurrentTime(current);
+        setProgress((current / total) * 100);
+      }
+    } catch (err) {
+      console.warn("Time update error:", err);
     }
   };
 
   const handleLoadedMetadata = () => {
-    if (videoRef.current) {
-      setDuration(videoRef.current.duration);
+    try {
+      if (videoRef.current) {
+        setDuration(videoRef.current.duration || 0);
+      }
+    } catch (err) {
+      console.warn("Metadata load error:", err);
     }
   };
 
   const handleSeek = (e) => {
-    const seekTime = (parseFloat(e.target.value) / 100) * (videoRef.current?.duration || 1);
-    if (videoRef.current) {
-      videoRef.current.currentTime = seekTime;
-      setProgress(e.target.value);
+    try {
+      const val = parseFloat(e.target.value);
+      if (videoRef.current && duration > 0) {
+        const seekTime = (val / 100) * duration;
+        videoRef.current.currentTime = seekTime;
+        setCurrentTime(seekTime);
+        setProgress(val);
+      }
+    } catch (err) {
+      console.warn("Seek error:", err);
     }
   };
 
   const toggleFullscreen = () => {
-    if (videoRef.current) {
-      if (videoRef.current.requestFullscreen) {
-        videoRef.current.requestFullscreen();
-      } else if (videoRef.current.webkitRequestFullscreen) {
-        videoRef.current.webkitRequestFullscreen();
+    try {
+      if (videoRef.current) {
+        if (videoRef.current.requestFullscreen) {
+          videoRef.current.requestFullscreen();
+        } else if (videoRef.current.webkitRequestFullscreen) {
+          videoRef.current.webkitRequestFullscreen();
+        }
       }
+    } catch (err) {
+      console.warn("Fullscreen error:", err);
     }
   };
 
   const formatTime = (seconds) => {
-    if (!seconds || isNaN(seconds)) return "00:00";
+    if (!seconds || isNaN(seconds) || seconds < 0) return "00:00";
     const mins = Math.floor(seconds / 60);
     const secs = Math.floor(seconds % 60);
     return `${mins < 10 ? "0" : ""}${mins}:${secs < 10 ? "0" : ""}${secs}`;
@@ -81,12 +112,13 @@ const VideoPlayer = ({ src, className = "" }) => {
     <div className={`relative overflow-hidden rounded-2xl bg-black border border-slate-800 shadow-xl group font-sans ${className}`}>
       <video
         ref={videoRef}
-        src={mediaUrl}
+        src={mediaUrl || undefined}
         onTimeUpdate={handleTimeUpdate}
         onLoadedMetadata={handleLoadedMetadata}
         onEnded={() => setIsPlaying(false)}
         className="w-full h-auto max-h-80 object-contain mx-auto bg-black"
         playsInline
+        controls={false}
       />
 
       {/* Control Overlay */}
@@ -96,7 +128,7 @@ const VideoPlayer = ({ src, className = "" }) => {
           type="range"
           min="0"
           max="100"
-          value={progress}
+          value={isNaN(progress) ? 0 : progress}
           onChange={handleSeek}
           className="w-full h-1 bg-slate-700 accent-orange-600 rounded-lg cursor-pointer mb-2"
         />
@@ -122,7 +154,7 @@ const VideoPlayer = ({ src, className = "" }) => {
             </button>
 
             <span className="text-[11px] font-bold text-slate-300">
-              {formatTime(videoRef.current?.currentTime)} / {formatTime(duration)}
+              {formatTime(currentTime)} / {formatTime(duration)}
             </span>
           </div>
 
