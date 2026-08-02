@@ -73,10 +73,10 @@ async def submit_geotag_photo(
     selfie_url = None
     if photo:
         try:
-            res = upload_image(photo, folder="geotrack_hrms/selfies")
+            res = await upload_image(photo, folder="geotrack_hrms/selfies")
             selfie_url = res.get("secure_url")
         except Exception:
-            content = photo.file.read() if hasattr(photo, "file") else await photo.read()
+            content = await photo.read()
             mime_type = photo.content_type or "image/jpeg"
             b64 = base64.b64encode(content).decode("utf-8")
             selfie_url = f"data:{mime_type};base64,{b64}"
@@ -85,7 +85,7 @@ async def submit_geotag_photo(
     work_photo_url = None
     if work_photo:
         try:
-            res = upload_image(work_photo, folder="geotrack_hrms/work_photos")
+            res = await upload_image(work_photo, folder="geotrack_hrms/work_photos")
             work_photo_url = res.get("secure_url")
         except Exception as e:
             content = await work_photo.read()
@@ -98,7 +98,7 @@ async def submit_geotag_photo(
     work_video_url = None
     if work_video:
         try:
-            res = upload_video(work_video, folder="geotrack_hrms/work_videos")
+            res = await upload_video(work_video, folder="geotrack_hrms/work_videos")
             work_video_url = res.get("secure_url")
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Failed to upload video: {str(e)}")
@@ -231,7 +231,7 @@ async def check_out_full(
     # Optional Checkout Selfie
     if checkout_selfie:
         try:
-            res = upload_image(checkout_selfie, folder="geotrack_hrms/checkout_selfies")
+            res = await upload_image(checkout_selfie, folder="geotrack_hrms/checkout_selfies")
             attendance.checkout_selfie_url = res.get("secure_url")
         except Exception:
             content = await checkout_selfie.read()
@@ -242,7 +242,7 @@ async def check_out_full(
     # Optional Checkout Work Photo
     if checkout_work_photo:
         try:
-            res = upload_image(checkout_work_photo, folder="geotrack_hrms/checkout_photos")
+            res = await upload_image(checkout_work_photo, folder="geotrack_hrms/checkout_photos")
             attendance.checkout_work_photo_url = res.get("secure_url")
         except Exception:
             content = await checkout_work_photo.read()
@@ -254,7 +254,7 @@ async def check_out_full(
     # Optional Checkout Work Video
     if checkout_work_video:
         try:
-            res = upload_video(checkout_work_video, folder="geotrack_hrms/checkout_videos")
+            res = await upload_video(checkout_work_video, folder="geotrack_hrms/checkout_videos")
             attendance.checkout_work_video_url = res.get("secure_url")
         except Exception as e:
             raise HTTPException(status_code=400, detail=f"Failed to upload checkout video: {str(e)}")

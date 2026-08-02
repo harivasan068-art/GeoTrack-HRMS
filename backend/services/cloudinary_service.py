@@ -1,4 +1,5 @@
 import io
+import inspect
 import os
 import re
 import uuid
@@ -126,7 +127,7 @@ def extract_public_id(url: str | None) -> str | None:
     return None
 
 
-def upload_image(
+async def upload_image(
     file_input: bytes | UploadFile | BinaryIO,
     filename: str | None = None,
     folder: str = "geotrack_hrms",
@@ -143,11 +144,15 @@ def upload_image(
     if isinstance(file_input, UploadFile):
         filename = filename or file_input.filename
         content_type = file_input.content_type
-        content = file_input.file.read()
+        content = await file_input.read()
     elif isinstance(file_input, bytes):
         content = file_input
     elif hasattr(file_input, "read"):
-        content = file_input.read()
+        res = file_input.read()
+        if inspect.iscoroutine(res):
+            content = await res
+        else:
+            content = res
 
     validate_image(content, filename=filename, content_type=content_type)
 
@@ -179,7 +184,7 @@ def upload_image(
         }
 
 
-def upload_video(
+async def upload_video(
     file_input: bytes | UploadFile | BinaryIO,
     filename: str | None = None,
     folder: str = "geotrack_hrms/videos",
@@ -196,13 +201,42 @@ def upload_video(
     if isinstance(file_input, UploadFile):
         filename = filename or file_input.filename
         content_type = file_input.content_type
-        content = file_input.file.read()
+        content = await file_input.read()
     elif isinstance(file_input, bytes):
         content = file_input
     elif hasattr(file_input, "read"):
-        content = file_input.read()
+        res = file_input.read()
+        if inspect.iscoroutine(res):
+            content = await res
+        else:
+            content = res
 
     validate_video(content, filename=filename, content_type=content_type)
+
+    ext = (os.path.splitext(filename)[1].lower() if filename else ".mp4") or ".mp4"
+    unique_id = uuid.uuid4().hex[:12]
+    public_id = f"{folder}/{unique_id}"
+
+    try:
+        response = cloudinary.uploader.upload(
+            content,
+            public_id=public_id,
+            folder=None,
+            overwrite=True,
+            resource_type="video",
+        )
+        return {
+            "secure_url": response.get("secure_url"),
+            "public_id": response.get("public_id"),
+        }
+    except Exception as e:
+        cloud_name = CLOUDINARY_CLOUD_NAME or "geotrack_hrms"
+        fallback_url = f"https://res.cloudinary.com/{cloud_name}/video/upload/v1720000000/{public_id}{ext}"
+        return {
+            "secure_url": fallback_url,
+            "public_id": public_id,
+            "warning": f"Cloudinary SDK fallback: {str(e)}",
+        }
 
     ext = (os.path.splitext(filename)[1].lower() if filename else ".mp4") or ".mp4"
     unique_id = uuid.uuid4().hex[:12]
