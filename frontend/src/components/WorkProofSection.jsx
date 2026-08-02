@@ -12,7 +12,7 @@ const WorkProofSection = ({ attendanceId, isReadOnly = false }) => {
   const [mediaType, setMediaType] = useState("image");
   const [selectedFile, setSelectedFile] = useState(null);
   const [description, setDescription] = useState("");
-  const [showUploadForm, setShowUploadForm] = useState(false);
+  const [showUploadForm, setShowUploadForm] = useState(!isReadOnly);
 
   const fetchProofs = async () => {
     try {
