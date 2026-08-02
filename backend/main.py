@@ -21,6 +21,27 @@ async def lifespan(app: FastAPI):
             except Exception:
                 pass
 
+            # Auto-migrate missing columns to attendance table (PostgreSQL & SQLite)
+            new_columns = [
+                ("check_in_time", "TIMESTAMP"),
+                ("check_out_time", "TIMESTAMP"),
+                ("working_hours", "VARCHAR(100)"),
+                ("checkout_latitude", "FLOAT"),
+                ("checkout_longitude", "FLOAT"),
+                ("checkout_location_name", "VARCHAR(255)"),
+                ("checkout_selfie_url", "TEXT"),
+                ("checkout_work_photo_url", "TEXT"),
+                ("checkout_work_video_url", "TEXT"),
+                ("work_photo_url", "TEXT"),
+                ("work_video_url", "TEXT"),
+            ]
+            for col_name, col_type in new_columns:
+                try:
+                    conn.execute(text(f"ALTER TABLE attendance ADD COLUMN {col_name} {col_type};"))
+                    conn.commit()
+                except Exception:
+                    pass
+
             try:
                 for col in ["photo_url", "work_photo_url", "work_video_url", "checkout_selfie_url", "checkout_work_photo_url", "checkout_work_video_url"]:
                     conn.execute(text(f"UPDATE attendance SET {col} = NULL WHERE {col} LIKE 'data:%' AND LENGTH({col}) < 100;"))
@@ -36,6 +57,7 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         print(f"Auto-seed warning on startup: {e}")
     yield
+
 
 
 app = FastAPI(
