@@ -5,6 +5,7 @@ import {
   FiCamera,
   FiCheckCircle,
   FiClock,
+  FiDownload,
   FiMapPin,
   FiPlusCircle,
   FiRefreshCw,
@@ -47,6 +48,41 @@ const Attendance = () => {
       setTodayRecords([]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const downloadPhoto = async (photoUrl, dateStr) => {
+    try {
+      const fullUrl = getImageUrl(photoUrl);
+      if (!fullUrl) {
+        toast.error("No photo available to download");
+        return;
+      }
+
+      const fileName = `Selfie_Proof_${dateStr || Date.now()}.jpg`;
+      const response = await fetch(fullUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+
+      toast.success("Selfie proof downloaded to your device!");
+    } catch (error) {
+      const fullUrl = getImageUrl(photoUrl);
+      const link = document.createElement("a");
+      link.href = fullUrl;
+      link.target = "_blank";
+      link.download = "Selfie_Proof.jpg";
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Opened photo download");
     }
   };
 
@@ -380,15 +416,24 @@ const Attendance = () => {
 
                 {att.photo_url && (
                   <div className="pt-3 border-t border-slate-800 flex items-center gap-4">
-                    <img
-                      src={getImageUrl(att.photo_url) || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80"}
-                      alt="Selfie Proof"
-                      className="h-24 w-24 object-cover rounded-xl border border-slate-700 shadow-md"
-                      onError={(e) => {
-                        e.target.onerror = null;
-                        e.target.src = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80";
-                      }}
-                    />
+                    <div className="relative group">
+                      <img
+                        src={getImageUrl(att.photo_url) || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80"}
+                        alt="Selfie Proof"
+                        className="h-24 w-24 object-cover rounded-xl border border-slate-700 shadow-md"
+                        onError={(e) => {
+                          e.target.onerror = null;
+                          e.target.src = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80";
+                        }}
+                      />
+                      <button
+                        onClick={() => downloadPhoto(att.photo_url, att.date)}
+                        className="absolute bottom-1 right-1 rounded-lg bg-slate-950/90 p-1.5 text-xs text-white border border-slate-700 shadow hover:bg-indigo-600 transition"
+                        title="Download selfie photo"
+                      >
+                        <FiDownload className="h-3.5 w-3.5" />
+                      </button>
+                    </div>
                     {att.remarks && (
                       <div className="text-xs bg-slate-950 p-3 rounded-xl border border-slate-800 flex-1">
                         <span className="text-slate-400 block font-bold mb-1">Admin Remarks:</span>

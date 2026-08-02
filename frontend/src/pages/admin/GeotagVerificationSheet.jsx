@@ -72,6 +72,43 @@ const GeotagVerificationSheet = () => {
     }
   };
 
+  const downloadPhoto = async (photoUrl, employeeName, empId) => {
+    try {
+      const fullUrl = getImageUrl(photoUrl);
+      if (!fullUrl) {
+        toast.error("No photo available to download");
+        return;
+      }
+
+      const cleanName = (employeeName || "Selfie").replace(/[^a-zA-Z0-9]/g, "_");
+      const fileName = `${cleanName}_${empId || "Proof"}_Selfie.jpg`;
+
+      const response = await fetch(fullUrl);
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = fileName;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(blobUrl);
+
+      toast.success("Selfie proof saved to your device!");
+    } catch (error) {
+      const fullUrl = getImageUrl(photoUrl);
+      const link = document.createElement("a");
+      link.href = fullUrl;
+      link.target = "_blank";
+      link.download = `${employeeName || "Selfie"}_Proof.jpg`;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      toast.success("Opened photo download");
+    }
+  };
+
   const exportToCSV = () => {
     if (!sheetData.length) return;
     const headers = [
@@ -250,26 +287,35 @@ const GeotagVerificationSheet = () => {
                     {/* Selfie Proof */}
                     <td className="px-4 py-3">
                       {item.photo_url ? (
-                        <button
-                          onClick={() => {
-                            setSelectedRequest(item);
-                            setRemarksInput(item.remarks || "");
-                          }}
-                          className="group flex items-center gap-2 rounded-lg bg-slate-950 p-1 border border-slate-800 hover:border-indigo-500 transition"
-                        >
-                          <img
-                            src={getImageUrl(item.photo_url) || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80"}
-                            alt="Selfie"
-                            className="h-10 w-12 object-cover rounded"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80";
+                        <div className="flex items-center gap-1.5">
+                          <button
+                            onClick={() => {
+                              setSelectedRequest(item);
+                              setRemarksInput(item.remarks || "");
                             }}
-                          />
-                          <span className="text-[11px] text-indigo-400 group-hover:underline flex items-center gap-1 pr-2">
-                            <FiEye /> Inspect
-                          </span>
-                        </button>
+                            className="group flex items-center gap-2 rounded-lg bg-slate-950 p-1 border border-slate-800 hover:border-indigo-500 transition"
+                          >
+                            <img
+                              src={getImageUrl(item.photo_url) || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80"}
+                              alt="Selfie"
+                              className="h-10 w-12 object-cover rounded"
+                              onError={(e) => {
+                                e.target.onerror = null;
+                                e.target.src = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80";
+                              }}
+                            />
+                            <span className="text-[11px] text-indigo-400 group-hover:underline flex items-center gap-1 pr-1">
+                              <FiEye /> Inspect
+                            </span>
+                          </button>
+                          <button
+                            onClick={() => downloadPhoto(item.photo_url, item.full_name, item.employee_id)}
+                            className="rounded-lg bg-slate-950 p-2 text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800 transition"
+                            title="Download selfie photo to device"
+                          >
+                            <FiDownload className="h-3.5 w-3.5" />
+                          </button>
+                        </div>
                       ) : (
                         <span className="text-slate-500 italic">No Selfie</span>
                       )}
@@ -370,16 +416,37 @@ const GeotagVerificationSheet = () => {
             <div className="grid gap-6 md:grid-cols-2">
               {/* Large Selfie */}
               <div>
-                <span className="text-xs font-bold text-slate-400 block mb-2">Live Captured Selfie Proof:</span>
-                <img
-                  src={getImageUrl(selectedRequest.photo_url) || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80"}
-                  alt="Large Selfie Proof"
-                  className="h-64 w-full object-cover rounded-2xl border border-slate-800 shadow-md"
-                  onError={(e) => {
-                    e.target.onerror = null;
-                    e.target.src = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80";
-                  }}
-                />
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-bold text-slate-400">Live Captured Selfie Proof:</span>
+                  {selectedRequest.photo_url && (
+                    <button
+                      onClick={() => downloadPhoto(selectedRequest.photo_url, selectedRequest.full_name, selectedRequest.employee_id)}
+                      className="inline-flex items-center gap-1.5 rounded-lg bg-indigo-600 px-3 py-1 text-xs font-bold text-white shadow hover:bg-indigo-500 transition"
+                      title="Download photo to device"
+                    >
+                      <FiDownload className="h-3.5 w-3.5" /> Save Photo
+                    </button>
+                  )}
+                </div>
+                <div className="relative group">
+                  <img
+                    src={getImageUrl(selectedRequest.photo_url) || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80"}
+                    alt="Large Selfie Proof"
+                    className="h-64 w-full object-cover rounded-2xl border border-slate-800 shadow-md"
+                    onError={(e) => {
+                      e.target.onerror = null;
+                      e.target.src = "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80";
+                    }}
+                  />
+                  {selectedRequest.photo_url && (
+                    <button
+                      onClick={() => downloadPhoto(selectedRequest.photo_url, selectedRequest.full_name, selectedRequest.employee_id)}
+                      className="absolute bottom-3 right-3 inline-flex items-center gap-1.5 rounded-xl bg-slate-950/90 backdrop-blur px-3 py-2 text-xs font-bold text-white border border-slate-700 shadow-xl hover:bg-indigo-600 hover:border-indigo-500 transition"
+                    >
+                      <FiDownload className="h-4 w-4" /> Download Photo to Device
+                    </button>
+                  )}
+                </div>
               </div>
 
               {/* Interactive Map Component */}
