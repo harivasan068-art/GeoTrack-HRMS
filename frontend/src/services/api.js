@@ -1,10 +1,6 @@
 import axios from "axios";
 
-export const API_BASE_URL = import.meta.env.VITE_API_URL;
-
-if (!API_BASE_URL) {
-  throw new Error("VITE_API_URL is not configured");
-}
+export const API_BASE_URL = (import.meta.env.VITE_API_URL || "https://geotrack-hrms-1.onrender.com/api").replace(/\/$/, "");
 
 export const getImageUrl = (url) => {
   if (!url) return null;
