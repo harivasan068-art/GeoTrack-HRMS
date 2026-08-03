@@ -12,7 +12,7 @@ const AuditLogs = () => {
     setLoading(true);
     try {
       const data = await adminService.getAuditLogs();
-      setLogs(data);
+      setLogs(data || []);
     } catch {
       toast.error("Failed to load audit logs");
     } finally {
@@ -25,71 +25,91 @@ const AuditLogs = () => {
   }, []);
 
   return (
-    <div className="space-y-6 font-sans">
+    <div className="mx-auto max-w-4xl space-y-6 font-sans pb-16">
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
-            <FiLock className="text-orange-600 dark:text-orange-400" /> Enterprise Audit Trail Logs
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+            <FiLock className="text-orange-600 dark:text-orange-400" /> Audit Trail Logs
           </h1>
-          <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-medium">
-            Immutable tracking of all admin approvals, attendance rejections, employee updates, and company settings changes.
+          <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
+            Immutable tracking of admin verifications, approvals, and system changes.
           </p>
         </div>
 
         <button
           onClick={fetchLogs}
-          className="inline-flex items-center gap-2 rounded-2xl bg-white dark:bg-slate-800 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-700 transition border border-slate-200 dark:border-slate-700 shadow-sm font-sans"
+          className="inline-flex items-center gap-2 rounded-2xl bg-white dark:bg-slate-900 px-4 py-3 min-h-[48px] text-xs font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 transition border border-slate-200 dark:border-slate-800 shadow-sm"
         >
-          <FiRefreshCw className="h-3.5 w-3.5" /> Refresh Audit Trail
+          <FiRefreshCw className="h-4 w-4" /> Refresh Logs
         </button>
       </div>
 
-      <div className="overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
-            <thead className="bg-slate-100 dark:bg-slate-950 text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
-              <tr>
-                <th className="px-4 py-3.5">#</th>
-                <th className="px-4 py-3.5">Action Executed</th>
-                <th className="px-4 py-3.5">Target Employee ID</th>
-                <th className="px-4 py-3.5">Admin User</th>
-                <th className="px-4 py-3.5">Remarks / Details</th>
-                <th className="px-4 py-3.5 text-right">Timestamp</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs font-medium bg-white dark:bg-slate-900">
-              {loading ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-500 dark:text-slate-400">
-                    <LoadingSpinner size="md" />
-                  </td>
-                </tr>
-              ) : logs.length === 0 ? (
-                <tr>
-                  <td colSpan={6} className="py-12 text-center text-slate-500 dark:text-slate-400">
-                    No audit log records found.
-                  </td>
-                </tr>
-              ) : (
-                logs.map((log, idx) => (
-                  <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
-                    <td className="px-4 py-3 font-mono text-slate-400 dark:text-slate-500">{idx + 1}</td>
-                    <td className="px-4 py-3 font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
-                      <FiShield className="text-orange-600 dark:text-orange-400 shrink-0" /> {log.action}
-                    </td>
-                    <td className="px-4 py-3 font-mono font-bold text-orange-600 dark:text-orange-400">{log.employee_id || "System N/A"}</td>
-                    <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-200">{log.admin_name}</td>
-                    <td className="px-4 py-3 text-slate-500 dark:text-slate-400 max-w-xs truncate">{log.remarks || "--"}</td>
-                    <td className="px-4 py-3 text-right font-mono text-slate-500 dark:text-slate-400">
-                      {new Date(log.created_at).toLocaleString()}
-                    </td>
-                  </tr>
-                ))
-              )}
-            </tbody>
-          </table>
+      {loading ? (
+        <div className="flex h-64 items-center justify-center">
+          <LoadingSpinner size="lg" />
         </div>
-      </div>
+      ) : logs.length === 0 ? (
+        <div className="rounded-3xl bg-white dark:bg-slate-900 p-8 text-center border border-slate-200 dark:border-slate-800 shadow-sm text-xs font-bold text-slate-500">
+          No audit log records recorded yet.
+        </div>
+      ) : (
+        <>
+          {/* Mobile View: Cards Grid */}
+          <div className="grid gap-3 sm:hidden">
+            {logs.map((log) => (
+              <div key={log.id} className="rounded-2xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="font-extrabold text-xs text-slate-900 dark:text-white font-display flex items-center gap-1.5">
+                    <FiShield className="text-orange-600 shrink-0" /> {log.action}
+                  </span>
+                  <span className="font-mono text-[10px] text-slate-400">
+                    {new Date(log.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+                  </span>
+                </div>
+                <div className="text-xs text-slate-600 dark:text-slate-300 font-medium bg-slate-50 dark:bg-slate-950 p-2.5 rounded-xl border border-slate-200 dark:border-slate-800">
+                  <p><strong>Admin:</strong> {log.admin_name}</p>
+                  <p><strong>Target ID:</strong> <span className="font-mono text-orange-600">{log.employee_id || "System"}</span></p>
+                  {log.remarks && <p className="mt-1 text-slate-500"><strong>Note:</strong> {log.remarks}</p>}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Desktop View: Table */}
+          <div className="hidden sm:block overflow-hidden rounded-3xl border border-slate-200 dark:border-slate-800 bg-white dark:bg-slate-900 shadow-sm">
+            <div className="overflow-x-auto">
+              <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+                <thead className="bg-slate-100 dark:bg-slate-950 text-xs font-extrabold uppercase tracking-wider text-slate-600 dark:text-slate-400 border-b border-slate-200 dark:border-slate-800">
+                  <tr>
+                    <th className="px-4 py-3.5">#</th>
+                    <th className="px-4 py-3.5">Action Executed</th>
+                    <th className="px-4 py-3.5">Target Employee ID</th>
+                    <th className="px-4 py-3.5">Admin User</th>
+                    <th className="px-4 py-3.5">Remarks / Details</th>
+                    <th className="px-4 py-3.5 text-right">Timestamp</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-slate-200 dark:divide-slate-800 text-xs font-medium bg-white dark:bg-slate-900">
+                  {logs.map((log, idx) => (
+                    <tr key={log.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
+                      <td className="px-4 py-3 font-mono text-slate-400">{idx + 1}</td>
+                      <td className="px-4 py-3 font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+                        <FiShield className="text-orange-600 shrink-0" /> {log.action}
+                      </td>
+                      <td className="px-4 py-3 font-mono font-bold text-orange-600">{log.employee_id || "System N/A"}</td>
+                      <td className="px-4 py-3 font-bold text-slate-900 dark:text-slate-200">{log.admin_name}</td>
+                      <td className="px-4 py-3 text-slate-500 dark:text-slate-400 max-w-xs truncate">{log.remarks || "--"}</td>
+                      <td className="px-4 py-3 text-right font-mono text-slate-500">
+                        {new Date(log.created_at).toLocaleString()}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </>
+      )}
     </div>
   );
 };

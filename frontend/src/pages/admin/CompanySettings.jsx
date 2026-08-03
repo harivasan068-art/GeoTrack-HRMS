@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react";
+import { motion } from "framer-motion";
 import toast from "react-hot-toast";
 import { FiAlertTriangle, FiCheckCircle, FiGlobe, FiMapPin, FiSave, FiSettings, FiShield, FiUpload } from "react-icons/fi";
 import LoadingSpinner from "../../components/LoadingSpinner";
@@ -75,13 +76,30 @@ const CompanySettings = () => {
     });
   };
 
+  const handleLogoFileUpload = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    try {
+      toast.loading("Processing logo image...");
+      const base64Data = await compressLogoImage(file);
+      setFormData((prev) => ({ ...prev, company_logo: base64Data }));
+      setLogoPreviewError(false);
+      toast.dismiss();
+      toast.success("Logo file selected & compressed!");
+    } catch {
+      toast.dismiss();
+      toast.error("Failed to process logo file");
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setSaving(true);
     try {
       const updated = await adminService.updateCompanySettings(formData);
       updateBrandingState(updated);
-      toast.success("Company branding & Geofence settings updated successfully!");
+      toast.success("Company settings updated successfully!");
     } catch (e) {
       const msg = e.response?.data?.detail || "Failed to update company settings";
       toast.error(typeof msg === "string" ? msg : "Failed to update company settings");
@@ -91,265 +109,209 @@ const CompanySettings = () => {
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8">
-      {/* Header */}
+    <div className="mx-auto max-w-4xl space-y-6 font-sans pb-24">
+      {/* Title Header */}
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2">
-          <FiSettings className="text-orange-600 dark:text-orange-400" /> White-Label Company Branding & Geofencing
+        <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+          <FiSettings className="text-orange-600 dark:text-orange-400" /> Company Settings & Geofencing
         </h1>
-        <p className="mt-1 text-sm text-slate-500 dark:text-slate-400 font-medium">
-          Changing Company Name, Logo, Theme Color, or Office Geofence Radius will automatically update the entire HRMS.
+        <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
+          Configure organization branding, office location coordinates, and geofence parameters.
         </p>
       </div>
 
-      <form onSubmit={handleSubmit} className="rounded-3xl bg-white dark:bg-slate-900 p-8 border border-slate-200 dark:border-slate-800 space-y-8 shadow-sm font-sans">
-        {/* Branding Section */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-extrabold text-orange-600 dark:text-orange-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2 font-display">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* CARD 1: Company Identity */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl bg-white dark:bg-slate-900 p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4"
+        >
+          <h2 className="text-xs sm:text-sm font-extrabold text-orange-600 dark:text-orange-400 uppercase tracking-wider font-mono border-b border-slate-100 dark:border-slate-800 pb-2">
             1. Company Identity & Branding
           </h2>
 
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Company Name</label>
+              <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase font-mono tracking-wider mb-1.5">
+                Company Name
+              </label>
               <input
                 type="text"
                 required
                 value={formData.company_name}
                 onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3.5 min-h-[48px] text-xs sm:text-sm text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Theme Primary Color (Hex)</label>
-              <div className="mt-1.5 flex items-center gap-3">
+              <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase font-mono tracking-wider mb-1.5">
+                Theme Color
+              </label>
+              <div className="flex items-center gap-3">
                 <input
                   type="color"
                   value={formData.theme_color}
                   onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
-                  className="h-10 w-12 rounded-xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-1 cursor-pointer"
+                  className="h-12 w-16 rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 p-1 cursor-pointer shrink-0"
                 />
                 <input
                   type="text"
                   value={formData.theme_color}
                   onChange={(e) => setFormData({ ...formData, theme_color: e.target.value })}
-                  className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold"
+                  className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3.5 min-h-[48px] text-xs sm:text-sm text-slate-900 dark:text-white font-mono font-bold"
                 />
               </div>
             </div>
           </div>
 
           <div className="space-y-3">
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Company Logo (Upload File, Direct Image Link, or Presets)</label>
-            
-            {/* Live Logo Preview Box */}
-            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800">
+            <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase font-mono tracking-wider">
+              Company Logo Uploader
+            </label>
+
+            <div className="flex flex-col sm:flex-row items-center gap-4 rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800">
               <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-700 overflow-hidden shrink-0 shadow-sm">
                 {formData.company_logo && !logoPreviewError ? (
                   <img
                     src={getImageUrl(formData.company_logo)}
-                    alt="Logo Preview"
-                    className="h-full w-full object-contain"
+                    alt="Logo"
+                    className="h-full w-full object-contain p-1"
                     onError={() => setLogoPreviewError(true)}
                   />
                 ) : (
-                  <div
-                    style={{ backgroundColor: formData.theme_color || "#ea580c" }}
-                    className="h-full w-full flex items-center justify-center text-white font-bold"
-                  >
-                    <FiMapPin className="h-6 w-6" />
-                  </div>
+                  <FiShield className="h-8 w-8 text-orange-600" />
                 )}
               </div>
 
-              <div className="flex-1 space-y-2 w-full font-sans">
+              <div className="flex-1 w-full space-y-2">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">
+                  Upload New Logo File
+                </label>
                 <input
-                  type="text"
-                  placeholder="https://example.com/logo.png or data:image/..."
-                  value={formData.company_logo}
-                  onChange={(e) => {
-                    setLogoPreviewError(false);
-                    setFormData({ ...formData, company_logo: e.target.value });
-                  }}
-                  className="w-full rounded-xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 px-4 py-2 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none font-medium"
+                  type="file"
+                  accept="image/png,image/jpeg,image/svg+xml,image/webp"
+                  onChange={handleLogoFileUpload}
+                  className="w-full text-xs text-slate-500 file:mr-3 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-500/10 file:text-orange-600 dark:file:text-orange-400 hover:file:bg-orange-500/20 cursor-pointer"
                 />
-
-                <div className="flex flex-wrap items-center gap-2">
-                  {/* Local Image File Upload Button */}
-                  <label className="inline-flex items-center gap-1.5 rounded-xl bg-orange-50 dark:bg-orange-950/50 border border-orange-200 dark:border-orange-800 px-3 py-1.5 text-[11px] font-bold text-orange-700 dark:text-orange-300 hover:bg-orange-600 hover:text-white transition cursor-pointer font-sans">
-                    <FiUpload className="h-3.5 w-3.5" /> Upload Image File
-                    <input
-                      type="file"
-                      accept="image/*"
-                      className="hidden"
-                      onChange={async (e) => {
-                        const file = e.target.files?.[0];
-                        if (file) {
-                          try {
-                            const compressedDataUrl = await compressLogoImage(file);
-                            setLogoPreviewError(false);
-                            setFormData({ ...formData, company_logo: compressedDataUrl });
-                            toast.success("Logo file selected & optimized!");
-                          } catch {
-                            toast.error("Failed to process image file");
-                          }
-                        }
-                      }}
-                    />
-                  </label>
-
-                  {/* Preset Logos */}
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLogoPreviewError(false);
-                      setFormData({
-                        ...formData,
-                        company_logo: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80",
-                      });
-                    }}
-                    className="inline-flex items-center gap-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-[11px] font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 transition shadow-sm"
-                  >
-                    Preset 1
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setLogoPreviewError(false);
-                      setFormData({
-                        ...formData,
-                        company_logo: "https://images.unsplash.com/photo-1560179707-f14e90ef3623?w=200&auto=format&fit=crop&q=80",
-                      });
-                    }}
-                    className="inline-flex items-center gap-1 rounded-xl bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-2.5 py-1 text-[11px] font-bold text-slate-700 dark:text-slate-300 hover:bg-slate-100 transition shadow-sm"
-                  >
-                    Preset 2
-                  </button>
-
-                  {formData.company_logo && (
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setLogoPreviewError(false);
-                        setFormData({ ...formData, company_logo: "" });
-                      }}
-                      className="inline-flex items-center gap-1 rounded-xl bg-rose-50 dark:bg-rose-950/40 border border-rose-200 dark:border-rose-800 px-2.5 py-1 text-[11px] font-bold text-rose-700 dark:text-rose-400 hover:bg-rose-600 hover:text-white transition"
-                    >
-                      Reset Default Icon
-                    </button>
-                  )}
-                </div>
               </div>
             </div>
-
-            {/* Webpage HTML URL Warning */}
-            {formData.company_logo && (formData.company_logo.includes(".htm") || formData.company_logo.includes(".html")) && (
-              <div className="flex items-center gap-2 rounded-2xl bg-amber-50 dark:bg-amber-950/40 border border-amber-200 dark:border-amber-800 p-3 text-xs text-amber-800 dark:text-amber-300">
-                <FiAlertTriangle className="h-4 w-4 shrink-0 text-amber-600 dark:text-amber-400" />
-                <span>
-                  The URL entered ends in <code>.htm</code> (web page). Please upload an image file (`.png`, `.jpg`, `.svg`) or click <strong>Upload Image File</strong> above.
-                </span>
-              </div>
-            )}
           </div>
-        </div>
+        </motion.div>
 
-        {/* Contact Info Section */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-extrabold text-amber-600 dark:text-amber-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2 font-display">
-            2. Contact & Headquarters Address
+        {/* CARD 2: Contact & Website */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="rounded-3xl bg-white dark:bg-slate-900 p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4"
+        >
+          <h2 className="text-xs sm:text-sm font-extrabold text-orange-600 dark:text-orange-400 uppercase tracking-wider font-mono border-b border-slate-100 dark:border-slate-800 pb-2">
+            2. Contact & Address Details
           </h2>
 
-          <div className="grid gap-6 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Corporate Email</label>
+              <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase font-mono tracking-wider mb-1.5">
+                Official Phone Number
+              </label>
               <input
-                type="email"
-                required
-                value={formData.email}
-                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
+                type="text"
+                value={formData.phone}
+                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3.5 min-h-[48px] text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:border-orange-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Phone Number</label>
+              <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase font-mono tracking-wider mb-1.5">
+                Official Email
+              </label>
               <input
-                type="text"
-                required
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
+                type="email"
+                value={formData.email}
+                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3.5 min-h-[48px] text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:border-orange-500 focus:outline-none"
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Office Physical Address</label>
+            <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase font-mono tracking-wider mb-1.5">
+              HQ Address
+            </label>
             <input
               type="text"
-              required
               value={formData.address}
               onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-              className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white focus:border-orange-500 focus:outline-none font-medium"
+              className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3.5 min-h-[48px] text-xs sm:text-sm text-slate-900 dark:text-white font-medium focus:border-orange-500 focus:outline-none"
             />
           </div>
-        </div>
+        </motion.div>
 
-        {/* Geofencing Parameters Section */}
-        <div className="space-y-4 font-sans">
-          <h2 className="text-sm font-extrabold text-emerald-600 dark:text-emerald-400 uppercase tracking-wider border-b border-slate-200 dark:border-slate-800 pb-2 font-display">
-            3. Office Geofence Radius Parameters
+        {/* CARD 3: Geofencing Location Configuration */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="rounded-3xl bg-white dark:bg-slate-900 p-5 sm:p-6 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4"
+        >
+          <h2 className="text-xs sm:text-sm font-extrabold text-orange-600 dark:text-orange-400 uppercase tracking-wider font-mono border-b border-slate-100 dark:border-slate-800 pb-2">
+            3. Office Geofence Coordinates & Radius
           </h2>
 
-          <div className="grid gap-6 sm:grid-cols-3">
+          <div className="grid gap-4 sm:grid-cols-3">
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Office Latitude</label>
+              <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase font-mono tracking-wider mb-1.5">
+                Latitude
+              </label>
               <input
                 type="number"
                 step="any"
-                required
                 value={formData.office_latitude}
-                onChange={(e) => setFormData({ ...formData, office_latitude: parseFloat(e.target.value) })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-orange-500 focus:outline-none"
+                onChange={(e) => setFormData({ ...formData, office_latitude: parseFloat(e.target.value) || 0 })}
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3.5 min-h-[48px] text-xs sm:text-sm text-slate-900 dark:text-white font-mono font-bold focus:border-orange-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Office Longitude</label>
+              <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase font-mono tracking-wider mb-1.5">
+                Longitude
+              </label>
               <input
                 type="number"
                 step="any"
-                required
                 value={formData.office_longitude}
-                onChange={(e) => setFormData({ ...formData, office_longitude: parseFloat(e.target.value) })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-orange-500 focus:outline-none"
+                onChange={(e) => setFormData({ ...formData, office_longitude: parseFloat(e.target.value) || 0 })}
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3.5 min-h-[48px] text-xs sm:text-sm text-slate-900 dark:text-white font-mono font-bold focus:border-orange-500 focus:outline-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Allowed Radius (Meters)</label>
+              <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase font-mono tracking-wider mb-1.5">
+                Geofence Radius (Meters)
+              </label>
               <input
                 type="number"
-                required
+                step="any"
                 value={formData.geofence_radius_meters}
-                onChange={(e) => setFormData({ ...formData, geofence_radius_meters: parseFloat(e.target.value) })}
-                className="mt-1.5 w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-2.5 text-xs text-slate-900 dark:text-white font-mono font-bold focus:border-orange-500 focus:outline-none"
+                onChange={(e) => setFormData({ ...formData, geofence_radius_meters: parseFloat(e.target.value) || 100 })}
+                className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3.5 min-h-[48px] text-xs sm:text-sm text-slate-900 dark:text-white font-mono font-bold focus:border-orange-500 focus:outline-none"
               />
             </div>
           </div>
-        </div>
+        </motion.div>
 
-        {/* Save Button */}
-        <button
+        {/* Large Submit Button */}
+        <motion.button
+          whileTap={{ scale: 0.98 }}
           type="submit"
           disabled={saving}
-          className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-orange-600 px-6 py-3.5 text-xs font-bold text-white shadow-md hover:bg-orange-700 transition font-sans"
+          className="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-600 py-4 min-h-[52px] text-xs sm:text-sm font-extrabold text-white shadow-xl shadow-orange-600/30 hover:from-orange-500 hover:to-amber-500 transition disabled:opacity-60 font-sans tracking-wide"
         >
-          {saving ? <LoadingSpinner size="sm" /> : <><FiSave /> Save White-Label Settings & Geofence</>}
-        </button>
+          {saving ? <LoadingSpinner size="sm" /> : <><FiSave className="h-5 w-5" /> Save Company Settings & Geofence</>}
+        </motion.button>
       </form>
     </div>
   );

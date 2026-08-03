@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import {
   FiActivity,
   FiAlertCircle,
@@ -15,6 +16,7 @@ import {
   FiUserCheck,
   FiUsers,
   FiXCircle,
+  FiChevronRight,
 } from "react-icons/fi";
 import toast from "react-hot-toast";
 import LoadingSpinner from "../../components/LoadingSpinner";
@@ -72,13 +74,12 @@ const AdminDashboard = () => {
   };
 
   const formatTime = (dateStr) => {
-    if (!dateStr) return "--";
+    if (!dateStr) return "--:--";
     const d = new Date(dateStr);
     if (isNaN(d.getTime())) return dateStr;
     return d.toLocaleTimeString("en-US", {
       hour: "2-digit",
       minute: "2-digit",
-      second: "2-digit",
       hour12: true,
     });
   };
@@ -100,273 +101,229 @@ const AdminDashboard = () => {
       label: "Total Employees",
       value: data?.total_employees || 0,
       icon: FiUsers,
-      color: "bg-blue-50 text-blue-600 border border-blue-200",
+      color: "bg-blue-500/10 text-blue-600 dark:text-blue-400 border border-blue-500/20",
     },
     {
-      label: "Approved Present Today",
+      label: "Approved Present",
       value: data?.present_today || 0,
       icon: FiCheckCircle,
-      color: "bg-emerald-50 text-emerald-600 border border-emerald-200",
+      color: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/20",
     },
     {
       label: "Pending Approvals",
       value: data?.pending_approvals || 0,
       icon: FiCheckSquare,
-      color: "bg-amber-50 text-amber-600 border border-amber-200",
+      color: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border border-amber-500/20",
     },
     {
       label: "Absent Today",
       value: data?.absent_today || 0,
       icon: FiXCircle,
-      color: "bg-rose-50 text-rose-600 border border-rose-200",
+      color: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20",
     },
     {
       label: "Attendance Rate",
       value: `${attendanceRate}%`,
       icon: FiPieChart,
-      color: "bg-orange-50 text-orange-600 border border-orange-200 dark:bg-orange-950/50 dark:text-orange-400 dark:border-orange-800",
+      color: "bg-orange-500/10 text-orange-600 dark:text-orange-400 border border-orange-500/20",
     },
     {
-      label: "Checked Out Today",
+      label: "Checked Out",
       value: data?.checked_out_today || 0,
       icon: FiClock,
-      color: "bg-cyan-50 text-cyan-600 border border-cyan-200",
+      color: "bg-purple-500/10 text-purple-600 dark:text-purple-400 border border-purple-500/20",
     },
   ];
 
   return (
-    <div className="space-y-6 sm:space-y-8 animate-fade-in">
-      {/* Executive Header Console */}
+    <div className="space-y-6 font-sans pb-16">
+      {/* Header Banner */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
-          <div className="flex items-center gap-2 text-xs font-extrabold text-orange-600 dark:text-orange-400 uppercase tracking-widest font-mono">
+          <div className="flex items-center gap-2 text-xs font-extrabold text-orange-600 dark:text-orange-400 uppercase tracking-wider font-mono">
             <FiActivity className="animate-pulse" /> Live HR Command Console
           </div>
-          <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 font-display">
-            Enterprise HRMS Analytics
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white tracking-tight mt-1 font-display">
+            Enterprise HR Analytics
           </h1>
-          <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
+          <p className="mt-0.5 text-xs text-slate-500 dark:text-slate-400 font-medium">
             Real-time workforce attendance metrics, geofence verification & approval sheet
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          <button
-            onClick={() => setIsEditProfileOpen(true)}
-            className="inline-flex items-center gap-2 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-4 py-2.5 text-xs font-bold text-slate-700 dark:text-slate-200 hover:bg-slate-100 dark:hover:bg-slate-800 transition shadow-sm font-sans"
+        <Link to="/admin/verifications">
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-600 px-5 py-3 min-h-[48px] text-xs font-extrabold text-white shadow-lg shadow-orange-600/25 hover:from-orange-500 hover:to-amber-500 transition"
           >
-            <FiUserCheck className="h-4 w-4 text-orange-600 dark:text-orange-400" /> Edit Admin Profile
-          </button>
-          <Link
-            to="/admin/verifications"
-            className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-5 py-2.5 text-xs font-bold text-white shadow-md shadow-orange-600/20 hover:bg-orange-700 transition font-sans"
-          >
-            <FiCheckSquare className="h-4 w-4" /> Open Verification Sheet
-          </Link>
-        </div>
+            <FiCheckSquare className="h-4 w-4" /> Go to Verification Sheet
+          </motion.button>
+        </Link>
       </div>
 
-      {/* Admin Overview Banner */}
-      <div className="relative overflow-hidden rounded-3xl bg-gradient-to-r from-slate-900 via-slate-800 to-slate-900 p-6 text-white shadow-xl">
-        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 relative z-10">
-          <div className="flex items-center gap-4">
-            <img
-              src={getImageUrl(user?.photo) || "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80"}
-              alt="Admin Avatar"
-              className="h-16 w-16 object-cover rounded-2xl border-2 border-white/80 shadow-xl ring-4 ring-white/10 shrink-0"
-              onError={(e) => {
-                e.target.onerror = null;
-                e.target.src = "https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=300&auto=format&fit=crop&q=80";
-              }}
-            />
-            <div>
-              <div className="flex items-center gap-2">
-                <h2 className="text-xl font-extrabold text-white font-display">{user?.full_name || "Administrator"}</h2>
-                <span className="inline-flex items-center gap-1 rounded-full bg-orange-500/30 border border-orange-400/40 px-2.5 py-0.5 text-[10px] font-bold text-orange-200 uppercase tracking-wider backdrop-blur-md font-mono">
-                  <FiShield /> Super Admin
-                </span>
+      {/* Stats Cards Grid (2 cols on mobile, 3/6 on desktop) */}
+      <div className="grid grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-3 sm:gap-4">
+        {stats.map((st, i) => {
+          const Icon = st.icon;
+          return (
+            <motion.div
+              key={st.label}
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: i * 0.04 }}
+              className="rounded-3xl bg-white dark:bg-slate-900 p-4 sm:p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-2"
+            >
+              <div className="flex items-center justify-between">
+                <span className="text-[11px] font-bold text-slate-500 dark:text-slate-400 line-clamp-1">{st.label}</span>
+                <div className={`h-8 w-8 rounded-xl flex items-center justify-center ${st.color}`}>
+                  <Icon className="h-4 w-4" />
+                </div>
               </div>
-              <p className="text-xs text-slate-300 font-mono mt-1">
-                Email: <span className="text-white">{user?.email || "admin@geotrack.com"}</span> &bull; ID: <span className="text-orange-400 font-bold">{user?.employee_id || "EMP001"}</span>
+              <p className="text-lg sm:text-xl font-extrabold text-slate-900 dark:text-white font-display">
+                {st.value}
               </p>
-            </div>
-          </div>
-
-          <button
-            onClick={() => setIsEditProfileOpen(true)}
-            className="inline-flex items-center gap-2 rounded-2xl bg-white/10 border border-white/20 px-4 py-2 text-xs font-bold text-white hover:bg-white hover:text-slate-900 transition font-sans"
-          >
-            <FiEdit className="h-3.5 w-3.5" /> Edit Settings & Password
-          </button>
-        </div>
+            </motion.div>
+          );
+        })}
       </div>
 
-      {/* Pending Approvals Alert Banner */}
-      {data?.pending_approvals > 0 && (
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 rounded-3xl bg-amber-50 dark:bg-amber-950/40 p-5 border border-amber-200 dark:border-amber-800 shadow-sm font-sans">
-          <div className="flex items-center gap-3.5">
-            <div className="h-10 w-10 rounded-2xl bg-amber-500 text-white border border-amber-600 flex items-center justify-center shrink-0 shadow-sm">
-              <FiCheckSquare className="h-5 w-5 animate-pulse" />
-            </div>
-            <div>
-              <div className="text-xs sm:text-sm font-extrabold text-amber-900 dark:text-amber-300 font-display">
-                {data.pending_approvals} Attendance Submissions Pending Verification
+      {/* Quick Access Action Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 sm:gap-4">
+        <Link to="/admin/verifications">
+          <div className="rounded-3xl bg-gradient-to-r from-orange-600 to-amber-600 p-5 text-white shadow-lg shadow-orange-600/20 flex items-center justify-between min-h-[72px]">
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 rounded-2xl bg-white/20 flex items-center justify-center text-white shrink-0">
+                <FiCheckSquare className="h-6 w-6" />
               </div>
-              <div className="text-xs text-amber-800/80 dark:text-amber-200/80 mt-0.5 font-medium">
-                Review selfie proofs, reverse geocoded customer addresses, and mark Present or Absent.
+              <div>
+                <h3 className="font-extrabold text-sm font-display">Attendance Review Sheet</h3>
+                <p className="text-[11px] text-white/80 font-medium">{data?.pending_approvals || 0} pending review</p>
               </div>
             </div>
+            <FiChevronRight className="h-5 w-5" />
           </div>
-          <Link
-            to="/admin/verifications"
-            className="shrink-0 rounded-2xl bg-amber-500 px-5 py-2.5 text-xs font-bold text-slate-950 hover:bg-amber-400 shadow-md transition font-sans"
-          >
-            Review Submissions &rarr;
-          </Link>
-        </div>
-      )}
+        </Link>
 
-      {/* 6 Executive Stats Cards - Light Corporate Theme */}
-      <div className="grid gap-3 sm:gap-6 grid-cols-2 lg:grid-cols-3 font-sans">
-        {stats.map(({ label, value, icon: Icon, color }) => (
-          <div key={label} className="group rounded-3xl bg-white dark:bg-slate-900 p-4 sm:p-6 border border-slate-200/80 dark:border-slate-800 hover:border-slate-300 transition-all duration-300 shadow-sm hover:shadow-md space-y-3">
-            <div className="flex items-center justify-between">
-              <p className="text-[11px] sm:text-xs font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider truncate">{label}</p>
-              <div className={`rounded-2xl p-2 sm:p-3 ${color} shrink-0 group-hover:scale-110 transition`}>
-                <Icon className="h-4 w-4 sm:h-5 sm:w-5" />
+        <Link to="/admin/employees">
+          <div className="rounded-3xl bg-white dark:bg-slate-900 p-5 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between min-h-[72px]">
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 rounded-2xl bg-blue-500/10 text-blue-600 dark:text-blue-400 flex items-center justify-center shrink-0">
+                <FiUsers className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="font-extrabold text-sm font-display">Manage Employees</h3>
+                <p className="text-[11px] text-slate-500 font-medium">{employeeList.length} total staff</p>
               </div>
             </div>
-            <p className="text-2xl sm:text-3xl font-black text-slate-900 dark:text-white tracking-tight font-display">{value}</p>
+            <FiChevronRight className="h-5 w-5 text-slate-400" />
           </div>
-        ))}
+        </Link>
+
+        <Link to="/admin/settings">
+          <div className="rounded-3xl bg-white dark:bg-slate-900 p-5 text-slate-900 dark:text-white border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between min-h-[72px]">
+            <div className="flex items-center gap-3">
+              <div className="h-11 w-11 rounded-2xl bg-purple-500/10 text-purple-600 dark:text-purple-400 flex items-center justify-center shrink-0">
+                <FiMapPin className="h-6 w-6" />
+              </div>
+              <div>
+                <h3 className="font-extrabold text-sm font-display">Company Geofence</h3>
+                <p className="text-[11px] text-slate-500 font-medium">Configure office GPS radius</p>
+              </div>
+            </div>
+            <FiChevronRight className="h-5 w-5 text-slate-400" />
+          </div>
+        </Link>
       </div>
 
-      {/* Recent Attendance Logs Today */}
-      <div className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm font-sans">
+      {/* Employee Directory Summary (Cards on mobile, table on desktop) */}
+      <div className="space-y-4">
         <div className="flex items-center justify-between">
-          <h2 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2 font-display">
-            <FiClock className="text-emerald-600 dark:text-emerald-400" /> Today's Attendance Logs
+          <h2 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider font-mono flex items-center gap-2">
+            <FiUsers className="text-orange-600" /> Recent Employees Directory ({employeeList.length})
           </h2>
-          <Link to="/admin/verifications" className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-700 font-bold hover:underline">
-            View All in Approval Sheet &rarr;
+          <Link to="/admin/employees" className="text-xs font-bold text-orange-600 dark:text-orange-400 hover:underline">
+            View All &rarr;
           </Link>
         </div>
 
-        {!data?.recent_attendance?.length ? (
-          <p className="text-xs text-slate-500 dark:text-slate-400 py-8 text-center">No attendance submissions recorded today</p>
-        ) : (
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 dark:border-slate-800 bg-slate-50/50 dark:bg-slate-950/50">
-            <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
-              <thead className="border-b border-slate-200 dark:border-slate-800 bg-slate-100 dark:bg-slate-950 text-slate-600 dark:text-slate-400 uppercase font-bold text-[11px]">
-                <tr>
-                  <th className="p-3.5">Employee ID</th>
-                  <th className="p-3.5">Check-In</th>
-                  <th className="p-3.5">Location Site</th>
-                  <th className="p-3.5 text-center">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 dark:divide-slate-800 font-medium bg-white dark:bg-slate-900">
-                {data.recent_attendance.map((record) => (
-                  <tr key={record.id} className="hover:bg-slate-50 dark:hover:bg-slate-800/40 transition">
-                    <td className="p-3.5 font-mono font-bold text-orange-600 dark:text-orange-400">{record.employee_id}</td>
-                    <td className="p-3.5 text-emerald-600 dark:text-emerald-400 font-mono font-bold">{formatTime(record.check_in)}</td>
-                    <td className="p-3.5 text-slate-700 dark:text-slate-300 flex items-center gap-1.5 font-semibold">
-                      <FiMapPin className="text-orange-600 dark:text-orange-400 shrink-0" />
-                      <span className="truncate">{record.location_name || "Office HQ"}</span>
-                    </td>
-                    <td className="p-3.5 text-center">
-                      <span className={`inline-block rounded-full px-2.5 py-0.5 font-extrabold text-[10px] ${
-                        record.status === "Present"
-                          ? "bg-emerald-100 dark:bg-emerald-950/50 text-emerald-800 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800"
-                          : record.status === "Absent"
-                          ? "bg-rose-100 dark:bg-rose-950/50 text-rose-800 dark:text-rose-300 border border-rose-200 dark:border-rose-800"
-                          : "bg-amber-100 dark:bg-amber-950/50 text-amber-800 dark:text-amber-300 border border-amber-200 dark:border-amber-800"
-                      }`}>
-                        {record.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-        )}
-      </div>
+        {/* Mobile View: Responsive Cards Grid */}
+        <div className="grid gap-3 sm:hidden">
+          {employeeList.slice(0, 5).map((emp) => (
+            <div key={emp.id} className="rounded-2xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 shadow-sm flex items-center justify-between gap-3">
+              <div className="flex items-center gap-3 overflow-hidden">
+                <img
+                  src={getImageUrl(emp.photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
+                  alt={emp.full_name}
+                  className="h-11 w-11 rounded-xl object-cover border border-slate-200 dark:border-slate-700 shrink-0"
+                  onError={(e) => {
+                    e.target.onerror = null;
+                    e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
+                  }}
+                />
+                <div className="truncate">
+                  <h4 className="font-extrabold text-xs text-slate-900 dark:text-white truncate">{emp.full_name}</h4>
+                  <p className="text-[10px] text-slate-500 font-medium truncate">{emp.designation} &bull; {emp.department}</p>
+                  <p className="text-[10px] text-orange-600 font-mono font-bold">ID: {emp.employee_id}</p>
+                </div>
+              </div>
 
-      {/* Registered Employees Directory Overview */}
-      <div className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm font-sans">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider flex items-center gap-2 font-display">
-              <FiUsers className="text-orange-600 dark:text-orange-400" /> Employee Directory Overview
-            </h2>
-            <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5 font-medium">Inspect active employees, department assignments, and roles</p>
-          </div>
-          <Link to="/admin/employees" className="text-xs text-orange-600 dark:text-orange-400 hover:text-orange-700 font-bold hover:underline">
-            Manage Directory ({employeeList.length}) &rarr;
-          </Link>
+              <button
+                onClick={() => handleDeleteEmployee(emp.id, emp.full_name)}
+                disabled={deleteLoadingId === emp.id}
+                className="rounded-xl p-2.5 bg-rose-50 dark:bg-rose-950/40 text-rose-600 hover:bg-rose-600 hover:text-white transition shrink-0 min-h-[40px] min-w-[40px] flex items-center justify-center"
+                title="Delete Employee"
+              >
+                {deleteLoadingId === emp.id ? <LoadingSpinner size="sm" /> : <FiTrash2 className="h-4 w-4" />}
+              </button>
+            </div>
+          ))}
         </div>
 
-        {!employeeList.length ? (
-          <p className="text-xs text-slate-500 py-8 text-center">No employee records found</p>
-        ) : (
-          <div className="overflow-x-auto rounded-2xl border border-slate-200 bg-slate-50/50">
-            <table className="w-full text-left text-xs text-slate-700">
-              <thead className="border-b border-slate-200 bg-slate-100 text-slate-600 uppercase font-bold text-[11px]">
-                <tr>
-                  <th className="p-3.5">Employee</th>
-                  <th className="p-3.5">ID</th>
-                  <th className="p-3.5">Department & Role</th>
-                  <th className="p-3.5">Email</th>
-                  <th className="p-3.5 text-center">Action</th>
+        {/* Desktop View: Clean Table */}
+        <div className="hidden sm:block rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 overflow-hidden shadow-sm">
+          <table className="w-full text-left text-xs text-slate-700 dark:text-slate-300">
+            <thead className="bg-slate-50 dark:bg-slate-950 text-slate-500 dark:text-slate-400 font-mono font-extrabold uppercase border-b border-slate-200 dark:border-slate-800">
+              <tr>
+                <th className="p-4">Employee</th>
+                <th className="p-4">ID</th>
+                <th className="p-4">Department</th>
+                <th className="p-4">Designation</th>
+                <th className="p-4 text-right">Actions</th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-slate-100 dark:divide-slate-800 font-medium">
+              {employeeList.slice(0, 6).map((emp) => (
+                <tr key={emp.id} className="hover:bg-slate-50/50 dark:hover:bg-slate-800/40 transition">
+                  <td className="p-4 flex items-center gap-3">
+                    <img
+                      src={getImageUrl(emp.photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
+                      alt={emp.full_name}
+                      className="h-9 w-9 rounded-xl object-cover border shrink-0"
+                    />
+                    <div>
+                      <span className="font-extrabold text-slate-900 dark:text-white block">{emp.full_name}</span>
+                      <span className="text-[10px] text-slate-400">{emp.email}</span>
+                    </div>
+                  </td>
+                  <td className="p-4 font-mono font-bold text-orange-600">{emp.employee_id}</td>
+                  <td className="p-4">{emp.department}</td>
+                  <td className="p-4">{emp.designation}</td>
+                  <td className="p-4 text-right">
+                    <button
+                      onClick={() => handleDeleteEmployee(emp.id, emp.full_name)}
+                      disabled={deleteLoadingId === emp.id}
+                      className="inline-flex items-center gap-1 text-rose-600 hover:text-rose-700 font-bold hover:underline"
+                    >
+                      <FiTrash2 /> Delete
+                    </button>
+                  </td>
                 </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200 font-medium bg-white">
-                {employeeList.slice(0, 5).map((emp) => {
-                  const isAdmin = emp.designation?.toLowerCase() === "admin";
-                  return (
-                    <tr key={emp.id || emp.employee_id} className="hover:bg-slate-50 transition">
-                      <td className="p-3.5">
-                        <div className="flex items-center gap-3">
-                          <img
-                            src={getImageUrl(emp.photo) || "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80"}
-                            alt={emp.full_name}
-                            className="h-9 w-9 rounded-xl object-cover border border-slate-200 shrink-0"
-                            onError={(e) => {
-                              e.target.onerror = null;
-                              e.target.src = "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=300&auto=format&fit=crop&q=80";
-                            }}
-                          />
-                          <span className="font-bold text-slate-900">{emp.full_name}</span>
-                        </div>
-                      </td>
-                      <td className="p-3.5 font-mono text-orange-600 dark:text-orange-400 font-bold">{emp.employee_id}</td>
-                      <td className="p-3.5 text-slate-700">{emp.department} &bull; {emp.designation}</td>
-                      <td className="p-3.5 text-slate-500 font-mono">{emp.email}</td>
-                      <td className="p-3.5 text-center">
-                        {!isAdmin ? (
-                          <button
-                            disabled={deleteLoadingId === emp.employee_id}
-                            onClick={() => handleDeleteEmployee(emp.employee_id, emp.full_name)}
-                            className="inline-flex items-center gap-1 rounded-xl bg-rose-50 px-3 py-1.5 text-xs font-bold text-rose-700 border border-rose-200 hover:bg-rose-600 hover:text-white transition disabled:opacity-30"
-                            title="Delete this employee account"
-                          >
-                            <FiTrash2 className="h-3.5 w-3.5" /> Delete
-                          </button>
-                        ) : (
-                          <span className="text-[10px] text-slate-400 italic font-semibold">Protected Admin</span>
-                        )}
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
-        )}
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Admin Profile Modal */}
       <AdminProfileModal isOpen={isEditProfileOpen} onClose={() => setIsEditProfileOpen(false)} />
     </div>
   );

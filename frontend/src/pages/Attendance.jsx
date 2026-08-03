@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import toast from "react-hot-toast";
 import {
   FiAlertTriangle,
@@ -11,6 +12,8 @@ import {
   FiRefreshCw,
   FiSend,
   FiXCircle,
+  FiVideo,
+  FiImage,
 } from "react-icons/fi";
 import InteractiveMap from "../components/InteractiveMap";
 import LoadingSpinner from "../components/LoadingSpinner";
@@ -48,7 +51,6 @@ const Attendance = () => {
   const fetchToday = async () => {
     try {
       const data = await attendanceService.getTodayAttendance();
-      // data is an array of today's customer site check-in submissions
       setTodayRecords(Array.isArray(data) ? data : data ? [data] : []);
     } catch {
       setTodayRecords([]);
@@ -79,7 +81,7 @@ const Attendance = () => {
       URL.revokeObjectURL(blobUrl);
 
       toast.success("Selfie proof downloaded to your device!");
-    } catch (error) {
+    } catch {
       const fullUrl = getImageUrl(photoUrl);
       const link = document.createElement("a");
       link.href = fullUrl;
@@ -129,7 +131,7 @@ const Attendance = () => {
         setGeofenceDistance(dist);
         setIsInsideGeofence(dist <= (company.geofence_radius_meters || 100));
       }
-    } catch (e) {
+    } catch {
       toast.error("Location permission required for GPS attendance");
     }
   };
@@ -141,7 +143,6 @@ const Attendance = () => {
     return d.toLocaleTimeString([], { hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: true });
   };
 
-  // Start live camera stream
   const startCamera = async () => {
     setCameraActive(true);
     try {
@@ -149,7 +150,7 @@ const Attendance = () => {
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
       }
-    } catch (err) {
+    } catch {
       toast.error("Unable to access camera. You can upload a photo file instead.");
       setCameraActive(false);
     }
@@ -183,17 +184,10 @@ const Attendance = () => {
     }, "image/jpeg");
   };
 
-  const handleFileSelect = (e) => {
-    const file = e.target.files[0];
-    if (file) {
-      setSelectedFile(file);
-      setCapturedImage(URL.createObjectURL(file));
-      stopCamera();
-    }
-  };
-
   const handleSubmitAttendance = async (e) => {
     e.preventDefault();
+    if (submitting) return;
+
     if (!selectedFile) {
       toast.error("Please capture or upload a live selfie");
       return;
@@ -224,10 +218,9 @@ const Attendance = () => {
         });
       }
 
-      const result = await attendanceService.submitGeotagPhoto(formData);
+      await attendanceService.submitGeotagPhoto(formData);
       toast.success("Site check-in & work proofs submitted successfully!");
 
-      // Reset form states for next site visit
       setCapturedImage(null);
       setSelectedFile(null);
       setWorkImages([]);
@@ -252,171 +245,220 @@ const Attendance = () => {
   const getStatusBadge = (status) => {
     if (status === "Present") {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-bold text-emerald-400 border border-emerald-500/30">
-          <FiCheckCircle /> Marked Present by Admin
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-extrabold text-emerald-600 dark:text-emerald-400 border border-emerald-500/20">
+          <FiCheckCircle /> Verified Present
         </span>
       );
     }
     if (status === "Absent") {
       return (
-        <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 px-3 py-1 text-xs font-bold text-rose-400 border border-rose-500/30">
-          <FiXCircle /> Marked Absent by Admin
+        <span className="inline-flex items-center gap-1.5 rounded-full bg-rose-500/10 px-3 py-1 text-xs font-extrabold text-rose-600 dark:text-rose-400 border border-rose-500/20">
+          <FiXCircle /> Marked Absent
         </span>
       );
     }
     return (
-      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-bold text-amber-400 border border-amber-500/30">
-        <FiClock className="animate-spin" /> Pending Admin Approval
+      <span className="inline-flex items-center gap-1.5 rounded-full bg-amber-500/10 px-3 py-1 text-xs font-extrabold text-amber-600 dark:text-amber-400 border border-amber-500/20">
+        <FiClock className="animate-spin" /> Pending Approval
       </span>
     );
   };
 
   return (
-    <div className="mx-auto max-w-4xl space-y-8 font-sans">
-      {/* Page Header */}
+    <div className="mx-auto max-w-3xl space-y-6 font-sans pb-28">
+      {/* Page Header Title */}
       <div>
-        <h1 className="text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
-          <FiCamera className="text-orange-600 dark:text-orange-400" /> Continuous Field Geotag Check-Ins
+        <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+          <FiCamera className="text-orange-600 dark:text-orange-400" /> Continuous Field Check-Ins
         </h1>
-        <p className="mt-1 text-sm text-slate-600 dark:text-slate-400 font-medium">
-          Submit location check-ins continuously for customer requests throughout the day. All submissions are sent to Admin for verification.
+        <p className="mt-1 text-xs sm:text-sm text-slate-500 dark:text-slate-400 font-medium">
+          Submit live geotagged check-in & work proofs for customer visits throughout the day.
         </p>
       </div>
 
-      {/* Geotag Submission Form */}
-      <form onSubmit={handleSubmitAttendance} className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-6 shadow-sm dark:shadow-2xl">
-        <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 font-display">
-            <FiPlusCircle className="text-orange-600 dark:text-orange-400" /> Mark New Customer Location Check-In
-          </h2>
-          <span className="text-xs font-bold text-orange-600 dark:text-orange-400 bg-orange-50 dark:bg-orange-950/50 px-3 py-1 rounded-full border border-orange-200 dark:border-orange-800 font-mono">
-            Continuous Site Visit Tracker
-          </span>
-        </div>
+      <form onSubmit={handleSubmitAttendance} className="space-y-4">
+        {/* CARD 1: Customer Site Title & Info */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="rounded-3xl bg-white dark:bg-slate-900 p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3"
+        >
+          <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
+            <h2 className="text-sm font-extrabold text-slate-900 dark:text-white flex items-center gap-2 font-display">
+              <FiPlusCircle className="text-orange-600 dark:text-orange-400" /> Mark Site Visit Location
+            </h2>
+            <span className="text-[10px] font-mono font-bold text-orange-600 dark:text-orange-400 bg-orange-500/10 px-2.5 py-1 rounded-full border border-orange-500/20">
+              Live GPS Geotag
+            </span>
+          </div>
 
-        {/* Location Name Customization */}
-        <div>
-          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 mb-1.5">Customer / Site Name</label>
-          <input
-            type="text"
-            required
-            value={locationName}
-            onChange={(e) => setLocationName(e.target.value)}
-            placeholder="e.g. Client Site Visit - Zenith Corp"
-            className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3 text-xs text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 font-medium"
-          />
-        </div>
+          <div>
+            <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 mb-1.5 uppercase font-mono tracking-wider">
+              Customer / Site Name
+            </label>
+            <input
+              type="text"
+              required
+              value={locationName}
+              onChange={(e) => setLocationName(e.target.value)}
+              placeholder="e.g. Client Visit - Zenith Corp Site 1"
+              className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-3.5 min-h-[48px] text-xs sm:text-sm text-slate-900 dark:text-white placeholder-slate-400 focus:border-orange-500 focus:outline-none focus:ring-2 focus:ring-orange-500/20 font-medium"
+            />
+          </div>
+        </motion.div>
 
-        {/* Geofence Warning Banner */}
-        {!isInsideGeofence && (
-          <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/30 p-4 border border-amber-200 dark:border-amber-800 flex items-start gap-3 font-sans">
-            <FiAlertTriangle className="h-5 w-5 text-amber-600 dark:text-amber-400 shrink-0 mt-0.5" />
-            <div className="text-xs">
-              <div className="font-bold text-amber-800 dark:text-amber-300">You are outside the main office geofence ({geofenceDistance}m away).</div>
-              <div className="text-amber-700 dark:text-amber-200/80 mt-0.5 font-medium">
-                Your customer site check-in will be flagged as <strong>'Outside Allowed Zone'</strong> for Admin review.
+        {/* CARD 2: GPS Status & Geofence Warning */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 }}
+          className="rounded-3xl bg-white dark:bg-slate-900 p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-3"
+        >
+          <div className="flex items-center justify-between">
+            <span className="text-xs font-extrabold text-slate-700 dark:text-slate-300 flex items-center gap-2">
+              <FiMapPin className="text-orange-600 dark:text-orange-400" /> GPS Geofence Status
+            </span>
+            {isInsideGeofence ? (
+              <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded-full border border-emerald-500/20">
+                Inside Verified Zone
+              </span>
+            ) : (
+              <span className="text-[11px] font-bold text-amber-600 dark:text-amber-400 bg-amber-500/10 px-3 py-1 rounded-full border border-amber-500/20">
+                Outside Zone ({geofenceDistance}m away)
+              </span>
+            )}
+          </div>
+
+          {!isInsideGeofence && (
+            <div className="rounded-2xl bg-amber-50 dark:bg-amber-950/30 p-3.5 border border-amber-200 dark:border-amber-800 flex items-start gap-3">
+              <FiAlertTriangle className="h-5 w-5 text-amber-600 shrink-0 mt-0.5" />
+              <div className="text-xs text-amber-800 dark:text-amber-200/90 font-medium">
+                You are {geofenceDistance}m away from the primary office geofence. Your site check-in will be flagged for Admin verification review.
               </div>
             </div>
-          </div>
-        )}
+          )}
+        </motion.div>
 
-        {/* Map Preview Component */}
+        {/* CARD 3: Interactive Leaflet Map Preview */}
         {gpsLocation && (
-          <InteractiveMap
-            latitude={gpsLocation.latitude}
-            longitude={gpsLocation.longitude}
-            address={address}
-            locationName={locationName}
-            isInsideGeofence={isInsideGeofence}
-            height="h-52"
-          />
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.1 }}
+            className="rounded-3xl bg-white dark:bg-slate-900 p-4 border border-slate-200 dark:border-slate-800 shadow-sm overflow-hidden"
+          >
+            <InteractiveMap
+              latitude={gpsLocation.latitude}
+              longitude={gpsLocation.longitude}
+              address={address}
+              locationName={locationName}
+              isInsideGeofence={isInsideGeofence}
+              height="h-56 sm:h-64"
+            />
+          </motion.div>
         )}
 
-        {/* Live Camera Viewfinder & Selfie Capture */}
-        <div className="space-y-3 font-sans">
-          <label className="block text-xs font-bold text-slate-700 dark:text-slate-300">Capture Site Live Selfie</label>
+        {/* CARD 4: Camera Viewfinder & Live Selfie Capture */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.15 }}
+          className="rounded-3xl bg-white dark:bg-slate-900 p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4 text-center"
+        >
+          <label className="block text-xs font-extrabold text-slate-700 dark:text-slate-300 uppercase font-mono tracking-wider text-left">
+            Live Selfie Verification
+          </label>
 
           {cameraActive ? (
-            <div className="relative rounded-2xl overflow-hidden bg-black border-2 border-orange-500 max-w-sm mx-auto shadow-lg">
-              <video ref={videoRef} autoPlay playsInline className="h-64 w-full object-cover" />
+            <div className="relative rounded-3xl overflow-hidden bg-black border-2 border-orange-500 max-w-sm mx-auto shadow-xl">
+              <video ref={videoRef} autoPlay playsInline className="h-64 sm:h-72 w-full object-cover" />
               <div className="absolute bottom-4 left-0 right-0 flex justify-center gap-3">
                 <button
                   type="button"
                   onClick={capturePhoto}
-                  className="rounded-full bg-orange-600 px-6 py-2.5 text-xs font-bold text-white shadow-lg hover:bg-orange-700 transition"
+                  className="rounded-full bg-gradient-to-r from-orange-600 to-amber-600 px-6 py-3 min-h-[48px] text-xs font-extrabold text-white shadow-xl hover:scale-105 transition"
                 >
-                  Take Photo
+                  Take Selfie Photo
                 </button>
                 <button
                   type="button"
                   onClick={stopCamera}
-                  className="rounded-full bg-slate-800 px-4 py-2.5 text-xs font-semibold text-white transition hover:bg-slate-700"
+                  className="rounded-full bg-slate-800/90 px-4 py-3 min-h-[48px] text-xs font-bold text-white backdrop-blur-md transition hover:bg-slate-700"
                 >
                   Cancel
                 </button>
               </div>
             </div>
           ) : capturedImage ? (
-            <div className="space-y-3 text-center">
-              <img src={capturedImage} alt="Captured Selfie" className="h-56 w-56 object-cover rounded-2xl mx-auto border-2 border-orange-500 shadow-md" />
+            <div className="space-y-3">
+              <img
+                src={capturedImage}
+                alt="Captured Selfie"
+                className="h-56 w-56 object-cover rounded-3xl mx-auto border-2 border-orange-500 shadow-lg"
+              />
               <button
                 type="button"
                 onClick={startCamera}
-                className="inline-flex items-center gap-2 rounded-2xl bg-slate-100 dark:bg-slate-800 px-4 py-2 text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
+                className="inline-flex items-center gap-2 rounded-2xl bg-slate-100 dark:bg-slate-800 px-5 py-3 min-h-[48px] text-xs font-bold text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700 hover:bg-slate-200 dark:hover:bg-slate-700 transition"
               >
-                <FiRefreshCw /> Retake Photo
+                <FiRefreshCw className="h-4 w-4" /> Retake Selfie Photo
               </button>
             </div>
           ) : (
             <button
               type="button"
               onClick={startCamera}
-              className="inline-flex items-center gap-2 rounded-2xl bg-orange-600 px-5 py-3 text-xs font-bold text-white shadow-md shadow-orange-600/20 hover:bg-orange-700 transition"
+              className="w-full flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-orange-600 to-amber-600 px-6 py-4 min-h-[56px] text-xs sm:text-sm font-extrabold text-white shadow-lg shadow-orange-600/25 hover:scale-[1.01] transition"
             >
-              <FiCamera className="h-4 w-4" /> Open Camera & Capture Photo
+              <FiCamera className="h-5 w-5" /> Open Live Camera & Capture Selfie
             </button>
           )}
-        </div>
+        </motion.div>
 
-        {/* Work Proofs Embedded Upload Controls */}
-        <div className="rounded-2xl bg-slate-50 dark:bg-slate-950 p-4 border border-slate-200 dark:border-slate-800 space-y-3 font-sans">
-          <div className="flex items-center gap-2 text-xs font-bold text-slate-800 dark:text-white">
-            <FiPlusCircle className="text-orange-600 dark:text-orange-400 h-4 w-4" /> Work Completion Proofs (Optional)
+        {/* CARD 5: Work Proof Upload Section */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.2 }}
+          className="rounded-3xl bg-white dark:bg-slate-900 p-5 border border-slate-200 dark:border-slate-800 shadow-sm space-y-4"
+        >
+          <div className="flex items-center gap-2 text-xs font-extrabold text-slate-900 dark:text-white uppercase font-mono tracking-wider">
+            <FiPlusCircle className="text-orange-600 dark:text-orange-400 h-4 w-4" /> Work Proof Attachments (Optional)
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-2">
+          <div className="grid gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">
-                Upload Poster / Site Photos (Max 10MB each)
+              <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1.5">
+                Site Posters / Photos (Max 10MB each)
               </label>
               <input
                 type="file"
                 multiple
                 accept="image/jpeg,image/png,image/webp"
                 onChange={(e) => setWorkImages(e.target.files)}
-                className="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-100 file:text-orange-700 dark:file:bg-orange-950 dark:file:text-orange-400 hover:file:bg-orange-200 cursor-pointer"
+                className="w-full text-xs text-slate-500 file:mr-2 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-500/10 file:text-orange-600 dark:file:text-orange-400 hover:file:bg-orange-500/20 cursor-pointer"
               />
               {workImages && workImages.length > 0 && (
-                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
-                  ✓ {workImages.length} image(s) selected
+                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
+                  ✓ {workImages.length} image(s) attached
                 </span>
               )}
             </div>
 
             <div>
-              <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1">
-                Upload Work Videos (Max 100MB each)
+              <label className="block text-[11px] font-bold text-slate-600 dark:text-slate-400 mb-1.5">
+                Work Videos (Max 100MB each)
               </label>
               <input
                 type="file"
                 multiple
                 accept="video/mp4,video/quicktime,video/webm"
                 onChange={(e) => setWorkVideos(e.target.files)}
-                className="w-full text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-100 file:text-orange-700 dark:file:bg-orange-950 dark:file:text-orange-400 hover:file:bg-orange-200 cursor-pointer"
+                className="w-full text-xs text-slate-500 file:mr-2 file:py-2.5 file:px-4 file:rounded-xl file:border-0 file:text-xs file:font-bold file:bg-orange-500/10 file:text-orange-600 dark:file:text-orange-400 hover:file:bg-orange-500/20 cursor-pointer"
               />
               {workVideos && workVideos.length > 0 && (
-                <span className="text-[10px] font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
-                  ✓ {workVideos.length} video(s) selected
+                <span className="text-[11px] font-bold text-emerald-600 dark:text-emerald-400 mt-1 block">
+                  ✓ {workVideos.length} video(s) attached
                 </span>
               )}
             </div>
@@ -425,52 +467,61 @@ const Attendance = () => {
           <div>
             <input
               type="text"
-              placeholder="Work proof description / notes (e.g. Poster site 1, completed branding installation)"
+              placeholder="Work proof description / site notes..."
               value={workDescription}
               onChange={(e) => setWorkDescription(e.target.value)}
-              className="w-full rounded-xl bg-white dark:bg-slate-900 px-3.5 py-2 text-xs border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-orange-500"
+              className="w-full rounded-2xl bg-slate-50 dark:bg-slate-950 px-4 py-3 min-h-[48px] text-xs sm:text-sm border border-slate-200 dark:border-slate-800 text-slate-900 dark:text-white focus:outline-none focus:border-orange-500 font-medium"
             />
           </div>
-        </div>
+        </motion.div>
 
-        {/* Submit Attendance Button */}
-        <button
-          type="submit"
-          disabled={submitting}
-          className="w-full rounded-2xl bg-orange-600 py-3.5 text-xs font-extrabold text-white shadow-md shadow-orange-600/20 hover:bg-orange-700 transition disabled:opacity-60 font-sans tracking-wide"
-        >
-          {submitting ? <LoadingSpinner size="sm" /> : "Submit Customer Site Check-In"}
-        </button>
+        {/* Sticky Mobile Submit Action Button Bar */}
+        <div className="fixed bottom-16 sm:bottom-0 inset-x-0 z-30 p-4 bg-white/80 dark:bg-slate-900/80 backdrop-blur-xl border-t border-slate-200 dark:border-slate-800 max-w-3xl mx-auto">
+          <motion.button
+            whileTap={{ scale: 0.98 }}
+            type="submit"
+            disabled={submitting}
+            className="w-full rounded-2xl bg-gradient-to-r from-orange-600 to-amber-600 py-4 min-h-[52px] text-xs sm:text-sm font-extrabold text-white shadow-xl shadow-orange-600/30 hover:from-orange-500 hover:to-amber-500 transition disabled:opacity-60 font-sans tracking-wide flex items-center justify-center gap-2"
+          >
+            {submitting ? (
+              <LoadingSpinner size="sm" />
+            ) : (
+              <>
+                <FiSend className="h-5 w-5" /> Submit Site Check-In & Work Proofs
+              </>
+            )}
+          </motion.button>
+        </div>
         <canvas ref={canvasRef} className="hidden" />
       </form>
 
       {/* List of Today's Submitted Site Visits */}
       {todayRecords.length > 0 && (
-        <div className="space-y-4 font-sans">
-          <h2 className="text-base font-bold text-slate-900 dark:text-white flex items-center gap-2 font-display">
-            <FiClock className="text-orange-600 dark:text-orange-400" /> Today's Submitted Site Check-Ins ({todayRecords.length})
+        <div className="space-y-4 pt-4">
+          <h2 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider font-mono flex items-center gap-2">
+            <FiClock className="text-orange-600 dark:text-orange-400" /> Today's Site Visits ({todayRecords.length})
           </h2>
 
           <div className="space-y-4">
             {todayRecords.map((att) => (
-              <div key={att.id} className="rounded-3xl bg-white dark:bg-slate-900 p-6 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
-                <div className="flex items-center justify-between border-b border-slate-200 dark:border-slate-800 pb-3">
+              <div key={att.id} className="rounded-3xl bg-white dark:bg-slate-900 p-5 border border-slate-200 dark:border-slate-800 space-y-4 shadow-sm">
+                <div className="flex items-center justify-between border-b border-slate-100 dark:border-slate-800 pb-3">
                   <div>
-                    <span className="text-xs font-bold text-orange-600 dark:text-orange-400 font-display">{att.location_name || "Customer Site"}</span>
-                    <div className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">Submitted at: {formatTime(att.check_in)}</div>
+                    <span className="text-sm font-extrabold text-slate-900 dark:text-white font-display">{att.location_name || "Customer Site"}</span>
+                    <div className="text-xs text-slate-500 dark:text-slate-400 font-mono mt-0.5">Check-in at {formatTime(att.check_in)}</div>
                   </div>
                   {getStatusBadge(att.status)}
                 </div>
 
-                <div className="grid gap-4 sm:grid-cols-2 text-xs">
+                <div className="grid gap-3 sm:grid-cols-2 text-xs">
                   <div>
-                    <span className="text-slate-500 dark:text-slate-400 font-bold">GPS Address:</span>
-                    <div className="font-bold text-slate-900 dark:text-slate-200 mt-0.5 flex items-center gap-1">
-                      <FiMapPin className="text-orange-600 dark:text-orange-400 shrink-0" /> {att.address || att.location_name}
+                    <span className="text-slate-500 dark:text-slate-400 font-bold">Address:</span>
+                    <div className="font-bold text-slate-800 dark:text-slate-200 mt-0.5 flex items-center gap-1">
+                      <FiMapPin className="text-orange-600 shrink-0" /> {att.address || att.location_name}
                     </div>
                   </div>
                   <div>
-                    <span className="text-slate-500 dark:text-slate-400 font-bold">Coordinates:</span>
+                    <span className="text-slate-500 dark:text-slate-400 font-bold">GPS Coordinates:</span>
                     <div className="font-mono text-orange-600 dark:text-orange-400 font-bold mt-0.5">
                       {att.latitude?.toFixed(4)}, {att.longitude?.toFixed(4)}
                     </div>
@@ -478,7 +529,7 @@ const Attendance = () => {
                 </div>
 
                 {att.photo_url && (
-                  <div className="pt-3 border-t border-slate-200 dark:border-slate-800 flex items-center gap-4">
+                  <div className="pt-3 border-t border-slate-100 dark:border-slate-800 flex items-center gap-4">
                     <div className="relative group">
                       <img
                         src={getImageUrl(att.photo_url) || "https://images.unsplash.com/photo-1540575467063-178a50c2df87?w=600&auto=format&fit=crop&q=80"}
@@ -490,23 +541,23 @@ const Attendance = () => {
                         }}
                       />
                       <button
+                        type="button"
                         onClick={() => downloadPhoto(att.photo_url, att.date)}
-                        className="absolute bottom-1 right-1 rounded-lg bg-slate-900/90 p-1.5 text-xs text-white border border-slate-700 shadow hover:bg-orange-600 transition"
+                        className="absolute bottom-1 right-1 rounded-xl bg-slate-900/90 p-2 text-xs text-white border border-slate-700 shadow hover:bg-orange-600 transition"
                         title="Download selfie photo"
                       >
-                        <FiDownload className="h-3.5 w-3.5" />
+                        <FiDownload className="h-4 w-4" />
                       </button>
                     </div>
                     {att.remarks && (
                       <div className="text-xs bg-slate-50 dark:bg-slate-950 p-3.5 rounded-2xl border border-slate-200 dark:border-slate-800 flex-1">
-                        <span className="text-slate-500 dark:text-slate-400 block font-bold mb-1">Admin Remarks:</span>
+                        <span className="text-slate-500 block font-bold mb-1">Admin Remarks:</span>
                         <span className="text-slate-800 dark:text-slate-200 font-medium">{att.remarks}</span>
                       </div>
                     )}
                   </div>
                 )}
 
-                {/* Work Proof Module */}
                 <WorkProofSection attendanceId={att.id} isReadOnly={true} />
               </div>
             ))}
