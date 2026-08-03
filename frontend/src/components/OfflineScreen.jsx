@@ -38,7 +38,7 @@ const OfflineScreen = ({ children }) => {
           <div className="space-y-2">
             <h2 className="text-2xl font-extrabold text-white font-display">Offline Mode</h2>
             <p className="text-xs text-slate-400 leading-relaxed font-medium">
-              Your internet connection appears to be offline. Don't worry, your app shell is cached locally by GeoTrack PWA service worker.
+              Your internet connection appears to be offline. Don&apos;t worry, your app shell is cached locally by GeoTrack PWA service worker.
             </p>
           </div>
 

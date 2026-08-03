@@ -499,7 +499,7 @@ const Attendance = () => {
       {todayRecords.length > 0 && (
         <div className="space-y-4 pt-4">
           <h2 className="text-sm font-extrabold text-slate-900 dark:text-white uppercase tracking-wider font-mono flex items-center gap-2">
-            <FiClock className="text-orange-600 dark:text-orange-400" /> Today's Site Visits ({todayRecords.length})
+            <FiClock className="text-orange-600 dark:text-orange-400" /> Today&apos;s Site Visits ({todayRecords.length})
           </h2>
 
           <div className="space-y-4">

@@ -13,7 +13,7 @@ const Terms = () => {
         <div className="space-y-6 rounded-3xl bg-white dark:bg-slate-900 p-8 sm:p-10 border border-slate-200 dark:border-slate-800 leading-relaxed shadow-sm font-sans">
           <div>
             <h3 className="text-lg font-bold text-slate-900 dark:text-white font-display">1. Platform Usage & Verification Rules</h3>
-            <p className="text-slate-600 dark:text-slate-400 text-xs mt-1.5 font-medium">GeoTrack HRMS is an enterprise workforce attendance application. Attendance submissions enter 'Pending Approval' status and must be verified by the employer's designated Admin.</p>
+            <p className="text-slate-600 dark:text-slate-400 text-xs mt-1.5 font-medium">GeoTrack HRMS is an enterprise workforce attendance application. Attendance submissions enter &apos;Pending Approval&apos; status and must be verified by the employer&apos;s designated Admin.</p>
           </div>
 
           <div>
