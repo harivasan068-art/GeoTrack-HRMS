@@ -289,7 +289,7 @@ const EmployeeTable = ({ employees = [], onDelete, loading, onAddEmployee }) => 
               </button>
               <button
                 onClick={() => {
-                  onDelete(deleteConfirmEmp.id, deleteConfirmEmp.full_name);
+                  onDelete(deleteConfirmEmp.employee_id || deleteConfirmEmp.id, deleteConfirmEmp.full_name);
                   setDeleteConfirmEmp(null);
                 }}
                 className="rounded-2xl bg-rose-600 px-5 py-2.5 text-xs font-extrabold text-white shadow hover:bg-rose-700 transition"

@@ -42,7 +42,7 @@ const Employees = () => {
     try {
       await adminService.deleteEmployee(employeeId);
       toast.success(`Employee ${employeeId} deleted successfully`);
-      setEmployees((prev) => prev.filter((e) => e.employee_id !== employeeId));
+      setEmployees((prev) => prev.filter((e) => e.employee_id !== employeeId && e.id !== employeeId && String(e.id) !== String(employeeId)));
     } catch (error) {
       toast.error(error.response?.data?.detail || "Delete failed");
     } finally {

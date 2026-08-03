@@ -268,12 +268,12 @@ const AdminDashboard = () => {
               </div>
 
               <button
-                onClick={() => handleDeleteEmployee(emp.id, emp.full_name)}
-                disabled={deleteLoadingId === emp.id}
+                onClick={() => handleDeleteEmployee(emp.employee_id || emp.id, emp.full_name)}
+                disabled={deleteLoadingId === (emp.employee_id || emp.id)}
                 className="rounded-xl p-2.5 bg-rose-50 dark:bg-rose-950/40 text-rose-600 hover:bg-rose-600 hover:text-white transition shrink-0 min-h-[40px] min-w-[40px] flex items-center justify-center"
                 title="Delete Employee"
               >
-                {deleteLoadingId === emp.id ? <LoadingSpinner size="sm" /> : <FiTrash2 className="h-4 w-4" />}
+                {deleteLoadingId === (emp.employee_id || emp.id) ? <LoadingSpinner size="sm" /> : <FiTrash2 className="h-4 w-4" />}
               </button>
             </div>
           ))}
@@ -310,8 +310,8 @@ const AdminDashboard = () => {
                   <td className="p-4">{emp.designation}</td>
                   <td className="p-4 text-right">
                     <button
-                      onClick={() => handleDeleteEmployee(emp.id, emp.full_name)}
-                      disabled={deleteLoadingId === emp.id}
+                      onClick={() => handleDeleteEmployee(emp.employee_id || emp.id, emp.full_name)}
+                      disabled={deleteLoadingId === (emp.employee_id || emp.id)}
                       className="inline-flex items-center gap-1 text-rose-600 hover:text-rose-700 font-bold hover:underline"
                     >
                       <FiTrash2 /> Delete

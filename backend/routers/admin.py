@@ -350,26 +350,32 @@ def update_employee(
     return employee
 
 
-@router.delete("/employees/{employee_id}", status_code=status.HTTP_204_NO_CONTENT)
+@router.delete("/employees/{employee_id}")
 def delete_employee(
     employee_id: str,
     current_admin: Employee = Depends(get_current_admin),
     db: Session = Depends(get_db),
 ):
     employee = db.query(Employee).filter(Employee.employee_id == employee_id).first()
+    if not employee and (employee_id.isdigit() or isinstance(employee_id, int)):
+        employee = db.query(Employee).filter(Employee.id == int(employee_id)).first()
+
     if not employee:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
             detail="Employee not found",
         )
 
-    if employee.employee_id == current_admin.employee_id:
+    if employee.id == current_admin.id or employee.employee_id == current_admin.employee_id:
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
             detail="Cannot delete your own admin account",
         )
 
-    db.query(Attendance).filter(Attendance.employee_id == employee_id).delete()
+    db.query(Attendance).filter(
+        (Attendance.employee_id == employee.employee_id) | (Attendance.employee_id == str(employee.id))
+    ).delete(synchronize_session=False)
+
     db.delete(employee)
     db.commit()
 
@@ -377,11 +383,11 @@ def delete_employee(
         db,
         action="Deleted Employee",
         admin_name=current_admin.full_name,
-        employee_id=employee_id,
-        remarks=f"Deleted employee record '{employee.full_name}'",
+        employee_id=employee.employee_id,
+        remarks=f"Deleted employee record '{employee.full_name}' ({employee.employee_id})",
     )
 
-    return None
+    return {"message": "Deleted successfully", "employee_id": employee.employee_id}
 
 
 # --- REPORTS ---
