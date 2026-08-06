@@ -2,7 +2,7 @@
  * GeoTrack HRMS — API Router
  * File: Code.gs
  * 
- * Handles HTTP GET & POST requests for Auth, Employee, Attendance, and Drive Upload APIs.
+ * Handles HTTP GET & POST requests for Auth, Employee, Attendance, Drive Uploads, and Reports APIs.
  */
 
 function doGet(e) {
@@ -63,8 +63,37 @@ function doGet(e) {
       return jsonResponse(histRes.response, histRes.statusCode);
     }
     
+    // -------------------------------------------------------------
+    // Reports & Dashboard GET Endpoints
+    // -------------------------------------------------------------
+    
+    // 1. Dashboard Statistics (/api/admin/dashboard or action=dashboard)
+    if (action === "dashboard" || action === "getDashboard" || action === "/api/admin/dashboard") {
+      var dashRes = getDashboardStats();
+      return jsonResponse(dashRes.response, dashRes.statusCode);
+    }
+    
+    // 2. Attendance Reports (/api/admin/reports or action=reports)
+    if (action === "reports" || action === "getReports" || action === "/api/admin/reports") {
+      var reportRes = getAttendanceReports(params.start_date, params.end_date);
+      return jsonResponse(reportRes.response, reportRes.statusCode);
+    }
+    
+    // 3. Monthly Reports Breakdown (action=monthlyReports)
+    if (action === "monthlyReports" || action === "getMonthlyReports") {
+      var monthRes = getMonthlyReports(params.year);
+      return jsonResponse(monthRes.response, monthRes.statusCode);
+    }
+    
+    // 4. Employee Report API (action=employeeReport)
+    if (action === "employeeReport" || action === "getEmployeeReport") {
+      var empReportRes = getSingleEmployeeReport(params.employee_id || params.id, params.start_date, params.end_date);
+      if (empReportRes.errorDetail) return jsonResponse(empReportRes.errorDetail, empReportRes.statusCode);
+      return jsonResponse(empReportRes.response, empReportRes.statusCode);
+    }
+    
     if (action === "health") {
-      return jsonResponse({ status: "healthy", service: "GeoTrack Drive Upload, Attendance, Employee & Auth Services", version: CONFIG.VERSION });
+      return jsonResponse({ status: "healthy", service: "GeoTrack Reports, Dashboard, Drive, Attendance, Employee & Auth Services", version: CONFIG.VERSION });
     }
     
     return jsonResponse({ detail: "Endpoint or action not found" }, 404);
@@ -149,23 +178,17 @@ function doPost(e) {
       return jsonResponse(checkOutRes.response, checkOutRes.statusCode);
     }
     
-    // -------------------------------------------------------------
-    // Google Drive File Upload POST Endpoints
-    // -------------------------------------------------------------
-    
-    // 1. Employee Photo Upload -> 'Employee Photos' folder
+    // Drive Upload POST Endpoints
     if (action === "uploadEmployeePhoto" || action === "uploadPhoto" || action === "/api/auth/upload-photo") {
       var empPhotoRes = uploadEmployeePhoto(body.employee_id || body.id, body.fileBase64 || body.photo, body.filename, body.mimeType);
       return jsonResponse(empPhotoRes.response, empPhotoRes.statusCode);
     }
     
-    // 2. Selfie Upload -> 'Selfies' folder
     if (action === "geotagUpload" || action === "uploadSelfie" || action === "/api/attendance/geotag-upload") {
       var selfieRes = uploadSelfie(body.employee_id, body.fileBase64 || body.photo, body.filename, body.mimeType);
       return jsonResponse(selfieRes.response, selfieRes.statusCode);
     }
     
-    // 3. Work Proof Image Upload -> 'Work Proof Images' folder
     if (action === "uploadWorkProofImage" || action === "uploadProofImage" || action === "/api/work-proof/upload") {
       var isVid = body.mimeType && body.mimeType.indexOf("video") !== -1;
       if (isVid) {
@@ -176,13 +199,11 @@ function doPost(e) {
       return jsonResponse(imgRes.response, imgRes.statusCode);
     }
     
-    // 4. Work Proof Video Upload -> 'Work Proof Videos' folder
     if (action === "uploadWorkProofVideo" || action === "uploadProofVideo") {
       var vidProofRes = uploadWorkProofVideo(body.attendance_id, body.employee_id, body.fileBase64 || body.file, body.filename, body.mimeType, body.description);
       return jsonResponse(vidProofRes.response, vidProofRes.statusCode);
     }
     
-    // 5. Company Logo Upload -> 'Company Logos' folder
     if (action === "uploadCompanyLogo" || action === "uploadLogo") {
       var logoRes = uploadCompanyLogo(body.fileBase64 || body.logo, body.filename, body.mimeType);
       return jsonResponse(logoRes.response, logoRes.statusCode);
