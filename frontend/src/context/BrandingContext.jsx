@@ -21,7 +21,7 @@ export const BrandingProvider = ({ children }) => {
 
   const fetchBranding = async () => {
     try {
-      const res = await api.get("/api/admin/company");
+      const res = await api.get("/admin/company");
       if (res.data) {
         setCompany(res.data);
       }

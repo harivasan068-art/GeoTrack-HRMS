@@ -4,6 +4,10 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from database.database import Base, engine
+from models.attendance import Attendance
+from models.company import AuditLog, CompanySettings
+from models.employee import Employee
+from models.work_proof import WorkProof
 from routers import admin, attendance, auth, employees, work_proof
 
 os.makedirs("uploads", exist_ok=True)
@@ -38,25 +42,10 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Allowed CORS Origins
-allowed_origins = [
-    "http://localhost:5173",
-    "http://127.0.0.1:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
-    "https://geo-track-hrms.vercel.app",
-    "https://www.geo-track-hrms.vercel.app",
-]
-
-env_origins = os.getenv("CORS_ORIGINS")
-if env_origins:
-    allowed_origins.extend([o.strip() for o in env_origins.split(",") if o.strip()])
-
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=allowed_origins,
-    allow_origin_regex=r"https://.*\.vercel\.app",
-    allow_credentials=True,
+    allow_origins=["*"],
+    allow_credentials=False,
     allow_methods=["*"],
     allow_headers=["*"],
 )
@@ -79,6 +68,8 @@ def root():
     }
 
 
+@app.get("/health")
 @app.get("/api/health")
 def health_check():
     return {"status": "healthy"}
+

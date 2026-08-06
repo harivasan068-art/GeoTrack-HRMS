@@ -11,6 +11,7 @@ from database.database import Base, SessionLocal, engine
 from models.attendance import Attendance
 from models.company import AuditLog, CompanySettings
 from models.employee import Employee
+from models.work_proof import WorkProof
 from utils.security import hash_password
 
 
@@ -182,12 +183,19 @@ def auto_seed_if_needed():
 
 def seed_database():
     print("Recreating database tables for Enterprise HRMS...")
-    Base.metadata.drop_all(bind=engine)
+    from sqlalchemy import text
+
+    with engine.begin() as conn:
+        conn.execute(text("DROP SCHEMA public CASCADE;"))
+        conn.execute(text("CREATE SCHEMA public;"))
+
     Base.metadata.create_all(bind=engine)
-    
-    # Stamp alembic version table so alembic upgrade head succeeds seamlessly
+
     try:
-        alembic_ini_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "alembic.ini")
+        alembic_ini_path = os.path.join(
+            os.path.dirname(os.path.abspath(__file__)),
+            "alembic.ini",
+        )
         alembic_cfg = Config(alembic_ini_path)
         command.stamp(alembic_cfg, "head")
     except Exception as exc:
@@ -197,17 +205,19 @@ def seed_database():
 
     try:
         populate_seed_data(db)
+
         print("Successfully seeded Enterprise HRMS database!")
         print("-----------------------------------------------------------------")
         print("Single Admin Credentials   : admin@geotrack.com / admin123")
-        print("Employee 1 (Engineering)  : john.doe@geotrack.com / password123")
-        print("Employee 2 (Product)      : jane.smith@geotrack.com / password123")
-        print("Employee 3 (Field Operations): alex.wong@geotrack.com / password123")
+        print("Employee 1 (Engineering)   : john.doe@geotrack.com / password123")
+        print("Employee 2 (Product)       : jane.smith@geotrack.com / password123")
+        print("Employee 3 (Field Ops)     : alex.wong@geotrack.com / password123")
         print("-----------------------------------------------------------------")
 
     except Exception as e:
         db.rollback()
         print(f"Error seeding database: {e}")
+
     finally:
         db.close()
 
