@@ -1,6 +1,8 @@
 /**
- * GeoTrack HRMS — Entry Point Router
+ * GeoTrack HRMS — Authentication API Router
  * File: Code.gs
+ * 
+ * Handles incoming HTTP GET & POST requests for Authentication endpoints only.
  */
 
 function doGet(e) {
@@ -8,44 +10,23 @@ function doGet(e) {
     var params = (e && e.parameter) ? e.parameter : {};
     var action = params.action || "health";
     
-    // Router logic for GET requests
-    switch (action) {
-      case "health":
-        return jsonResponse({ status: "healthy", message: "GeoTrack HRMS Apps Script Operational", version: CONFIG.VERSION });
-        
-      case "company":
-      case "getCompanySettings":
-        return jsonResponse(getCompanySettings());
-        
-      case "employees":
-      case "getEmployees":
-        return jsonResponse(getEmployees());
-        
-      case "employee":
-      case "getEmployeeById":
-        return jsonResponse(getEmployeeById(params.id || params.employee_id));
-        
-      case "todayAttendance":
-      case "getTodayAttendance":
-        return jsonResponse(getTodayAttendance(params.employee_id));
-        
-      case "attendanceHistory":
-      case "getAttendanceHistory":
-        return jsonResponse(getAttendanceHistory(params.employee_id));
-        
-      case "workProofs":
-      case "getWorkProofs":
-        return jsonResponse(getWorkProofs(params.attendance_id));
-        
-      case "auditLogs":
-      case "getAuditLogs":
-        return jsonResponse(getAuditLogs());
-        
-      default:
-        return jsonResponse({ error: "Invalid action parameter '" + action + "'" }, 404);
+    // Auth Session Validation Endpoint: /auth/me or ?action=me
+    if (action === "me" || action === "getMe" || action === "/api/auth/me") {
+      var authHeader = (e && e.parameter && e.parameter.token) ? e.parameter.token : null;
+      var meResult = handleGetMe(authHeader);
+      if (meResult.errorDetail) {
+        return jsonResponse(meResult.errorDetail, meResult.statusCode);
+      }
+      return jsonResponse(meResult.response, meResult.statusCode);
     }
+    
+    if (action === "health") {
+      return jsonResponse({ status: "healthy", service: "GeoTrack Authentication Service", version: CONFIG.VERSION });
+    }
+    
+    return jsonResponse({ detail: "Endpoint or action not found" }, 404);
   } catch (err) {
-    return jsonResponse({ error: err.toString() }, 500);
+    return jsonResponse({ detail: err.toString() }, 500);
   }
 }
 
@@ -62,65 +43,35 @@ function doPost(e) {
       body = e.parameter;
     }
     
-    var action = body.action || (e && e.parameter && e.parameter.action);
+    var action = body.action || (e && e.parameter && e.parameter.action) || "login";
     
-    if (!action) {
-      return jsonResponse({ error: "Missing required 'action' parameter" }, 400);
+    // 1. POST Login Endpoint
+    if (action === "login" || action === "/api/auth/login") {
+      var loginResult = handleLogin(body.email, body.password);
+      if (loginResult.errorDetail) {
+        return jsonResponse(loginResult.errorDetail, loginResult.statusCode);
+      }
+      return jsonResponse(loginResult.response, loginResult.statusCode);
     }
     
-    // Router logic for POST / PUT / DELETE requests
-    switch (action) {
-      case "login":
-        var loginResult = handleLogin(body.email, body.password);
-        return jsonResponse(loginResult, loginResult.status || 200);
-        
-      case "register":
-      case "createEmployee":
-        var regResult = createEmployee(body);
-        return jsonResponse(regResult, regResult.status || 201);
-        
-      case "updateEmployee":
-        return jsonResponse(updateEmployee(body.employee_id || body.id, body));
-        
-      case "deleteEmployee":
-        return jsonResponse(deleteEmployee(body.employee_id || body.id));
-        
-      case "geotagUpload":
-      case "submitGeotagPhoto":
-        return jsonResponse(submitGeotagPhoto(body.fileBase64, body.filename, body.mimeType));
-        
-      case "checkIn":
-        return jsonResponse(checkIn(body));
-        
-      case "checkOut":
-        return jsonResponse(checkOut(body));
-        
-      case "verifyAttendance":
-        return jsonResponse(verifyAttendance(body.attendance_id || body.id, body.status, body.admin_notes, body.admin_name));
-        
-      case "uploadWorkProof":
-        return jsonResponse(uploadWorkProof(
-          body.attendance_id,
-          body.employee_id,
-          body.fileBase64,
-          body.filename,
-          body.mimeType,
-          body.description
-        ));
-        
-      case "deleteWorkProof":
-        return jsonResponse(deleteWorkProof(body.id || body.proof_id));
-        
-      case "updateCompanySettings":
-        return jsonResponse(updateCompanySettings(body));
-        
-      case "logAuditAction":
-        return jsonResponse(logAuditAction(body.action_description, body.admin_name, body.employee_id, body.remarks));
-        
-      default:
-        return jsonResponse({ error: "Invalid action parameter '" + action + "'" }, 400);
+    // 2. Session Validation Endpoint (POST variant)
+    if (action === "me" || action === "getMe" || action === "/api/auth/me") {
+      var token = body.token || (e && e.parameter && e.parameter.token);
+      var meResultPost = handleGetMe(token);
+      if (meResultPost.errorDetail) {
+        return jsonResponse(meResultPost.errorDetail, meResultPost.statusCode);
+      }
+      return jsonResponse(meResultPost.response, meResultPost.statusCode);
     }
+    
+    // 3. Logout Endpoint
+    if (action === "logout" || action === "/api/auth/logout") {
+      var logoutResult = handleLogout();
+      return jsonResponse(logoutResult.response, logoutResult.statusCode);
+    }
+    
+    return jsonResponse({ detail: "Action not recognized" }, 400);
   } catch (err) {
-    return jsonResponse({ error: err.toString() }, 500);
+    return jsonResponse({ detail: err.toString() }, 500);
   }
 }
