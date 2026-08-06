@@ -1,8 +1,6 @@
 /**
  * GeoTrack HRMS — Google Workspace Configuration
  * File: Config.gs
- * 
- * Global constants, Sheet IDs, Drive Folder IDs, and Configuration.
  */
 
 var CONFIG = {
@@ -18,22 +16,21 @@ var CONFIG = {
     AUDIT_LOGS: "AuditLogs"
   },
   
-  // Google Drive Root & Subfolder IDs (Replace with your actual Folder IDs)
-  DRIVE_FOLDERS: {
-    ROOT: "YOUR_ROOT_FOLDER_ID_HERE",
-    EMPLOYEE_PHOTOS: "YOUR_EMPLOYEE_PHOTOS_FOLDER_ID_HERE",
-    SELFIES: "YOUR_SELFIES_FOLDER_ID_HERE",
-    WORK_PROOF_IMAGES: "YOUR_WORK_PROOF_IMAGES_FOLDER_ID_HERE",
-    WORK_PROOF_VIDEOS: "YOUR_WORK_PROOF_VIDEOS_FOLDER_ID_HERE",
-    COMPANY_LOGOS: "YOUR_COMPANY_LOGOS_FOLDER_ID_HERE"
+  // Google Drive Subfolder Names
+  DRIVE_FOLDER_NAMES: {
+    ROOT: "GeoTrack HRMS",
+    EMPLOYEE_PHOTOS: "Employee Photos",
+    SELFIES: "Selfies",
+    WORK_PROOF_IMAGES: "Work Proof Images",
+    WORK_PROOF_VIDEOS: "Work Proof Videos",
+    COMPANY_LOGOS: "Company Logos"
   },
   
-  // JWT & Security Config
+  // Security & Token Config
   SECURITY: {
-    JWT_SECRET: "geotrack-hrms-google-workspace-secret-key",
-    TOKEN_EXPIRATION_HOURS: 24
+    SECRET_KEY: "geotrack-hrms-google-workspace-secret-key",
+    TOKEN_EXPIRE_HOURS: 24
   },
 
-  // API Version
   VERSION: "1.0.0"
 };
