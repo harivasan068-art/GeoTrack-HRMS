@@ -1,6 +1,11 @@
 import axios from "axios";
 
-export const API_BASE_URL = (import.meta.env.VITE_API_URL || "https://geotrack-hrms.onrender.com").replace(/\/$/, "");
+let baseUrl = (import.meta.env.VITE_API_URL || "https://geotrack-hrms.onrender.com/api").replace(/\/$/, "");
+if (!baseUrl.endsWith("/api")) {
+  baseUrl = `${baseUrl}/api`;
+}
+export const API_BASE_URL = baseUrl;
+
 
 export const getImageUrl = (url) => {
   if (!url) return null;
